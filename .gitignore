@@ -1,0 +1,17 @@
+# Ignorar entorno virtual
+venv/
+
+# Ignorar archivos de caché de Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignorar archivos de configuración local o secretos
+instance/
+.flaskenv
+
+# Ignorar archivos de editor o del sistema operativo
+.DS_Store # macOS
+.vscode/  # VS Code
+*.log

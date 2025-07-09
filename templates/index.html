@@ -1,0 +1,47 @@
+{% extends "base.html" %} {# Indica que esta plantilla extiende (hereda de) base.html #}
+
+{% block title %}Inicio - Propiedades Veracruz IA{% endblock %} {# Sobrescribe el título de la página #}
+
+{% block content %} {# Define el bloque de contenido específico para esta página #}
+    <div class="container"> {# Contenedor para centrar y dar espacio al contenido #}
+        <h1>Bienvenida a Propiedades Veracruz IA</h1>
+        <p>Explora las mejores propiedades en venta y renta en Veracruz.</p>
+
+        <h2>Propiedades Disponibles</h2>
+        {% if propiedades %} {# Verifica si hay propiedades en la lista #}
+            <div class="property-grid"> {# Contenedor para la cuadrícula de propiedades #}
+                {% for propiedad in propiedades %} {# Itera sobre cada propiedad en la lista #}
+                    <div class="property-card"> {# Tarjeta individual para cada propiedad #}
+                        <h3>{{ propiedad.titulo }}</h3> {# Muestra el título de la propiedad #}
+                        <p><strong>Precio:</strong> ${{ "{:,.2f}".format(propiedad.precio) }}</p> {# Muestra el precio formateado #}
+                        <p><strong>Dirección:</strong> {{ propiedad.direccion }}, {{ propiedad.municipio }}</p> {# Dirección y municipio #}
+                        <p><strong>Tipo:</strong> {{ propiedad.tipo }}</p> {# Tipo de propiedad #}
+                        <p><strong>Estado:</strong> {{ propiedad.estado_propiedad }}</p> {# Estado (Venta/Alquiler) #}
+                        <p><strong>Habitaciones:</strong> {{ propiedad.num_habitaciones }}</p> {# Número de habitaciones #}
+                        <p><strong>Baños:</strong> {{ propiedad.num_banos }}</p> {# Número de baños #}
+                        {% if propiedad.num_medios_banos %} {# Muestra medios baños solo si existen #}
+                            <p><strong>Medios Baños:</strong> {{ propiedad.num_medios_banos }}</p>
+                        {% endif %}
+                        {% if propiedad.num_estacionamientos %} {# Muestra estacionamientos solo si existen #}
+                            <p><strong>Estacionamientos:</strong> {{ propiedad.num_estacionamientos }}</p>
+                        {% endif %}
+                        {% if propiedad.antiguedad %} {# Muestra antigüedad solo si existe #}
+                            <p><strong>Antigüedad:</strong> {{ propiedad.antiguedad }} años</p>
+                        {% endif %}
+                        <p><strong>Construcción:</strong> {{ "{:,.2f}".format(propiedad.area_construccion_metros_cuadrados) }} m²</p> {# Área de construcción #}
+                        {% if propiedad.area_terreno_metros_cuadrados %} {# Muestra área de terreno solo si existe #}
+                            <p><strong>Terreno:</strong> {{ "{:,.2f}".format(propiedad.area_terreno_metros_cuadrados) }} m²</p>
+                        {% endif %}
+                        {% if propiedad.cuota_mantenimiento %} {# Muestra cuota de mantenimiento solo si existe #}
+                            <p><strong>Mantenimiento:</strong> ${{ "{:,.2f}".format(propiedad.cuota_mantenimiento) }}</p>
+                        {% endif %}
+                        <p>{{ propiedad.descripcion[:100] }}...</p> {# Muestra una parte de la descripción #}
+                        <a href="{{ url_for('main.property_detail', property_id=propiedad.id) }}">Ver Detalles</a> {# Enlace a la página de detalles de la propiedad #}
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %} {# Si no hay propiedades #}
+            <p>No hay propiedades disponibles en este momento. ¡Sé el primero en añadir una!</p>
+        {% endif %}
+    </div>
+{% endblock %}

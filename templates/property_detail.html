@@ -1,0 +1,56 @@
+{% extends "base.html" %} {# Indica que esta plantilla extiende (hereda de) base.html #}
+
+{% block title %}{{ propiedad.titulo }} - Detalles de Propiedad{% endblock %} {# Título dinámico con el nombre de la propiedad #}
+
+{% block content %} {# Bloque de contenido principal de la página #}
+    <div class="container property-detail"> {# Contenedor para los detalles de la propiedad #}
+        <a href="{{ url_for('main.home') }}" class="back-link">&larr; Volver a Propiedades</a> {# Enlace para volver a la página principal #}
+
+        <h1>{{ propiedad.titulo }}</h1> {# Título principal de la propiedad #}
+        <p class="price">Precio: ${{ "{:,.2f}".format(propiedad.precio) }}</p> {# Precio formateado #}
+
+        {# Galería de imágenes de la propiedad #}
+        <div class="image-gallery">
+            {% if propiedad.imagenes %} {# Verifica si la propiedad tiene imágenes asociadas #}
+                {% for imagen in propiedad.imagenes %} {# Itera sobre cada objeto Imagen asociado #}
+                    {# La ruta de la imagen se construye usando url_for para archivos estáticos #}
+                    <img src="{{ url_for('static', filename='uploads/' + imagen.nombre_archivo) }}"
+                         alt="Imagen de {{ propiedad.titulo }}"
+                         class="property-image {% if imagen.es_principal %}main-image{% endif %}">
+                {% endfor %}
+            {% else %} {# Si no hay imágenes #}
+                <p>No hay imágenes disponibles para esta propiedad.</p>
+            {% endif %}
+        </div>
+
+        <div class="detail-section">
+            <h2>Información General</h2>
+            <p><strong>Dirección:</strong> {{ propiedad.direccion }}, {{ propiedad.municipio }}, {{ propiedad.estado }} {{ propiedad.codigo_postal if propiedad.codigo_postal else '' }}</p>
+            <p><strong>Tipo de Propiedad:</strong> {{ propiedad.tipo }}</p>
+            <p><strong>Estado de la Propiedad:</strong> {{ propiedad.estado_propiedad }}</p>
+            <p><strong>Descripción:</strong> {{ propiedad.descripcion }}</p>
+        </div>
+
+        <div class="detail-section">
+            <h2>Características</h2>
+            <p><strong>Número de Habitaciones:</strong> {{ propiedad.num_habitaciones }}</p>
+            <p><strong>Número de Baños:</strong> {{ propiedad.num_banos }}</p>
+            {% if propiedad.num_medios_banos %}
+                <p><strong>Número de Medios Baños:</strong> {{ propiedad.num_medios_banos }}</p>
+            {% endif %}
+            {% if propiedad.num_estacionamientos %}
+                <p><strong>Número de Estacionamientos:</strong> {{ propiedad.num_estacionamientos }}</p>
+            {% endif %}
+            {% if propiedad.antiguedad %}
+                <p><strong>Antigüedad:</strong> {{ propiedad.antiguedad }} años</p>
+            {% endif %}
+            <p><strong>Área de Construcción:</strong> {{ "{:,.2f}".format(propiedad.area_construccion_metros_cuadrados) }} m²</p>
+            {% if propiedad.area_terreno_metros_cuadrados %}
+                <p><strong>Área de Terreno:</strong> {{ "{:,.2f}".format(propiedad.area_terreno_metros_cuadrados) }} m²</p>
+            {% endif %}
+            {% if propiedad.cuota_mantenimiento %}
+                <p><strong>Cuota de Mantenimiento:</strong> ${{ "{:,.2f}".format(propiedad.cuota_mantenimiento) }}</p>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

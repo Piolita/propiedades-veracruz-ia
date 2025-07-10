@@ -106,7 +106,6 @@ button[type="submit"]:hover {
     background-color: #0056b3; /* Color de fondo más oscuro al pasar el ratón */
 }
 
-
 /* Estilos para la cuadrícula de propiedades */
 .property-grid {
     display: grid; /* Usa CSS Grid para la disposición */
@@ -231,4 +230,102 @@ button[type="submit"]:hover {
 
 .property-image:hover {
     border-color: #28a745; /* Borde verde al pasar el ratón */
+}
+
+/* Estilos para el enlace de edición */
+.edit-link {
+    display: inline-block; /* Permite aplicar padding y margin */
+    background-color: #ffc107; /* Color de fondo amarillo/naranja para el botón de edición */
+    color: #212529; /* Texto oscuro */
+    padding: 8px 15px; /* Relleno */
+    border-radius: 5px; /* Bordes redondeados */
+    text-decoration: none; /* Sin subrayado */
+    margin-top: 15px; /* Margen superior */
+    margin-left: 10px; /* Margen a la izquierda para separarlo de "Ver Detalles" */
+    transition: background-color 0.3s ease; /* Transición suave */
+    font-weight: bold; /* Negrita */
+}
+
+.edit-link:hover {
+    background-color: #e0a800; /* Color más oscuro al pasar el ratón */
+}
+
+/* Ajuste para que el enlace de edición en property_detail se vea bien */
+.property-detail .edit-link {
+    margin-bottom: 20px; /* Espacio debajo del botón de edición */
+    margin-top: 0; /* Elimina el margen superior si no es necesario */
+    float: right; /* Flota a la derecha para que esté al lado del título */
+}
+
+/* Estilo para la miniatura de la propiedad en la página principal (index.html) */
+.property-thumbnail {
+    width: 100%; /* Ocupa todo el ancho disponible en su contenedor */
+    height: 200px; /* Altura fija para todas las miniaturas */
+    object-fit: cover; /* Recorta la imagen para que cubra el área sin distorsionarse */
+    border-radius: 8px; /* Bordes redondeados */
+    margin-bottom: 15px; /* Espacio debajo de la imagen */
+    display: block; /* Asegura que la imagen se comporte como un bloque */
+    background-color: #f0f0f0; /* Fondo gris claro */
+    vertical-align: top; /* Elimina el espacio extra debajo de las imágenes */
+}
+
+/* Estilo para el enlace que envuelve la miniatura */
+.thumbnail-link {
+    display: block !important; /* FORZAR: Asegura que el enlace ocupe todo el espacio y no tenga espacios extra */
+    line-height: 0 !important; /* FORZAR: Elimina cualquier espacio extra de línea que pueda afectar el layout */
+    font-size: 0 !important; /* FORZAR: Elimina el tamaño de fuente si el enlace tuviera texto */
+    text-decoration: none !important; /* FORZAR: Elimina el subrayado por defecto de los enlaces */
+    padding: 0 !important; /* FORZAR: Asegura que no haya padding en el enlace */
+    margin: 0 !important; /* FORZAR: Asegura que no haya margin en el enlace */
+    border: none !important; /* FORZAR: Asegura que no haya borde en el enlace */
+}
+
+
+/* Estilos para el enlace de eliminación */
+.delete-link {
+    display: inline-block; /* Permite aplicar padding y margin */
+    background-color: #dc3545; /* Color de fondo rojo para el botón de eliminación */
+    color: white; /* Texto blanco */
+    padding: 8px 15px; /* Relleno */
+    border-radius: 5px; /* Bordes redondeados */
+    text-decoration: none; /* Sin subrayado */
+    margin-top: 15px; /* Margen superior */
+    margin-left: 10px; /* Margen a la izquierda para separarlo de otros botones */
+    transition: background-color 0.3s ease; /* Transición suave */
+    font-weight: bold; /* Negrita */
+}
+
+.delete-link:hover {
+    background-color: #c82333; /* Color más oscuro al pasar el ratón */
+}
+
+/* Ajuste para que el enlace de eliminación en property_detail se vea bien */
+.property-detail .delete-link {
+    margin-bottom: 20px; /* Espacio debajo del botón de eliminación */
+    margin-top: 0; /* Elimina el margen superior si no es necesario */
+    float: right; /* Flota a la derecha para que esté al lado del título */
+    margin-left: 10px; /* Margen a la izquierda para separarlo del botón de edición */
+}
+
+
+/* Estilos para la tarjeta de confirmación de eliminación */
+.delete-confirmation-card {
+    border: 2px solid #dc3545; /* Borde rojo para la tarjeta de confirmación */
+    background-color: #fff3cd; /* Fondo amarillo claro para la advertencia */
+    padding: 25px; /* Relleno */
+    margin-bottom: 20px; /* Margen inferior */
+}
+
+.delete-confirmation-card h3 {
+    color: #dc3545; /* Color de texto rojo para el título de la propiedad */
+}
+
+/* Estilos para el mensaje de advertencia */
+.warning-message {
+    color: #dc3545; /* Texto rojo oscuro */
+    font-weight: bold; /* Negrita */
+    font-size: 1.2em; /* Tamaño de fuente más grande */
+    margin-top: 20px; /* Margen superior */
+    margin-bottom: 20px; /* Margen inferior */
+    text-align: center; /* Centra el texto */
 }

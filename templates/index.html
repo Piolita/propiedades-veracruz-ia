@@ -13,6 +13,24 @@
                 {% for propiedad in propiedades %} {# Itera sobre cada propiedad en la lista #}
                     <div class="property-card"> {# Tarjeta individual para cada propiedad #}
                         <h3>{{ propiedad.titulo }}</h3> {# Muestra el título de la propiedad #}
+                        {# Lógica simplificada para mostrar la imagen principal de la propiedad #}
+                        {# Busca la primera imagen que tenga 'es_principal' como True #}
+                        {% set primary_image = (propiedad.imagenes | selectattr('es_principal')) | first %}
+
+                        {# Envuelve la imagen (o placeholder) con un enlace a la página de detalles #}
+                        <a href="{{ url_for('main.property_detail', property_id=propiedad.id) }}" class="thumbnail-link">
+                            {% if primary_image %} {# Si se encontró una imagen principal #}
+                                <img src="{{ url_for('static', filename='uploads/' + primary_image.nombre_archivo) }}"
+                                     alt="Imagen principal de {{ propiedad.titulo }}"
+                                     class="property-thumbnail"> {# Clase para estilizar la miniatura #}
+                            {% else %} {# Si no hay imagen principal o no hay imágenes #}
+                                {# Usa tu archivo placeholder.png #}
+                                <img src="{{ url_for('static', filename='placeholder.png') }}"
+                                     alt="No hay imagen disponible"
+                                     class="property-thumbnail"> {# Muestra una imagen de marcador de posición #}
+                            {% endif %}
+                        </a>
+
                         <p><strong>Precio:</strong> ${{ "{:,.2f}".format(propiedad.precio) }}</p> {# Muestra el precio formateado #}
                         <p><strong>Dirección:</strong> {{ propiedad.direccion }}, {{ propiedad.municipio }}</p> {# Dirección y municipio #}
                         <p><strong>Tipo:</strong> {{ propiedad.tipo }}</p> {# Tipo de propiedad #}
@@ -23,7 +41,7 @@
                             <p><strong>Medios Baños:</strong> {{ propiedad.num_medios_banos }}</p>
                         {% endif %}
                         {% if propiedad.num_estacionamientos %} {# Muestra estacionamientos solo si existen #}
-                            <p><strong>Estacionamientos:</strong> {{ propiedad.num_estacionamientos }}</p>
+                            <p><strong>Número de Estacionamientos:</strong> {{ propiedad.num_estacionamientos }}</p>
                         {% endif %}
                         {% if propiedad.antiguedad %} {# Muestra antigüedad solo si existe #}
                             <p><strong>Antigüedad:</strong> {{ propiedad.antiguedad }} años</p>
@@ -37,6 +55,10 @@
                         {% endif %}
                         <p>{{ propiedad.descripcion[:100] }}...</p> {# Muestra una parte de la descripción #}
                         <a href="{{ url_for('main.property_detail', property_id=propiedad.id) }}">Ver Detalles</a> {# Enlace a la página de detalles de la propiedad #}
+                        {# Nuevo enlace para editar la propiedad #}
+                        <a href="{{ url_for('main.edit_property', property_id=propiedad.id) }}" class="edit-link">Editar</a>
+                        {# Nuevo enlace para eliminar la propiedad #}
+                        <a href="{{ url_for('main.delete_property', property_id=propiedad.id) }}" class="delete-link">Eliminar</a>
                     </div>
                 {% endfor %}
             </div>

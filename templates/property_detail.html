@@ -7,8 +7,14 @@
         <a href="{{ url_for('main.home') }}" class="back-link">&larr; Volver a Propiedades</a> {# Enlace para volver a la página principal #}
 
         <h1>{{ propiedad.titulo }}</h1> {# Título principal de la propiedad #}
+        {# Nuevo enlace para editar la propiedad #}
+        <a href="{{ url_for('main.edit_property', property_id=propiedad.id) }}" class="edit-link">Editar Propiedad</a>
         <p class="price">Precio: ${{ "{:,.2f}".format(propiedad.precio) }}</p> {# Precio formateado #}
-
+        {# Nuevo enlace para eliminar la propiedad #}       
+        <a href="{{ url_for('main.delete_property', property_id=propiedad.id) }}" class="delete-link">Eliminar Propiedad</a>
+        <p class="price">Precio: ${{ "{:,.2f}".format(propiedad.precio) }}</p> {# Precio formateado #}
+        
+        
         {# Galería de imágenes de la propiedad #}
         <div class="image-gallery">
             {% if propiedad.imagenes %} {# Verifica si la propiedad tiene imágenes asociadas #}

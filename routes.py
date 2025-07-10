@@ -17,7 +17,22 @@ def allowed_file(filename):
 def home():
     # Esta función se ejecuta cuando alguien visita la URL raíz.
     # Obtiene todas las propiedades de la base de datos.
-    propiedades = Propiedad.query.all() # Consulta todas las filas de la tabla Propiedad
+    # Usamos .options(db.joinedload(Propiedad.imagenes)) para cargar las imágenes relacionadas
+    # en la misma consulta, lo cual es más eficiente.
+    # Luego, filtramos las imágenes para encontrar la que es principal.
+    propiedades = Propiedad.query.options(db.joinedload(Propiedad.imagenes)).all()
+
+    # --- INICIO DE DEPURACIÓN DE IMÁGENES EN HOME (Mantener para referencia o eliminar si ya no es necesario) ---
+    # print("\n--- DEPURACIÓN DE IMÁGENES EN HOME ---")
+    # for prop in propiedades:
+    #     print(f"Propiedad ID: {prop.id}, Título: {prop.titulo}")
+    #     if prop.imagenes:
+    #         for img in prop.imagenes:
+    #             print(f"  - Imagen: {img.nombre_archivo}, es_principal: {img.es_principal}")
+    #     else:
+    #         print("  - No hay imágenes asociadas a esta propiedad.")
+    # print("--- FIN DE DEPURACIÓN DE IMÁGENES EN HOME ---\n")
+    # --- FIN DE DEPURACIÓN DE DEPURACIÓN ---
 
     # Devuelve el contenido de la plantilla HTML 'index.html', pasando las propiedades.
     return render_template('index.html', propiedades=propiedades) # Pasa la lista de propiedades a la plantilla
@@ -163,3 +178,74 @@ def property_detail(property_id):
 
     # Renderiza la plantilla property_detail.html y le pasa el objeto propiedad encontrado.
     return render_template('property_detail.html', propiedad=propiedad)
+
+@main.route('/edit_property/<int:property_id>', methods=['GET', 'POST']) # Define la ruta para editar, acepta GET y POST.
+def edit_property(property_id):
+    # Busca la propiedad por su ID, o devuelve un error 404 si no se encuentra.
+    propiedad = Propiedad.query.get_or_404(property_id)
+
+    if request.method == 'POST': # Si la petición es POST (el formulario se ha enviado)...
+        try:
+            # Actualiza los atributos de la propiedad con los datos del formulario.
+            # Aquí solo actualizamos los campos de texto/número. La lógica de imágenes será más compleja.
+            propiedad.titulo = request.form['titulo']
+            propiedad.descripcion = request.form['descripcion']
+            propiedad.precio = float(request.form['precio'])
+            propiedad.direccion = request.form['direccion']
+            propiedad.municipio = request.form['municipio']
+            propiedad.estado = request.form['estado']
+            propiedad.num_habitaciones = int(request.form['num_habitaciones'])
+            propiedad.num_banos = int(request.form['num_banos'])
+            propiedad.area_construccion_metros_cuadrados = float(request.form['area_construccion_metros_cuadrados'])
+            propiedad.tipo = request.form['tipo']
+            propiedad.estado_propiedad = request.form['estado_propiedad']
+
+            # Campos opcionales: Actualizar solo si se proporcionan en el formulario.
+            # Usamos .get() para evitar errores si el campo no está en la petición.
+            propiedad.codigo_postal = request.form.get('codigo_postal') or None
+            propiedad.num_medios_banos = int(request.form.get('num_medios_banos')) if request.form.get('num_medios_banos') else None
+            propiedad.num_estacionamientos = int(request.form.get('num_estacionamientos')) if request.form.get('num_estacionamientos') else None
+            propiedad.antiguedad = int(request.form.get('antiguedad')) if request.form.get('antiguedad') else None
+            propiedad.area_terreno_metros_cuadrados = float(request.form.get('area_terreno_metros_cuadrados')) if request.form.get('area_terreno_metros_cuadrados') else None
+            propiedad.cuota_mantenimiento = float(request.form.get('cuota_mantenimiento')) if request.form.get('cuota_mantenimiento') else None
+
+            db.session.commit() # Confirma los cambios en la base de datos.
+            flash('¡Propiedad actualizada con éxito!', 'success') # Muestra un mensaje de éxito.
+            return redirect(url_for('main.property_detail', property_id=propiedad.id)) # Redirige a los detalles de la propiedad.
+
+        except Exception as e:
+            db.session.rollback() # Si hay un error, revierte los cambios.
+            flash(f'Error al actualizar propiedad: {e}', 'danger') # Muestra un mensaje de error.
+
+    # Si la petición es GET, renderiza el formulario de edición con los datos de la propiedad.
+    # Pasamos el objeto 'propiedad' a la plantilla para pre-rellenar el formulario.
+    return render_template('edit_property.html', propiedad=propiedad)
+
+
+@main.route('/delete_property/<int:property_id>', methods=['GET', 'POST']) # Ruta para eliminar una propiedad.
+def delete_property(property_id):
+    propiedad = Propiedad.query.get_or_404(property_id) # Busca la propiedad por su ID.
+
+    if request.method == 'POST': # Si la petición es POST (se confirma la eliminación)...
+        try:
+            # Eliminar archivos de imagen asociados del sistema de archivos
+            for imagen in propiedad.imagenes:
+                filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], imagen.nombre_archivo)
+                if os.path.exists(filepath): # Verifica si el archivo existe antes de intentar eliminarlo
+                    os.remove(filepath) # Elimina el archivo físico
+                    print(f"DEBUG: Archivo eliminado: {filepath}") # Mensaje de depuración
+                else:
+                    print(f"DEBUG: Archivo no encontrado (ya eliminado o ruta incorrecta): {filepath}") # Mensaje de depuración
+
+            db.session.delete(propiedad) # Elimina la propiedad de la sesión de la base de datos.
+            db.session.commit() # Confirma los cambios (esto también eliminará las imágenes de la DB debido a cascade='all, delete-orphan')
+
+            flash('¡Propiedad eliminada con éxito!', 'success') # Muestra un mensaje de éxito.
+            return redirect(url_for('main.home')) # Redirige al usuario a la página de inicio.
+
+        except Exception as e:
+            db.session.rollback() # Si hay un error, revierte los cambios.
+            flash(f'Error al eliminar propiedad: {e}', 'danger') # Muestra un mensaje de error.
+
+    # Si la petición es GET, muestra la página de confirmación de eliminación.
+    return render_template('confirm_delete.html', propiedad=propiedad)

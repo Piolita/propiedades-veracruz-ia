@@ -1,0 +1,34 @@
+{% extends "base.html" %} {# Indica que esta plantilla hereda de base.html #}
+
+{% block title %}Confirmar Eliminación - {{ propiedad.titulo }}{% endblock %} {# Título dinámico #}
+
+{% block content %} {# Bloque de contenido principal de la página #}
+    <div class="container"> {# Contenedor para centrar y dar espacio al contenido #}
+        <h1>Confirmar Eliminación de Propiedad</h1>
+        <p>Estás a punto de eliminar la siguiente propiedad:</p>
+
+        <div class="property-card delete-confirmation-card"> {# Usa estilos de tarjeta para mostrar los detalles #}
+            <h3>{{ propiedad.titulo }}</h3>
+            {% set primary_image = (propiedad.imagenes | selectattr('es_principal')) | first %}
+            {% if primary_image %}
+                <img src="{{ url_for('static', filename='uploads/' + primary_image.nombre_archivo) }}"
+                     alt="Imagen principal de {{ propiedad.titulo }}"
+                     class="property-thumbnail">
+            {% else %}
+                <img src="{{ url_for('static', filename='placeholder.png') }}"
+                     alt="No hay imagen disponible"
+                     class="property-thumbnail">
+            {% endif %}
+            <p><strong>Dirección:</strong> {{ propiedad.direccion }}, {{ propiedad.municipio }}</p>
+            <p><strong>Precio:</strong> ${{ "{:,.2f}".format(propiedad.precio) }}</p>
+            <p><strong>Descripción:</strong> {{ propiedad.descripcion[:150] }}...</p> {# Muestra una parte de la descripción #}
+        </div>
+
+        <p class="warning-message">¡Advertencia! Esta acción es irreversible. ¿Estás seguro de que deseas eliminar esta propiedad?</p>
+
+        <form method="POST" action="{{ url_for('main.delete_property', property_id=propiedad.id) }}"> {# El formulario POST envía la confirmación #}
+            <button type="submit" class="delete-confirm-button">Sí, Eliminar Propiedad</button>
+            <a href="{{ url_for('main.property_detail', property_id=propiedad.id) }}" class="cancel-button">No, Cancelar</a> {# Botón para cancelar la eliminación #}
+        </form>
+    </div>
+{% endblock %}

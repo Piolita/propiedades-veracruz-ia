@@ -7,27 +7,32 @@
         <a href="{{ url_for('main.home') }}" class="back-link">&larr; Volver a Propiedades</a> {# Enlace para volver a la página principal #}
 
         <h1>{{ propiedad.titulo }}</h1> {# Título principal de la propiedad #}
-        {# Nuevo enlace para editar la propiedad #}
+        {# Enlace para editar la propiedad #}
         <a href="{{ url_for('main.edit_property', property_id=propiedad.id) }}" class="edit-link">Editar Propiedad</a>
-        <p class="price">Precio: ${{ "{:,.2f}".format(propiedad.precio) }}</p> {# Precio formateado #}
-        {# Nuevo enlace para eliminar la propiedad #}       
+        {# Nuevo enlace para eliminar la propiedad #}
         <a href="{{ url_for('main.delete_property', property_id=propiedad.id) }}" class="delete-link">Eliminar Propiedad</a>
         <p class="price">Precio: ${{ "{:,.2f}".format(propiedad.precio) }}</p> {# Precio formateado #}
-        
-        
-        {# Galería de imágenes de la propiedad #}
-        <div class="image-gallery">
-            {% if propiedad.imagenes %} {# Verifica si la propiedad tiene imágenes asociadas #}
-                {% for imagen in propiedad.imagenes %} {# Itera sobre cada objeto Imagen asociado #}
-                    {# La ruta de la imagen se construye usando url_for para archivos estáticos #}
-                    <img src="{{ url_for('static', filename='uploads/' + imagen.nombre_archivo) }}"
-                         alt="Imagen de {{ propiedad.titulo }}"
-                         class="property-image {% if imagen.es_principal %}main-image{% endif %}">
-                {% endfor %}
-            {% else %} {# Si no hay imágenes #}
+
+        {# INICIO: Carrusel de imágenes de la propiedad #}
+        <div class="carousel-container">
+            {% if propiedad.imagenes %}
+                <div class="carousel-images">
+                    {% for imagen in propiedad.imagenes %}
+                        <img src="{{ url_for('static', filename='uploads/' + imagen.nombre_archivo) }}"
+                             alt="Imagen {{ loop.index }} de {{ propiedad.titulo }}"
+                             class="carousel-image {% if loop.first %}active{% endif %}"> {# Marca la primera imagen como activa #}
+                    {% endfor %}
+                </div>
+                <button class="carousel-button prev" aria-label="Imagen anterior">&#10094;</button> {# Flecha izquierda #}
+                <button class="carousel-button next" aria-label="Imagen siguiente">&#10095;</button> {# Flecha derecha #}
+                <div class="carousel-dots">
+                    {# Los puntos de navegación se generarán con JavaScript #}
+                </div>
+            {% else %}
                 <p>No hay imágenes disponibles para esta propiedad.</p>
             {% endif %}
         </div>
+        {# FIN: Carrusel de imágenes de la propiedad #}
 
         <div class="detail-section">
             <h2>Información General</h2>

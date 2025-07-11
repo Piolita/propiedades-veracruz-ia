@@ -54,8 +54,8 @@
                             <p><strong>Mantenimiento:</strong> ${{ "{:,.2f}".format(propiedad.cuota_mantenimiento) }}</p>
                         {% endif %}
                         <p>{{ propiedad.descripcion[:100] }}...</p> {# Muestra una parte de la descripción #}
-                        <a href="{{ url_for('main.property_detail', property_id=propiedad.id) }}">Ver Detalles</a> {# Enlace a la página de detalles de la propiedad #}
-                        {# Nuevo enlace para editar la propiedad #}
+                        <a href="{{ url_for('main.property_detail', property_id=propiedad.id) }}" class="detail-link">Ver Detalles</a> {# Enlace a la página de detalles de la propiedad #}
+                        {# Enlace para editar la propiedad #}
                         <a href="{{ url_for('main.edit_property', property_id=propiedad.id) }}" class="edit-link">Editar</a>
                         {# Nuevo enlace para eliminar la propiedad #}
                         <a href="{{ url_for('main.delete_property', property_id=propiedad.id) }}" class="delete-link">Eliminar</a>

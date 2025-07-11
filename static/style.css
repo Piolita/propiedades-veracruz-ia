@@ -1,3 +1,8 @@
+/* Aplicar box-sizing: border-box a todos los elementos para un modelo de caja consistente */
+* {
+    box-sizing: border-box;
+}
+
 /* Estilos generales del cuerpo de la página */
 body {
     font-family: Arial, sans-serif; /* Define la fuente del texto */
@@ -147,9 +152,40 @@ button[type="submit"]:hover {
     color: #333; /* Color más oscuro para el texto en negrita */
 }
 
-.property-card a {
+/* ################################################################## */
+/* INICIO: Estilos de ENLACES DENTRO de .property-card (REFINADOS) */
+/* ################################################################## */
+
+/* Estilo para el enlace que envuelve la miniatura */
+.thumbnail-link {
+    display: block; /* Asegura que el enlace ocupe todo el espacio */
+    width: 100%; /* El enlace ahora define el ancho */
+    height: 200px; /* El enlace ahora define la altura */
+    line-height: 0; /* Elimina espacio extra de línea */
+    font-size: 0; /* Elimina tamaño de fuente si el enlace tuviera texto */
+    text-decoration: none; /* Sin subrayado */
+    padding: 0; /* Elimina padding */
+    margin: 0 0 15px 0; /* Añade margin-bottom aquí para el espacio debajo de la miniatura */
+    border: none; /* Elimina borde */
+    border-radius: 8px; /* Bordes redondeados para el enlace */
+    overflow: hidden; /* Oculta cualquier desbordamiento dentro del enlace */
+}
+
+/* Estilo para la miniatura de la propiedad dentro del enlace */
+.property-thumbnail {
+    width: 100%; /* Ocupa todo el ancho disponible en su contenedor (el enlace) */
+    height: 100%; /* Ocupa toda la altura disponible en su contenedor (el enlace) */
+    object-fit: cover; /* Recorta la imagen para que cubra el área sin distorsionarse */
+    border-radius: 8px; /* Bordes redondeados */
+    display: block; /* Asegura que la imagen se comporte como un bloque */
+    background-color: #f0f0f0; /* Fondo gris claro (para placeholders) */
+    vertical-align: top; /* Elimina el espacio extra debajo de las imágenes */
+}
+
+/* Estilos para el enlace "Ver Detalles" */
+.detail-link {
     display: inline-block; /* Permite aplicar padding y margin */
-    background-color: #28a745; /* Color de fondo verde para el botón de detalles */
+    background-color: #28a745; /* Color de fondo verde */
     color: white; /* Texto blanco */
     padding: 8px 15px; /* Relleno */
     border-radius: 5px; /* Bordes redondeados */
@@ -158,9 +194,50 @@ button[type="submit"]:hover {
     transition: background-color 0.3s ease; /* Transición suave */
 }
 
-.property-card a:hover {
+.detail-link:hover {
     background-color: #218838; /* Color más oscuro al pasar el ratón */
 }
+
+/* Estilos para el enlace de edición (en index.html y property_detail.html) */
+.edit-link {
+    display: inline-block; /* Permite aplicar padding y margin */
+    background-color: #ffc107; /* Color de fondo amarillo/naranja */
+    color: #212529; /* Texto oscuro */
+    padding: 8px 15px; /* Relleno */
+    border-radius: 5px; /* Bordes redondeados */
+    text-decoration: none; /* Sin subrayado */
+    margin-top: 15px; /* Margen superior */
+    margin-left: 10px; /* Margen a la izquierda para separarlo de "Ver Detalles" */
+    transition: background-color 0.3s ease; /* Transición suave */
+    font-weight: bold; /* Negrita */
+}
+
+.edit-link:hover {
+    background-color: #e0a800; /* Color más oscuro al pasar el ratón */
+}
+
+/* Estilos para el enlace de eliminación (en index.html y property_detail.html) */
+.delete-link {
+    display: inline-block; /* Permite aplicar padding y margin */
+    background-color: #dc3545; /* Color de fondo rojo */
+    color: white; /* Texto blanco */
+    padding: 8px 15px; /* Relleno */
+    border-radius: 5px; /* Bordes redondeados */
+    text-decoration: none; /* Sin subrayado */
+    margin-top: 15px; /* Margen superior */
+    margin-left: 10px; /* Margen a la izquierda para separarlo de otros botones */
+    transition: background-color 0.3s ease; /* Transición suave */
+    font-weight: bold; /* Negrita */
+}
+
+.delete-link:hover {
+    background-color: #c82333; /* Color más oscuro al pasar el ratón */
+}
+
+/* ################################################################## */
+/* FIN: Estilos de ENLACES DENTRO de .property-card (REFINADOS) */
+/* ################################################################## */
+
 
 /* Estilos para la página de detalles de la propiedad */
 .property-detail {
@@ -201,102 +278,11 @@ button[type="submit"]:hover {
     margin-bottom: 10px; /* Espacio entre párrafos */
 }
 
-/* Estilos para la galería de imágenes */
-.image-gallery {
-    display: grid; /* Usa CSS Grid para las imágenes */
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Columnas responsivas para imágenes */
-    gap: 15px; /* Espacio entre imágenes */
-    margin-bottom: 30px; /* Margen inferior */
-    border: 1px solid #ddd; /* Borde alrededor de la galería */
-    padding: 15px; /* Relleno dentro de la galería */
-    border-radius: 8px; /* Bordes redondeados */
-    background-color: #f9f9f9; /* Fondo ligero para la galería */
-}
-
-.property-image {
-    width: 100%; /* Las imágenes ocupan todo el ancho de su columna */
-    height: 200px; /* Altura fija para todas las imágenes */
-    object-fit: cover; /* Recorta la imagen para que cubra el área sin distorsionarse */
-    border-radius: 8px; /* Bordes redondeados para las imágenes */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra ligera */
-    border: 2px solid transparent; /* Borde transparente por defecto */
-    transition: border-color 0.3s ease; /* Transición para el borde */
-}
-
-.property-image.main-image {
-    border-color: #007bff; /* Borde azul para la imagen principal */
-    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2); /* Sombra más pronunciada para la principal */
-}
-
-.property-image:hover {
-    border-color: #28a745; /* Borde verde al pasar el ratón */
-}
-
-/* Estilos para el enlace de edición */
-.edit-link {
-    display: inline-block; /* Permite aplicar padding y margin */
-    background-color: #ffc107; /* Color de fondo amarillo/naranja para el botón de edición */
-    color: #212529; /* Texto oscuro */
-    padding: 8px 15px; /* Relleno */
-    border-radius: 5px; /* Bordes redondeados */
-    text-decoration: none; /* Sin subrayado */
-    margin-top: 15px; /* Margen superior */
-    margin-left: 10px; /* Margen a la izquierda para separarlo de "Ver Detalles" */
-    transition: background-color 0.3s ease; /* Transición suave */
-    font-weight: bold; /* Negrita */
-}
-
-.edit-link:hover {
-    background-color: #e0a800; /* Color más oscuro al pasar el ratón */
-}
-
 /* Ajuste para que el enlace de edición en property_detail se vea bien */
 .property-detail .edit-link {
     margin-bottom: 20px; /* Espacio debajo del botón de edición */
     margin-top: 0; /* Elimina el margen superior si no es necesario */
     float: right; /* Flota a la derecha para que esté al lado del título */
-}
-
-/* Estilo para la miniatura de la propiedad en la página principal (index.html) */
-.property-thumbnail {
-    width: 100%; /* Ocupa todo el ancho disponible en su contenedor */
-    height: 200px; /* Altura fija para todas las miniaturas */
-    object-fit: cover; /* Recorta la imagen para que cubra el área sin distorsionarse */
-    border-radius: 8px; /* Bordes redondeados */
-    margin-bottom: 15px; /* Espacio debajo de la imagen */
-    display: block; /* Asegura que la imagen se comporte como un bloque */
-    background-color: #f0f0f0; /* Fondo gris claro */
-    vertical-align: top; /* Elimina el espacio extra debajo de las imágenes */
-}
-
-/* Estilo para el enlace que envuelve la miniatura */
-.thumbnail-link {
-    display: block !important; /* FORZAR: Asegura que el enlace ocupe todo el espacio y no tenga espacios extra */
-    line-height: 0 !important; /* FORZAR: Elimina cualquier espacio extra de línea que pueda afectar el layout */
-    font-size: 0 !important; /* FORZAR: Elimina el tamaño de fuente si el enlace tuviera texto */
-    text-decoration: none !important; /* FORZAR: Elimina el subrayado por defecto de los enlaces */
-    padding: 0 !important; /* FORZAR: Asegura que no haya padding en el enlace */
-    margin: 0 !important; /* FORZAR: Asegura que no haya margin en el enlace */
-    border: none !important; /* FORZAR: Asegura que no haya borde en el enlace */
-}
-
-
-/* Estilos para el enlace de eliminación */
-.delete-link {
-    display: inline-block; /* Permite aplicar padding y margin */
-    background-color: #dc3545; /* Color de fondo rojo para el botón de eliminación */
-    color: white; /* Texto blanco */
-    padding: 8px 15px; /* Relleno */
-    border-radius: 5px; /* Bordes redondeados */
-    text-decoration: none; /* Sin subrayado */
-    margin-top: 15px; /* Margen superior */
-    margin-left: 10px; /* Margen a la izquierda para separarlo de otros botones */
-    transition: background-color 0.3s ease; /* Transición suave */
-    font-weight: bold; /* Negrita */
-}
-
-.delete-link:hover {
-    background-color: #c82333; /* Color más oscuro al pasar el ratón */
 }
 
 /* Ajuste para que el enlace de eliminación en property_detail se vea bien */
@@ -306,7 +292,6 @@ button[type="submit"]:hover {
     float: right; /* Flota a la derecha para que esté al lado del título */
     margin-left: 10px; /* Margen a la izquierda para separarlo del botón de edición */
 }
-
 
 /* Estilos para la tarjeta de confirmación de eliminación */
 .delete-confirmation-card {
@@ -329,3 +314,167 @@ button[type="submit"]:hover {
     margin-bottom: 20px; /* Margen inferior */
     text-align: center; /* Centra el texto */
 }
+
+/* Estilos para el botón de confirmar eliminación */
+.delete-confirm-button {
+    background-color: #dc3545; /* Rojo */
+    color: white; /* Texto blanco */
+    padding: 12px 20px; /* Relleno */
+    border: none; /* Sin borde */
+    border-radius: 5px; /* Bordes redondeados */
+    cursor: pointer; /* Cursor de mano */
+    font-size: 1.1em; /* Tamaño de fuente */
+    font-weight: bold; /* Negrita */
+    transition: background-color 0.3s ease; /* Transición suave */
+    margin-top: 20px; /* Margen superior */
+}
+
+.delete-confirm-button:hover {
+    background-color: #c82333; /* Rojo más oscuro al pasar el ratón */
+}
+
+/* Estilos para el botón de cancelar */
+.cancel-button {
+    display: inline-block; /* Permite aplicar padding y margin */
+    background-color: #6c757d; /* Gris */
+    color: white; /* Texto blanco */
+    padding: 12px 20px; /* Relleno */
+    border-radius: 5px; /* Bordes redondeados */
+    text-decoration: none; /* Sin subrayado */
+    margin-top: 20px; /* Margen superior */
+    margin-left: 15px; /* Margen a la izquierda para separarlo del botón de eliminar */
+    transition: background-color 0.3s ease; /* Transición suave */
+    font-weight: bold; /* Negrita */
+}
+
+.cancel-button:hover {
+    background-color: #5a6268; /* Gris más oscuro al pasar el ratón */
+}
+
+/* Estilos para el Carrusel de Imágenes */
+.carousel-container {
+    position: relative; /* Necesario para posicionar los botones y puntos */
+    max-width: 700px; /* Ancho máximo del carrusel */
+    margin: 30px auto; /* Centra el carrusel */
+    overflow: hidden; /* Oculta las imágenes que no están activas */
+    border-radius: 8px; /* Bordes redondeados */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); /* Sombra para el carrusel */
+    background-color: #fff; /* Fondo blanco */
+}
+
+.carousel-images {
+    display: flex; /* Usa flexbox para alinear las imágenes horizontalmente */
+    width: 100%; /* Ocupa todo el ancho del contenedor */
+    transition: transform 0.5s ease-in-out; /* Transición suave para el deslizamiento */
+}
+
+.carousel-image {
+    width: 100%; /* Cada imagen ocupa el 100% del ancho del carousel-container */
+    height: 400px; /* Altura fija para todas las imágenes del carrusel */
+    object-fit: cover; /* Recorta la imagen para cubrir el área sin distorsionarse */
+    flex-shrink: 0; /* Evita que las imágenes se encojan */
+    border-radius: 8px; /* Bordes redondeados */
+}
+
+/* Botones de navegación del carrusel */
+.carousel-button {
+    position: absolute; /* Posicionamiento absoluto dentro del carousel-container */
+    top: 50%; /* Centra verticalmente */
+    transform: translateY(-50%); /* Ajuste para centrado perfecto */
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo semitransparente oscuro */
+    color: white; /* Texto blanco */
+    border: none; /* Sin borde */
+    padding: 15px; /* Relleno */
+    cursor: pointer; /* Cursor de mano */
+    font-size: 2em; /* Tamaño grande para las flechas */
+    border-radius: 50%; /* Botones circulares */
+    z-index: 10; /* Asegura que estén por encima de las imágenes */
+    transition: background-color 0.3s ease; /* Transición suave */
+}
+
+.carousel-button:hover {
+    background-color: rgba(0, 0, 0, 0.8); /* Más oscuro al pasar el ratón */
+}
+
+.carousel-button.prev {
+    left: 10px; /* Posiciona el botón izquierdo */
+}
+
+.carousel-button.next {
+    right: 10px; /* Posiciona el botón derecho */
+}
+
+/* Puntos de navegación del carrusel (indicadores) */
+.carousel-dots {
+    position: absolute; /* Posicionamiento absoluto */
+    bottom: 15px; /* En la parte inferior */
+    left: 50%; /* Centra horizontalmente */
+    transform: translateX(-50%); /* Ajuste para centrado perfecto */
+    display: flex; /* Usa flexbox para alinear los puntos */
+    gap: 10px; /* Espacio entre los puntos */
+    z-index: 10; /* Asegura que estén por encima de las imágenes */
+}
+
+.dot {
+    width: 12px; /* Ancho del punto */
+    height: 12px; /* Alto del punto */
+    background-color: rgba(255, 255, 255, 0.5); /* Color blanco semitransparente */
+    border-radius: 50%; /* Forma circular */
+    cursor: pointer; /* Cursor de mano */
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Transición suave */
+}
+
+.dot.active {
+    background-color: white; /* Blanco sólido para el punto activo */
+    transform: scale(1.2); /* Ligeramente más grande */
+}
+
+/* ################################################################## */
+/* INICIO: Media Queries para Diseño Responsivo */
+/* ################################################################## */
+
+/* Para pantallas más pequeñas (tablets y móviles grandes) */
+@media (max-width: 768px) {
+    .property-grid {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* 2 columnas en pantallas medianas */
+    }
+
+    .carousel-image {
+        height: 300px; /* Altura un poco menor para el carrusel en pantallas más pequeñas */
+    }
+}
+
+/* Para pantallas muy pequeñas (móviles) */
+@media (max-width: 500px) {
+    .property-grid {
+        grid-template-columns: 1fr; /* 1 columna en pantallas pequeñas */
+    }
+
+    .carousel-image {
+        height: 250px; /* Altura aún menor para el carrusel en móviles */
+    }
+
+    .container {
+        padding: 15px; /* Menos padding en contenedores en móviles */
+    }
+
+    h1 {
+        font-size: 1.8em; /* Tamaño de fuente más pequeño para títulos principales */
+    }
+
+    .property-card h3 {
+        font-size: 1.1em; /* Tamaño de fuente más pequeño para títulos de tarjeta */
+    }
+
+    .property-card p {
+        font-size: 0.85em; /* Tamaño de fuente más pequeño para texto de tarjeta */
+    }
+
+    .property-detail .price {
+        font-size: 1.5em; /* Tamaño de fuente más pequeño para precio en detalles */
+    }
+}
+
+/* ################################################################## */
+/* FIN: Media Queries para Diseño Responsivo */
+/* ################################################################## */

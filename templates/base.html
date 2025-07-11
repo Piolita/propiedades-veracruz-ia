@@ -12,10 +12,9 @@
         <nav>
             <!-- Aquí irá tu menú de navegación -->
             <h1><a href="{{ url_for('main.home') }}">Propiedades Veracruz IA</a></h1>
-            <ul>
-                <li><a href="{{ url_for('main.add_property') }}">Añadir Propiedad</a></li>
+            <ul> {# Lista para enlaces de navegación #}
+                <li><a href="{{ url_for('main.add_property') }}">Añadir Propiedad</a></li> {# Enlace al formulario de añadir propiedad #}
             </ul>
-            <!-- Otros enlaces de navegación, si los hay -->
         </nav>
     </header>
 
@@ -42,5 +41,8 @@
         <p>&copy; {{ 2025 }} Propiedades Veracruz IA. Todos los derechos reservados.</p>
         <!-- Puedes añadir más información de pie de página aquí -->
     </footer>
+
+    {# Enlaza el archivo JavaScript del carrusel al final del body #}
+    <script src="{{ url_for('static', filename='js/carousel.js') }}"></script>
 </body>
 </html>

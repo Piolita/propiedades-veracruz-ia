@@ -199,19 +199,26 @@ button[type="submit"]:hover {
 }
 
 
-/* Estilos para el formulario de búsqueda sobre el video */
+/* Estilos para el contenedor del formulario de búsqueda */
 .search-form-container {
     margin-top: 100px; /* Ajusta este valor para bajar o subir el formulario */
     /* max-width se define ahora en el HTML para más flexibilidad */
-    padding: 15px !important; /* Ajuste de padding para que sea menos alto */
+    padding: 0 !important; /* ¡IMPORTANTE! Elimina el padding del contenedor */
 }
 
 .search-form-container form {
     background-color: rgba(255, 255, 255, 0.85) !important; /* Fondo blanco semitransparente para el formulario */
-    padding: 0 !important; /* Padding lo maneja el contenedor */
+    padding: 20px !important; /* ¡IMPORTANTE! Mueve el padding al formulario */
     border-radius: 10px !important; /* Bordes más redondeados */
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3) !important; /* Sombra más pronunciada */
     gap: 10px; /* Espacio entre los elementos del formulario, reducido para más compacidad */
+}
+
+/* Ancho personalizado para el select de Venta o Renta */
+.custom-select-width {
+    width: 33% !important; /* Aproximadamente un tercio del ancho */
+    min-width: 180px; /* Asegura que no sea demasiado pequeño en pantallas grandes */
+    max-width: 250px; /* Limita el ancho máximo */
 }
 
 .search-form-container .form-select,
@@ -662,6 +669,10 @@ button[type="submit"]:hover {
     }
     .search-form-container .w-100 { /* Asegura que los elementos ocupen todo el ancho en móvil */
         width: 100% !important;
+    }
+    .custom-select-width { /* Ajuste para el select de venta/renta en móvil */
+        width: 100% !important; /* Ocupa todo el ancho en móvil */
+        max-width: none; /* Elimina el max-width en móvil */
     }
 }
 

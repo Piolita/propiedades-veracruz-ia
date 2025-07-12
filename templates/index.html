@@ -66,23 +66,31 @@
             <div class="container search-form-container px-4 py-3" style="max-width: 750px;"> {# Eliminado d-none, ajustado max-width #}
                 <form class="d-flex flex-column gap-2 p-0 rounded-3 shadow-lg bg-white bg-opacity-75"> {# gap-2 para menos espacio entre elementos #}
                     {# Fila superior: Venta o Renta - Alineado a la izquierda y más largo #}
-                    <div class="d-flex justify-content-start w-100"> {# w-100 para que ocupe todo el ancho #}
-                        <select class="form-select form-select-lg" aria-label="Venta o Renta"> {# Eliminado w-auto y me-3 #}
+                    <div class="d-flex justify-content-start flex-grow-1"> {# flex-grow-1 para que ocupe el espacio disponible #}
+                        <select class="form-select form-select-lg custom-select-width" aria-label="Venta o Renta"> {# Nueva clase custom-select-width #}
                             <option selected value="">Venta o Renta</option> {# Valor vacío para la opción por defecto #}
-                            <option value="venta">Vender</option>
+                            <option value="venta">Comprar</option> {# CAMBIADO A "Comprar" #}
                             <option value="renta">Rentar</option>
                         </select>
                     </div>
                     {# Fila inferior: Tipo de Propiedad, Ubicación, Precio, Buscar #}
                     <div class="d-flex flex-column flex-md-row gap-2 w-100"> {# w-100 para que ocupe todo el ancho, gap-2 para menos espacio #}
                         <select class="form-select form-select-lg flex-grow-1" aria-label="Tipo de Propiedad">
-                            <option selected>Tipo de Propiedad</option>
+                            <option selected value="">Tipo de Propiedad</option>
                             <option value="casa">Casa</option>
                             <option value="departamento">Departamento</option>
                             <option value="terreno">Terreno</option>
                             <option value="local">Local/Oficina</option>
                         </select>
-                        <input class="form-control form-control-lg flex-grow-1" type="search" placeholder="Ubicación (ej. Boca del Río)" aria-label="Ubicación">
+                        {# CAMBIADO: Input de Ubicación a Select #}
+                        <select class="form-select form-select-lg flex-grow-1" aria-label="Ubicación">
+                            <option selected value="">Ubicación</option>
+                            <option value="boca_del_rio">Boca del Río</option>
+                            <option value="medellin">Medellín</option>
+                            <option value="veracruz">Veracruz</option>
+                            <option value="riviera_veracruzana">Riviera Veracruzana (Alvarado)</option>
+                            <option value="otras_ubicaciones">Otras Ubicaciones</option>
+                        </select>
                         <input class="form-control form-control-lg flex-grow-1" type="number" placeholder="Precio" aria-label="Precio"> {# Eliminado "Máximo" #}
                         <button class="btn btn-primary btn-lg px-5" type="submit">Buscar</button>
                     </div>

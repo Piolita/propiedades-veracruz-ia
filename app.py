@@ -1,42 +1,67 @@
-import os # Importa el módulo os para trabajar con rutas de archivos
-from flask import Flask # Importa la clase principal de Flask para crear la aplicación web.
-from config import Config # Importa la clase Config de tu archivo config.py para la configuración.
-from models import db # Importa la instancia 'db' de SQLAlchemy que creaste en models.py.
-from routes import main as main_blueprint # Importa el Blueprint 'main' de routes.py para organizar las rutas.
+import os
+from flask import Flask
+from werkzeug.security import generate_password_hash, check_password_hash # Necesario para create-admin
 
+# Importar las instancias de extensiones desde extensions.py
+from extensions import db, migrate, login_manager
+
+# Importa los modelos de la base de datos (Propiedad, Imagen, User)
+# User ahora se importa desde models.py
+from models import Propiedad, Imagen, User
+
+# Función de carga de usuario para Flask-Login
+@login_manager.user_loader
+def load_user(user_id):
+    # db ya estará inicializado con la app en este punto
+    return User.query.get(int(user_id))
+
+
+# Función para crear y configurar la aplicación Flask
 def create_app():
-    app = Flask(__name__) # Crea una instancia de la aplicación Flask.
-    app.config.from_object(Config) # Carga la configuración desde el objeto Config (config.py).
+    app = Flask(__name__)
 
-    # Configuración para la carga de imágenes
-    # Define la carpeta donde se guardarán las imágenes subidas
-    # os.path.abspath(os.path.dirname(__file__)) obtiene la ruta absoluta del directorio actual del archivo app.py
-    # 'static/uploads' es la subcarpeta dentro de 'static'
-    UPLOAD_FOLDER = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'static/uploads')
-    app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER # Añade la ruta de la carpeta de subidas a la configuración de Flask
+    # Configuración de la base de datos SQLite
+    basedir = os.path.abspath(os.path.dirname(__file__))
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'propiedades.db')
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app.config['SECRET_KEY'] = 'una_clave_secreta_muy_segura_y_larga_para_tu_app' # ¡CAMBIA ESTO EN PRODUCCIÓN!
 
-    # Asegúrate de que la carpeta de subidas exista. Si no existe, la crea.
-    if not os.path.exists(UPLOAD_FOLDER):
-        os.makedirs(UPLOAD_FOLDER)
-        print(f"DEBUG: Carpeta de subidas creada: {UPLOAD_FOLDER}") # DEBUG
+    # Inicializar las extensiones con la aplicación
+    # Esto DEBE ocurrir después de configurar la app
+    db.init_app(app)
+    migrate.init_app(app, db)
+    login_manager.init_app(app)
+    login_manager.login_view = 'main.login' # Ruta a la que se redirigirá si se requiere login
 
-    db.init_app(app) # Inicializa la extensión SQLAlchemy con la aplicación Flask.
+    # Importa y registra el blueprint 'main' de las rutas
+    # Esto DEBE ocurrir después de que la app y las extensiones están inicializadas
+    from routes import main_bp
+    app.register_blueprint(main_bp)
 
+    return app
 
+# Crea la instancia de la aplicación para el CLI (flask commands) y para el servidor de desarrollo
+app = create_app()
+
+# Comando para crear un usuario administrador (solo para desarrollo)
+@app.cli.command("create-admin")
+def create_admin():
+    """Crea un usuario administrador."""
+    username = input("Introduce el nombre de usuario para el administrador: ")
+    password = input("Introduce la contraseña para el administrador: ")
+
+    # Asegúrate de que las operaciones de DB se realicen en el contexto de la aplicación
     with app.app_context():
-        # Dentro del contexto de la aplicación, crea todas las tablas en la base de datos
-        # basándose en los modelos definidos en models.py.
-        # Esto solo crea las tablas si no existen.
-        db.create_all()
+        existing_user = User.query.filter_by(username=username).first()
+        if existing_user:
+            print(f"El usuario '{username}' ya existe.")
+            return
 
-
-    # Registra el Blueprint 'main' para que la aplicación conozca las rutas definidas en routes.py.
-    app.register_blueprint(main_blueprint)
-
-    return app # Devuelve la instancia de la aplicación Flask configurada.
+        admin_user = User(username=username)
+        admin_user.set_password(password)
+        db.session.add(admin_user)
+        db.session.commit()
+        print(f"Usuario administrador '{username}' creado exitosamente.")
 
 if __name__ == '__main__':
-    # Este bloque se ejecuta solo si el script app.py se corre directamente (no importado).
-    app = create_app() # Crea la aplicación.
-    app.run(debug=True) # Inicia el servidor de desarrollo de Flask.
-                        # debug=True permite recarga automática y depuración.
+    app.run(debug=True)

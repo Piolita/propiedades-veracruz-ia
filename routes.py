@@ -1,103 +1,58 @@
-import os # Importa el módulo os para trabajar con rutas de archivos
-from flask import Blueprint, render_template, request, flash, redirect, url_for, current_app # Importa módulos necesarios de Flask. current_app para acceder a la configuración de la app.
-from werkzeug.utils import secure_filename # Importa secure_filename para limpiar nombres de archivo y evitar ataques.
-from models import db, Propiedad, Imagen # Importa la instancia de DB y los modelos Propiedad e Imagen.
+from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app
+from flask_login import login_user, logout_user, login_required, current_user
+from werkzeug.utils import secure_filename
+import os
+from datetime import datetime
 
-main = Blueprint('main', __name__) # Crea un Blueprint llamado 'main' para agrupar las rutas principales.
+# Importa db y login_manager desde extensions.py
+from extensions import db, login_manager
+# Importa tus modelos de Propiedad, Imagen, y User (que ahora está en models.py)
+from models import Propiedad, Imagen, User 
 
-# Extensiones de archivo permitidas para las imágenes
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+# Crea una instancia de Blueprint
+main_bp = Blueprint('main', __name__)
 
-# Función para verificar si la extensión de un archivo es permitida
-def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-@main.route('/') # Decorador que asocia la URL raíz ('/') con la función 'home'.
+# Ruta principal (Home)
+@main_bp.route('/')
 def home():
-    # Esta función se ejecuta cuando alguien visita la URL raíz.
-    # Obtiene todas las propiedades de la base de datos.
-    # Usamos .options(db.joinedload(Propiedad.imagenes)) para cargar las imágenes relacionadas
-    # en la misma consulta, lo cual es más eficiente.
-    # Luego, filtramos las imágenes para encontrar la que es principal.
-    propiedades = Propiedad.query.options(db.joinedload(Propiedad.imagenes)).all()
+    # Envuelve la consulta de la base de datos en el contexto de la aplicación
+    with current_app.app_context():
+        propiedades = Propiedad.query.all()
+    return render_template('index.html', propiedades=propiedades)
 
-    # --- INICIO DE DEPURACIÓN DE IMÁGENES EN HOME (Mantener para referencia o eliminar si ya no es necesario) ---
-    # print("\n--- DEPURACIÓN DE IMÁGENES EN HOME ---")
-    # for prop in propiedades:
-    #     print(f"Propiedad ID: {prop.id}, Título: {prop.titulo}")
-    #     if prop.imagenes:
-    #         for img in prop.imagenes:
-    #             print(f"  - Imagen: {img.nombre_archivo}, es_principal: {img.es_principal}")
-    #     else:
-    #         print("  - No hay imágenes asociadas a esta propiedad.")
-    # print("--- FIN DE DEPURACIÓN DE IMÁGENES EN HOME ---\n")
-    # --- FIN DE DEPURACIÓN DE DEPURACIÓN ---
+# Ruta para mostrar los detalles de una propiedad
+@main_bp.route('/property/<int:property_id>')
+def property_detail(property_id):
+    # Envuelve la consulta de la base de datos en el contexto de la aplicación
+    with current_app.app_context():
+        propiedad = Propiedad.query.get_or_404(property_id)
+    return render_template('property_detail.html', propiedad=propiedad)
 
-    # Devuelve el contenido de la plantilla HTML 'index.html', pasando las propiedades.
-    return render_template('index.html', propiedades=propiedades) # Pasa la lista de propiedades a la plantilla
-
-@main.route('/add_property', methods=['GET', 'POST']) # Define la ruta /add_property, acepta peticiones GET y POST.
+# Ruta para añadir una nueva propiedad (requiere login)
+@main_bp.route('/add_property', methods=['GET', 'POST'])
+@login_required # Protege esta ruta, solo usuarios logueados pueden acceder
 def add_property():
-    # print("DEBUG: Entrando a la función add_property.") # DEBUG
-    if request.method == 'POST': # Si la petición es POST (el formulario se ha enviado)...
-        # print("DEBUG: Método de petición es POST.") # DEBUG
-        # Recoge los datos de los campos obligatorios. request.form accede a los datos enviados.
+    # db ya está importado desde extensions.py
+    if request.method == 'POST':
+        # Recopila datos del formulario
         titulo = request.form['titulo']
         descripcion = request.form['descripcion']
-        precio = float(request.form['precio']) # Convierte a número flotante
+        precio = float(request.form['precio'])
         direccion = request.form['direccion']
         municipio = request.form['municipio']
         estado = request.form['estado']
-        num_habitaciones = int(request.form['num_habitaciones']) # Convierte a número entero
-        num_banos = int(request.form['num_banos']) # Convierte a número entero
-        area_construccion_metros_cuadrados = float(request.form['area_construccion_metros_cuadrados']) # Convierte a flotante
         tipo = request.form['tipo']
         estado_propiedad = request.form['estado_propiedad']
+        num_habitaciones = int(request.form['num_habitaciones'])
+        num_banos = int(request.form['num_banos'])
+        num_medios_banos = int(request.form['num_medios_banos']) if request.form['num_medios_banos'] else 0
+        num_estacionamientos = int(request.form['num_estacionamientos']) if request.form['num_estacionamientos'] else 0
+        area_construccion_metros_cuadrados = float(request.form['area_construccion_metros_cuadrados'])
+        area_terreno_metros_cuadrados = float(request.form['area_terreno_metros_cuadrados']) if request.form['area_terreno_metros_cuadrados'] else 0.0
+        antiguedad = int(request.form['antiguedad']) if request.form['antiguedad'] else 0
+        cuota_mantenimiento = float(request.form['cuota_mantenimiento']) if request.form['cuota_mantenimiento'] else 0.0
 
-        # Campos opcionales: verifica si tienen valor antes de convertir y asignar None si están vacíos.
-
-        # Campo opcional: código postal
-        codigo_postal = request.form.get('codigo_postal')
-        if not codigo_postal: # Si está vacío, asigna None
-            codigo_postal = None
-
-        # Campo opcional: número de medios baños
-        num_medios_banos = request.form.get('num_medios_banos')
-        if num_medios_banos:
-            num_medios_banos = int(num_medios_banos)
-        else:
-            num_medios_banos = None
-
-        # Campo opcional: número de estacionamientos
-        num_estacionamientos = request.form.get('num_estacionamientos')
-        if num_estacionamientos:
-            num_estacionamientos = int(num_estacionamientos)
-        else:
-            num_estacionamientos = None
-
-        # Campo opcional: antigüedad
-        antiguedad = request.form.get('antiguedad')
-        if antiguedad:
-            antiguedad = int(antiguedad)
-        else:
-            antiguedad = None
-
-        # Campo opcional: área de terreno
-        area_terreno_metros_cuadrados = request.form.get('area_terreno_metros_cuadrados')
-        if area_terreno_metros_cuadrados:
-            area_terreno_metros_cuadrados = float(area_terreno_metros_cuadrados)
-        else:
-            area_terreno_metros_cuadrados = None
-
-        # Campo opcional: cuota de mantenimiento
-        cuota_mantenimiento = request.form.get('cuota_mantenimiento')
-        if cuota_mantenimiento:
-            cuota_mantenimiento = float(cuota_mantenimiento)
-        else:
-            cuota_mantenimiento = None
-
-        # Crea una nueva instancia del modelo Propiedad con los datos del formulario.
+        # Crea una nueva instancia de Propiedad
         nueva_propiedad = Propiedad(
             titulo=titulo,
             descripcion=descripcion,
@@ -105,147 +60,154 @@ def add_property():
             direccion=direccion,
             municipio=municipio,
             estado=estado,
-            codigo_postal=codigo_postal, # Asigna el valor (string o None)
+            tipo=tipo,
+            estado_propiedad=estado_propiedad,
             num_habitaciones=num_habitaciones,
             num_banos=num_banos,
             num_medios_banos=num_medios_banos,
             num_estacionamientos=num_estacionamientos,
-            antiguedad=antiguedad,
-            area_terreno_metros_cuadrados=area_terreno_metros_cuadrados, # Asigna el valor (flotante o None)
             area_construccion_metros_cuadrados=area_construccion_metros_cuadrados,
-            tipo=tipo,
+            area_terreno_metros_cuadrados=area_terreno_metros_cuadrados,
+            antiguedad=antiguedad,
             cuota_mantenimiento=cuota_mantenimiento,
-            estado_propiedad=estado_propiedad
+            fecha_publicacion=datetime.utcnow()
         )
-        # print(f"DEBUG: Propiedad creada en memoria: {nueva_propiedad.titulo}") # DEBUG
+        with current_app.app_context(): # Envuelve las operaciones de DB en el contexto
+            db.session.add(nueva_propiedad)
+            db.session.commit() # Guarda la propiedad para obtener su ID
 
-        try:
-            # print("DEBUG: Intentando añadir a la sesión y commit.") # DEBUG
-            db.session.add(nueva_propiedad) # Añade la nueva propiedad a la sesión de la base de datos.
-            db.session.commit() # Confirma los cambios y guarda la propiedad en la base de datos.
-            # print("DEBUG: Propiedad añadida y commit exitoso.") # DEBUG
+        # Manejo de la subida de imágenes
+        if 'imagenes' in request.files:
+            uploads_dir = os.path.join(current_app.root_path, 'static', 'uploads')
+            os.makedirs(uploads_dir, exist_ok=True)
 
-            # --- Lógica para manejar la carga de imágenes ---
-            # Verifica si el campo 'imagenes' existe en la petición de archivos
-            if 'imagenes' in request.files:
-                files = request.files.getlist('imagenes') # Obtiene la lista de archivos subidos
-                is_first_image = True # Bandera para marcar la primera imagen como principal
+            for archivo in request.files.getlist('imagenes'):
+                if archivo.filename != '':
+                    filename = secure_filename(archivo.filename)
+                    filepath = os.path.join(uploads_dir, filename)
+                    archivo.save(filepath)
 
-                for file in files:
-                    # Si el usuario no selecciona un archivo para el campo 'imagenes'
-                    # el navegador puede enviar un archivo vacío sin nombre. Lo ignoramos.
-                    if file.filename == '':
-                        flash('No se seleccionó ningún archivo para una de las imágenes.', 'warning')
-                        continue # Pasa al siguiente archivo en el bucle
+                    # Determina si es la imagen principal (asumiendo la primera imagen como principal por simplicidad)
+                    # En una aplicación real, podrías tener un checkbox en el formulario
+                    es_principal = (request.files.getlist('imagenes').index(archivo) == 0)
 
-                    # Si el archivo existe y tiene una extensión permitida
-                    if file and allowed_file(file.filename):
-                        # secure_filename limpia el nombre del archivo para evitar problemas de seguridad
-                        filename = secure_filename(file.filename)
-                        # Combina la ruta de la carpeta de subidas con el nombre del archivo
-                        filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
-                        file.save(filepath) # Guarda el archivo en el sistema de archivos
+                    nueva_imagen = Imagen(
+                        nombre_archivo=filename,
+                        propiedad_id=nueva_propiedad.id,
+                        es_principal=es_principal
+                    )
+                    with current_app.app_context(): # Envuelve las operaciones de DB en el contexto
+                        db.session.add(nueva_imagen)
+            with current_app.app_context(): # Envuelve el commit final en el contexto
+                db.session.commit()
 
-                        # Crea una nueva instancia del modelo Imagen y la asocia a la propiedad
-                        nueva_imagen = Imagen(
-                            nombre_archivo=filename,
-                            propiedad_id=nueva_propiedad.id, # Asocia la imagen con la propiedad recién creada
-                            es_principal=is_first_image # Marca la primera imagen como principal
-                        )
-                        db.session.add(nueva_imagen) # Añade la imagen a la sesión de la base de datos
-                        is_first_image = False # Después de la primera imagen, las demás no son principales
-                    else:
-                        flash(f'Tipo de archivo no permitido para {file.filename}. Solo se permiten PNG, JPG, JPEG, GIF.', 'danger')
-
-                db.session.commit() # Confirma los cambios de las imágenes en la base de datos
-            # --- Fin de la lógica de imágenes ---
-
-            flash('¡Propiedad añadida con éxito!', 'success') # Muestra un mensaje de éxito al usuario.
-            return redirect(url_for('main.home')) # Redirige al usuario a la página de inicio.
-        except Exception as e:
-            db.session.rollback() # Si hay un error, revierte los cambios en la base de datos.
-            flash(f'Error al añadir propiedad: {e}', 'danger') # Muestra un mensaje de error.
-            # Opcional: Podrías volver a renderizar el formulario con los datos pre-rellenados y el error.
-
-    # Si la petición es GET (se accede a la página por primera vez), simplemente renderiza el formulario.
+        flash('Propiedad añadida exitosamente!', 'success')
+        return redirect(url_for('main.home'))
     return render_template('add_property.html')
 
-@main.route('/property/<int:property_id>') # Nueva ruta para ver detalles de una propiedad. <int:property_id> captura un número entero de la URL.
-def property_detail(property_id):
-    # Busca la propiedad en la base de datos usando su ID.
-    # .get_or_404() es una forma conveniente de obtener un objeto por su PK o devolver un error 404 si no se encuentra.
-    propiedad = Propiedad.query.get_or_404(property_id)
-
-    # Renderiza la plantilla property_detail.html y le pasa el objeto propiedad encontrado.
-    return render_template('property_detail.html', propiedad=propiedad)
-
-@main.route('/edit_property/<int:property_id>', methods=['GET', 'POST']) # Define la ruta para editar, acepta GET y POST.
+# Ruta para editar una propiedad (requiere login)
+@main_bp.route('/edit_property/<int:property_id>', methods=['GET', 'POST'])
+@login_required # Protege esta ruta
 def edit_property(property_id):
-    # Busca la propiedad por su ID, o devuelve un error 404 si no se encuentra.
-    propiedad = Propiedad.query.get_or_404(property_id)
+    # db ya está importado desde extensions.py
+    with current_app.app_context(): # Envuelve la consulta de la base de datos en el contexto
+        propiedad = Propiedad.query.get_or_404(property_id)
+    if request.method == 'POST':
+        propiedad.titulo = request.form['titulo']
+        propiedad.descripcion = request.form['descripcion']
+        propiedad.precio = float(request.form['precio'])
+        propiedad.direccion = request.form['direccion']
+        propiedad.municipio = request.form['municipio']
+        propiedad.estado = request.form['estado']
+        propiedad.tipo = request.form['tipo']
+        propiedad.estado_propiedad = request.form['estado_propiedad']
+        propiedad.num_habitaciones = int(request.form['num_habitaciones'])
+        propiedad.num_banos = int(request.form['num_banos'])
+        propiedad.num_medios_banos = int(request.form['num_medios_banos']) if request.form['num_medios_banos'] else 0
+        propiedad.num_estacionamientos = int(request.form['num_estacionamientos']) if request.form['num_estacionamientos'] else 0
+        propiedad.area_construccion_metros_cuadrados = float(request.form['area_construccion_metros_cuadrados'])
+        propiedad.area_terreno_metros_cuadrados = float(request.form['area_terreno_metros_cuadrados']) if request.form['area_terreno_metros_cuadrados'] else 0.0
+        antiguedad = int(request.form['antiguedad']) if request.form['antiguedad'] else 0
+        cuota_mantenimiento = float(request.form['cuota_mantenimiento']) if request.form['cuota_mantenimiento'] else 0.0
 
-    if request.method == 'POST': # Si la petición es POST (el formulario se ha enviado)...
-        try:
-            # Actualiza los atributos de la propiedad con los datos del formulario.
-            # Aquí solo actualizamos los campos de texto/número. La lógica de imágenes será más compleja.
-            propiedad.titulo = request.form['titulo']
-            propiedad.descripcion = request.form['descripcion']
-            propiedad.precio = float(request.form['precio'])
-            propiedad.direccion = request.form['direccion']
-            propiedad.municipio = request.form['municipio']
-            propiedad.estado = request.form['estado']
-            propiedad.num_habitaciones = int(request.form['num_habitaciones'])
-            propiedad.num_banos = int(request.form['num_banos'])
-            propiedad.area_construccion_metros_cuadrados = float(request.form['area_construccion_metros_cuadrados'])
-            propiedad.tipo = request.form['tipo']
-            propiedad.estado_propiedad = request.form['estado_propiedad']
+        # Manejo de la subida de nuevas imágenes
+        if 'imagenes' in request.files:
+            uploads_dir = os.path.join(current_app.root_path, 'static', 'uploads')
+            os.makedirs(uploads_dir, exist_ok=True)
+            for archivo in request.files.getlist('imagenes'):
+                if archivo.filename != '':
+                    filename = secure_filename(archivo.filename)
+                    filepath = os.path.join(uploads_dir, filename)
+                    archivo.save(filepath)
+                    nueva_imagen = Imagen(nombre_archivo=filename, propiedad_id=propiedad.id, es_principal=False) # Nuevas imágenes no son principales por defecto
+                    with current_app.app_context(): # Envuelve las operaciones de DB en el contexto
+                        db.session.add(nueva_imagen)
 
-            # Campos opcionales: Actualizar solo si se proporcionan en el formulario.
-            # Usamos .get() para evitar errores si el campo no está en la petición.
-            propiedad.codigo_postal = request.form.get('codigo_postal') or None
-            propiedad.num_medios_banos = int(request.form.get('num_medios_banos')) if request.form.get('num_medios_banos') else None
-            propiedad.num_estacionamientos = int(request.form.get('num_estacionamientos')) if request.form.get('num_estacionamientos') else None
-            propiedad.antiguedad = int(request.form.get('antiguedad')) if request.form.get('antiguedad') else None
-            propiedad.area_terreno_metros_cuadrados = float(request.form.get('area_terreno_metros_cuadrados')) if request.form.get('area_terreno_metros_cuadrados') else None
-            propiedad.cuota_mantenimiento = float(request.form.get('cuota_mantenimiento')) if request.form.get('cuota_mantenimiento') else None
-
-            db.session.commit() # Confirma los cambios en la base de datos.
-            flash('¡Propiedad actualizada con éxito!', 'success') # Muestra un mensaje de éxito.
-            return redirect(url_for('main.property_detail', property_id=propiedad.id)) # Redirige a los detalles de la propiedad.
-
-        except Exception as e:
-            db.session.rollback() # Si hay un error, revierte los cambios.
-            flash(f'Error al actualizar propiedad: {e}', 'danger') # Muestra un mensaje de error.
-
-    # Si la petición es GET, renderiza el formulario de edición con los datos de la propiedad.
-    # Pasamos el objeto 'propiedad' a la plantilla para pre-rellenar el formulario.
+        with current_app.app_context(): # Envuelve el commit final en el contexto
+            db.session.commit()
+        flash('Propiedad actualizada exitosamente!', 'success')
+        return redirect(url_for('main.property_detail', property_id=propiedad.id))
     return render_template('edit_property.html', propiedad=propiedad)
 
-
-@main.route('/delete_property/<int:property_id>', methods=['GET', 'POST']) # Ruta para eliminar una propiedad.
+# Ruta para eliminar una propiedad (requiere login)
+@main_bp.route('/delete_property/<int:property_id>', methods=['GET', 'POST'])
+@login_required # Protege esta ruta
 def delete_property(property_id):
-    propiedad = Propiedad.query.get_or_404(property_id) # Busca la propiedad por su ID.
-
-    if request.method == 'POST': # Si la petición es POST (se confirma la eliminación)...
-        try:
-            # Eliminar archivos de imagen asociados del sistema de archivos
+    # db ya está importado desde extensions.py
+    with current_app.app_context(): # Envuelve la consulta de la base de datos en el contexto
+        propiedad = Propiedad.query.get_or_404(property_id)
+    if request.method == 'POST':
+        # Opcional: Eliminar archivos de imagen asociados del sistema de archivos
+        uploads_dir = os.path.join(current_app.root_path, 'static', 'uploads')
+        with current_app.app_context(): # Envuelve las operaciones de DB en el contexto
             for imagen in propiedad.imagenes:
-                filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], imagen.nombre_archivo)
-                if os.path.exists(filepath): # Verifica si el archivo existe antes de intentar eliminarlo
-                    os.remove(filepath) # Elimina el archivo físico
-                    print(f"DEBUG: Archivo eliminado: {filepath}") # Mensaje de depuración
-                else:
-                    print(f"DEBUG: Archivo no encontrado (ya eliminado o ruta incorrecta): {filepath}") # Mensaje de depuración
+                filepath = os.path.join(uploads_dir, imagen.nombre_archivo)
+                if os.path.exists(filepath):
+                    os.remove(filepath)
+                db.session.delete(imagen) # Elimina la referencia de la imagen de la base de datos
 
-            db.session.delete(propiedad) # Elimina la propiedad de la sesión de la base de datos.
-            db.session.commit() # Confirma los cambios (esto también eliminará las imágenes de la DB debido a cascade='all, delete-orphan')
+            db.session.delete(propiedad)
+            db.session.commit()
+        flash('Propiedad eliminada exitosamente!', 'success')
+        return redirect(url_for('main.home'))
+    return render_template('delete_property.html', propiedad=propiedad)
 
-            flash('¡Propiedad eliminada con éxito!', 'success') # Muestra un mensaje de éxito.
-            return redirect(url_for('main.home')) # Redirige al usuario a la página de inicio.
 
-        except Exception as e:
-            db.session.rollback() # Si hay un error, revierte los cambios.
-            flash(f'Error al eliminar propiedad: {e}', 'danger') # Muestra un mensaje de error.
+# ##################################################################
+# INICIO: Rutas de Autenticación
+# ##################################################################
 
-    # Si la petición es GET, muestra la página de confirmación de eliminación.
-    return render_template('confirm_delete.html', propiedad=propiedad)
+@main_bp.route('/login', methods=['GET', 'POST'])
+def login():
+    # User ya está importado desde models.py
+    if current_user.is_authenticated: # Si el usuario ya está logueado, redirige a home
+        return redirect(url_for('main.home'))
+
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        
+        # Envuelve la consulta de la base de datos en el contexto
+        with current_app.app_context():
+            user = User.query.filter_by(username=username).first()
+
+        if user and user.check_password(password):
+            login_user(user) # Inicia sesión del usuario
+            flash('Inicio de sesión exitoso.', 'success')
+            # Redirige al usuario a la página que intentaba acceder antes de ser redirigido al login
+            next_page = request.args.get('next')
+            return redirect(next_page or url_for('main.home'))
+        else:
+            flash('Nombre de usuario o contraseña inválidos.', 'danger')
+    return render_template('login.html')
+
+@main_bp.route('/logout')
+@login_required # Solo un usuario logueado puede cerrar sesión
+def logout():
+    logout_user() # Cierra la sesión del usuario
+    flash('Has cerrado sesión.', 'success')
+    return redirect(url_for('main.home'))
+
+# ##################################################################
+# FIN: Rutas de Autenticación
+# ##################################################################

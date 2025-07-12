@@ -3,67 +3,159 @@
 {% block title %}Inicio - Propiedades Veracruz IA{% endblock %} {# Sobrescribe el título de la página #}
 
 {% block content %} {# Define el bloque de contenido específico para esta página #}
-    <div class="container"> {# Contenedor para centrar y dar espacio al contenido #}
-        <h1>Bienvenida a Propiedades Veracruz IA</h1>
-        <p>Explora las mejores propiedades en venta y renta en Veracruz.</p>
 
-        <h2>Propiedades Disponibles</h2>
+    {# Sección principal con video de fondo y contenido flotante #}
+    <div class="main-hero-section position-relative vh-100 d-flex flex-column justify-content-center align-items-center text-white text-center">
+        {# Video de fondo #}
+        <video autoplay muted loop class="background-video">
+            {# Ruta a tu video local en la carpeta static/videos/ #}
+            <source src="{{ url_for('static', filename='videos/background_video.mp4') }}" type="video/mp4">
+            Tu navegador no soporta el elemento de video.
+        </video>
+
+        {# Overlay para oscurecer el video y mejorar legibilidad del texto #}
+        <div class="video-overlay"></div>
+
+        {# Contenido flotante sobre el video #}
+        {# Añadimos clases para centrar su contenido, y un padding superior para compensar la navbar fija #}
+        <div class="hero-content z-1 position-relative w-100 px-3 pt-5 d-flex flex-column justify-content-center align-items-center">
+            {# Navbar de Bootstrap (basada en tu estructura, con ajustes para el blur y enlaces) #}
+            <nav class="navbar navbar-expand-lg navbar-dark bg-transparent fixed-top py-3 custom-navbar"> {# custom-navbar para el blur #}
+                <div class="container-fluid"> {# container-fluid para ancho completo #}
+                    <a class="navbar-brand fs-3 fw-light text-shadow" href="{{ url_for('main.home') }}"> {# fw-light para letra más fina #}
+                        {# Logo de tu marca - Eliminado el borde blanco #}
+                        <img src="{{ url_for('static', filename='img/banners/logo_01.jpg') }}" alt="logo" width="40" height="40" class="d-inline-block align-middle me-2 rounded-circle">
+                        Propiedades-Veracruz IA
+                    </a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                            <li class="nav-item">
+                                <a class="nav-link active text-white fs-5 fw-bold text-shadow mx-2" aria-current="page" href="{{ url_for('main.home') }}">Inicio</a>
+                            </li>
+                            {# Otros enlaces de navegación para los usuarios #}
+                        </ul>
+                        {# Lógica de autenticación en la Navbar - Ajustada para alineación y botones #}
+                        <ul class="navbar-nav align-items-center"> {# align-items-center para alineación vertical #}
+                            {% if current_user.is_authenticated %}
+                                <li class="nav-item d-flex align-items-center"> {# d-flex align-items-center para alinear texto con botones #}
+                                    <span class="nav-link text-white fs-5 fw-bold text-shadow mx-2 p-0">Hola, {{ current_user.username }}</span> {# p-0 para quitar padding extra #}
+                                </li>
+                                <li class="nav-item">
+                                    {# Panel Admin: Ahora solo un nav-link con estilo de texto #}
+                                    <a class="nav-link text-white fw-bold mx-2 custom-admin-link" href="{{ url_for('main.add_property') }}">Panel Admin</a>
+                                </li>
+                                <li class="nav-item">
+                                    {# Cerrar Sesión: Ahora solo un nav-link con estilo de texto #}
+                                    <a class="nav-link text-white fw-bold mx-2 custom-admin-link" href="{{ url_for('main.logout') }}">Cerrar Sesión</a>
+                                </li>
+                            {% else %}
+                                <li class="nav-item">
+                                    {# Acceso Administrativo: Mantiene estilo de botón para ser visible #}
+                                    <a class="nav-link btn btn-sm btn-success text-white fw-bold mx-2" href="{{ url_for('main.login') }}">Acceso Administrativo</a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+
+            {# Formulario de búsqueda - Ajustado para ancho y alto, y AHORA VISIBLE #}
+            <div class="container search-form-container px-4 py-3" style="max-width: 750px;"> {# Eliminado d-none, ajustado max-width #}
+                <form class="d-flex flex-column gap-2 p-0 rounded-3 shadow-lg bg-white bg-opacity-75"> {# gap-2 para menos espacio entre elementos #}
+                    {# Fila superior: Venta o Renta - Alineado a la izquierda y más largo #}
+                    <div class="d-flex justify-content-start w-100"> {# w-100 para que ocupe todo el ancho #}
+                        <select class="form-select form-select-lg" aria-label="Venta o Renta"> {# Eliminado w-auto y me-3 #}
+                            <option selected value="">Venta o Renta</option> {# Valor vacío para la opción por defecto #}
+                            <option value="venta">Vender</option>
+                            <option value="renta">Rentar</option>
+                        </select>
+                    </div>
+                    {# Fila inferior: Tipo de Propiedad, Ubicación, Precio, Buscar #}
+                    <div class="d-flex flex-column flex-md-row gap-2 w-100"> {# w-100 para que ocupe todo el ancho, gap-2 para menos espacio #}
+                        <select class="form-select form-select-lg flex-grow-1" aria-label="Tipo de Propiedad">
+                            <option selected>Tipo de Propiedad</option>
+                            <option value="casa">Casa</option>
+                            <option value="departamento">Departamento</option>
+                            <option value="terreno">Terreno</option>
+                            <option value="local">Local/Oficina</option>
+                        </select>
+                        <input class="form-control form-control-lg flex-grow-1" type="search" placeholder="Ubicación (ej. Boca del Río)" aria-label="Ubicación">
+                        <input class="form-control form-control-lg flex-grow-1" type="number" placeholder="Precio" aria-label="Precio"> {# Eliminado "Máximo" #}
+                        <button class="btn btn-primary btn-lg px-5" type="submit">Buscar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {# Sección de Propiedades Disponibles #}
+    <div class="container my-5">
+        <h2 class="text-center mb-4 display-5 fw-bold text-primary">Propiedades Disponibles</h2>
         {% if propiedades %} {# Verifica si hay propiedades en la lista #}
             <div class="property-grid"> {# Contenedor para la cuadrícula de propiedades #}
                 {% for propiedad in propiedades %} {# Itera sobre cada propiedad en la lista #}
-                    <div class="property-card"> {# Tarjeta individual para cada propiedad #}
-                        <h3>{{ propiedad.titulo }}</h3> {# Muestra el título de la propiedad #}
-                        {# Lógica simplificada para mostrar la imagen principal de la propiedad #}
-                        {# Busca la primera imagen que tenga 'es_principal' como True #}
-                        {% set primary_image = (propiedad.imagenes | selectattr('es_principal')) | first %}
-
+                    {# Tarjeta individual para cada propiedad - Ahora usando clases de Bootstrap Card #}
+                    <div class="card property-card"> {# Añadimos la clase 'card' de Bootstrap #}
                         {# Envuelve la imagen (o placeholder) con un enlace a la página de detalles #}
                         <a href="{{ url_for('main.property_detail', property_id=propiedad.id) }}" class="thumbnail-link">
+                            {% set primary_image = (propiedad.imagenes | selectattr('es_principal')) | first %}
                             {% if primary_image %} {# Si se encontró una imagen principal #}
                                 <img src="{{ url_for('static', filename='uploads/' + primary_image.nombre_archivo) }}"
                                      alt="Imagen principal de {{ propiedad.titulo }}"
-                                     class="property-thumbnail"> {# Clase para estilizar la miniatura #}
+                                     class="card-img-top property-thumbnail"> {# Añadimos 'card-img-top' #}
                             {% else %} {# Si no hay imagen principal o no hay imágenes #}
                                 {# Usa tu archivo placeholder.png #}
                                 <img src="{{ url_for('static', filename='placeholder.png') }}"
                                      alt="No hay imagen disponible"
-                                     class="property-thumbnail"> {# Muestra una imagen de marcador de posición #}
+                                     class="card-img-top property-thumbnail"> {# Muestra una imagen de marcador de posición #}
                             {% endif %}
                         </a>
 
-                        <p><strong>Precio:</strong> ${{ "{:,.2f}".format(propiedad.precio) }}</p> {# Muestra el precio formateado #}
-                        <p><strong>Dirección:</strong> {{ propiedad.direccion }}, {{ propiedad.municipio }}</p> {# Dirección y municipio #}
-                        <p><strong>Tipo:</strong> {{ propiedad.tipo }}</p> {# Tipo de propiedad #}
-                        <p><strong>Estado:</strong> {{ propiedad.estado_propiedad }}</p> {# Estado (Venta/Alquiler) #}
-                        <p><strong>Habitaciones:</strong> {{ propiedad.num_habitaciones }}</p> {# Número de habitaciones #}
-                        <p><strong>Baños:</strong> {{ propiedad.num_banos }}</p> {# Número de baños #}
-                        {% if propiedad.num_medios_banos %} {# Muestra medios baños solo si existen #}
-                            <p><strong>Medios Baños:</strong> {{ propiedad.num_medios_banos }}</p>
-                        {% endif %}
-                        {% if propiedad.num_estacionamientos %} {# Muestra estacionamientos solo si existen #}
-                            <p><strong>Número de Estacionamientos:</strong> {{ propiedad.num_estacionamientos }}</p>
-                        {% endif %}
-                        {% if propiedad.antiguedad %} {# Muestra antigüedad solo si existe #}
-                            <p><strong>Antigüedad:</strong> {{ propiedad.antiguedad }} años</p>
-                        {% endif %}
-                        <p><strong>Construcción:</strong> {{ "{:,.2f}".format(propiedad.area_construccion_metros_cuadrados) }} m²</p> {# Área de construcción #}
-                        {% if propiedad.area_terreno_metros_cuadrados %} {# Muestra área de terreno solo si existe #}
-                            <p><strong>Terreno:</strong> {{ "{:,.2f}".format(propiedad.area_terreno_metros_cuadrados) }} m²</p>
-                        {% endif %}
-                        {% if propiedad.cuota_mantenimiento %} {# Muestra cuota de mantenimiento solo si existe #}
-                            <p><strong>Mantenimiento:</strong> ${{ "{:,.2f}".format(propiedad.cuota_mantenimiento) }}</p>
-                        {% endif %}
-                        <p>{{ propiedad.descripcion[:100] }}...</p> {# Muestra una parte de la descripción #}
-                        <a href="{{ url_for('main.property_detail', property_id=propiedad.id) }}" class="detail-link">Ver Detalles</a> {# Enlace a la página de detalles de la propiedad #}
-                        {# Enlace para editar la propiedad #}
-                        <a href="{{ url_for('main.edit_property', property_id=propiedad.id) }}" class="edit-link">Editar</a>
-                        {# Nuevo enlace para eliminar la propiedad #}
-                        <a href="{{ url_for('main.delete_property', property_id=propiedad.id) }}" class="delete-link">Eliminar</a>
+                        <div class="card-body card-content"> {# card-body para el contenido textual #}
+                            <p class="card-text property-status">{{ propiedad.estado_propiedad }}</p> {# card-text para párrafos #}
+                            <h5 class="card-title property-address">{{ propiedad.direccion }}</h5> {# card-title para el título #}
+                            <p class="card-text property-location">{{ propiedad.municipio }}, {{ propiedad.estado }}</p>
+
+                            <div class="property-features"> {# Contenedor para habitaciones, baños, estacionamientos #}
+                                {% if propiedad.num_habitaciones %}
+                                    <span>{{ propiedad.num_habitaciones }} <i class="fas fa-bed"></i></span>
+                                {% endif %}
+                                {% if propiedad.num_banos %}
+                                    <span>{{ propiedad.num_banos }}{% if propiedad.num_medios_banos %}.5{% endif %} <i class="fas fa-bath"></i></span>
+                                {% endif %}
+                                {% if propiedad.num_estacionamientos %}
+                                    <span>{{ propiedad.num_estacionamientos }} <i class="fas fa-car"></i></span>
+                                {% endif %}
+                            </div>
+
+                            <div class="property-areas"> {# Nuevo contenedor para m2 de terreno y construcción #}
+                                <i class="fa fa-arrows-alt"></i> {# Icono de cruz del viento #}
+                                {% if propiedad.area_terreno_metros_cuadrados %}
+                                    <span>{{ "{:,.0f}".format(propiedad.area_terreno_metros_cuadrados) }} m² t</span>
+                                {% endif %}
+                                {% if propiedad.area_construccion_metros_cuadrados %}
+                                    <span>{{ "{:,.0f}".format(propiedad.area_construccion_metros_cuadrados) }} m² c</span>
+                                {% endif %}
+                            </div>
+
+                            <p class="card-text property-price"><strong>{{ "{:,.2f}".format(propiedad.precio) }}</strong></p> {# Precio en negritas #}
+                            {% if propiedad.cuota_mantenimiento %}
+                                <p class="card-text property-maintenance"><strong>Mtto:</strong> ${{ "{:,.2f}".format(propiedad.cuota_mantenimiento) }}</p> {# Cuota de Mantenimiento abreviada #}
+                            {% endif %}
+                        </div>
+
+                        <div class="card-actions px-3 pb-3"> {# Contenedor para los botones de acción, con padding de Bootstrap #}
+                            <a href="{{ url_for('main.property_detail', property_id=propiedad.id) }}" class="btn detail-link mb-2">Ver Detalles</a> {# btn y mb-2 de Bootstrap #}
+                        </div>
                     </div>
                 {% endfor %}
             </div>
         {% else %} {# Si no hay propiedades #}
-            <p>No hay propiedades disponibles en este momento. ¡Sé el primero en añadir una!</p>
+            <p class="text-center lead">No hay propiedades disponibles en este momento. ¡Sé el primero en añadir una!</p>
         {% endif %}
     </div>
+
 {% endblock %}

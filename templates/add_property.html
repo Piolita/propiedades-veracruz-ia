@@ -1,82 +1,93 @@
-{% extends "base.html" %} {# Indica que esta plantilla hereda de base.html #}
+{% extends "base.html" %}
 
-{% block title %}Añadir Propiedad - Propiedades Veracruz IA{% endblock %} {# Título específico para esta página #}
+{% block title %}Añadir Propiedad{% endblock %}
 
-{% block content %} {# Bloque de contenido principal de la página #}
-    <div class="container"> {# Contenedor para centrar y dar espacio al formulario #}
-        <h1>Añadir Nueva Propiedad</h1>
-        {# IMPORTANTE: enctype="multipart/form-data" es necesario para la carga de archivos #}
-        <form method="POST" action="{{ url_for('main.add_property') }}" enctype="multipart/form-data"> {# Formulario para enviar datos. method="POST" para enviar datos, action define a dónde se enviarán #}
-            <label for="titulo">Título:</label> {# Etiqueta para el campo de entrada #}
-            <input type="text" id="titulo" name="titulo" required> {# Campo de texto para el título, 'required' lo hace obligatorio #}
-
-            <label for="descripcion">Descripción:</label>
-            <textarea id="descripcion" name="descripcion" rows="5" required></textarea> {# Área de texto para descripciones largas #}
-
-            <label for="precio">Precio:</label>
-            <input type="number" id="precio" name="precio" step="0.01" required> {# Campo numérico para el precio, 'step' permite decimales #}
-
-            <label for="direccion">Dirección:</label>
-            <input type="text" id="direccion" name="direccion" required>
-
-            <label for="municipio">Municipio:</label>
-            <input type="text" id="municipio" name="municipio" required>
-
-            <label for="estado">Estado:</label>
-            <input type="text" id="estado" name="estado" value="Veracruz" required> {# Valor predeterminado "Veracruz" #}
-
-            <label for="codigo_postal">Código Postal:</label>
-            <input type="text" id="codigo_postal" name="codigo_postal">
-
-            <label for="num_habitaciones">Número de Habitaciones:</label>
-            <input type="number" id="num_habitaciones" name="num_habitaciones" required>
-
-            <label for="num_banos">Número de Baños:</label>
-            <input type="number" id="num_banos" name="num_banos" required>
-
-            <label for="num_medios_banos">Número de Medios Baños:</label> {# Etiqueta para el campo de medios baños #}
-            <input type="number" id="num_medios_banos" name="num_medios_banos"> {# Campo numérico, no requerido (nullable=True en DB) #}
-
-            <label for="num_estacionamientos">Número de Estacionamientos:</label>
-            <input type="number" id="num_estacionamientos" name="num_estacionamientos"> {# No es requerido, ya que es nullable #}
-
-            <label for="antiguedad">Antigüedad (años):</label> {# Etiqueta para el campo de antigüedad #}
-            <input type="number" id="antiguedad" name="antiguedad"> {# Campo numérico, no requerido (nullable=True en DB) #}
-
-            <label for="area_terreno_metros_cuadrados">Área de Terreno (m²):</label>
-            <input type="number" id="area_terreno_metros_cuadrados" name="area_terreno_metros_cuadrados" step="0.01">
-
-            <label for="area_construccion_metros_cuadrados">Área de Construcción (m²):</label>
-            <input type="number" id="area_construccion_metros_cuadrados" name="area_construccion_metros_cuadrados" step="0.01" required>
-
-            <label for="tipo">Tipo de Propiedad:</label>
-            <select id="tipo" name="tipo" required> {# Menú desplegable para el tipo de propiedad #}
-                <option value="">Seleccione un tipo</option>
-                <option value="Casa">Casa</option>
-                <option value="Departamento">Departamento</option>
-                <option value="Terreno">Terreno</option>
-                <option value="Oficina">Oficina</option>
-                <option value="Local Comercial">Local Comercial</option>
-                <option value="Bodega">Bodega</option>
-                <option value="Rancho">Rancho</option>
-            </select>
-
-            <label for="cuota_mantenimiento">Cuota de Mantenimiento:</label>
-            <input type="number" id="cuota_mantenimiento" name="cuota_mantenimiento" step="0.01"> {# No es requerido #}
-
-            <label for="estado_propiedad">Estado de la Propiedad:</label>
-            <select id="estado_propiedad" name="estado_propiedad" required> {# Menú desplegable para el estado de la propiedad #}
-                <option value="">Seleccione un estado</option>
-                <option value="Venta">Venta</option>
-                <option value="Alquiler">Alquiler</option>
-            </select>
-
-            {# Nuevo campo para la carga de imágenes #}
-            <label for="imagenes">Imágenes de la Propiedad (múltiples):</label>
-            {# type="file" para seleccionar archivos, multiple para permitir varios archivos #}
-            <input type="file" id="imagenes" name="imagenes" accept="image/*" multiple>
-
-            <button type="submit">Añadir Propiedad</button> {# Botón para enviar el formulario #}
-        </form>
+{% block content %}
+<div class="container my-5">
+    <h2 class="text-center mb-4 display-5 fw-bold text-primary">Añadir Nueva Propiedad</h2>
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-7">
+            <form method="POST" action="{{ url_for('main.add_property') }}" enctype="multipart/form-data" class="p-4 border rounded shadow-sm bg-light">
+                <div class="mb-3">
+                    <label for="titulo" class="form-label">Título de la Propiedad:</label>
+                    <input type="text" class="form-control" id="titulo" name="titulo" required>
+                </div>
+                <div class="mb-3">
+                    <label for="descripcion" class="form-label">Descripción:</label>
+                    <textarea class="form-control" id="descripcion" name="descripcion" rows="5" required></textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="precio" class="form-label">Precio:</label>
+                    <input type="number" class="form-control" id="precio" name="precio" step="0.01" required>
+                </div>
+                <div class="mb-3">
+                    <label for="ubicacion" class="form-label">Dirección (Calle y Número):</label>
+                    <input type="text" class="form-control" id="ubicacion" name="ubicacion" required>
+                </div>
+                <div class="mb-3">
+                    <label for="municipio" class="form-label">Municipio:</label>
+                    <select class="form-select" id="municipio" name="municipio" required>
+                        <option value="">Selecciona un municipio</option>
+                        <option value="Boca del Río">Boca del Río</option>
+                        <option value="Medellín">Medellín</option>
+                        <option value="Veracruz">Veracruz</option>
+                        <option value="Alvarado">Alvarado (Riviera Veracruzana)</option>
+                        <option value="Otro">Otro</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="estado_propiedad" class="form-label">Estado de la Propiedad:</label>
+                    <select class="form-select" id="estado_propiedad" name="estado_propiedad" required>
+                        <option value="">Selecciona estado</option>
+                        <option value="Venta">Venta</option>
+                        <option value="Renta">Renta</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="tipo_propiedad" class="form-label">Tipo de Propiedad:</label>
+                    <select class="form-select" id="tipo_propiedad" name="tipo_propiedad" required>
+                        <option value="">Selecciona tipo</option>
+                        <option value="Casa">Casa</option>
+                        <option value="Departamento">Departamento</option>
+                        <option value="Terreno">Terreno</option>
+                        <option value="Local">Local/Oficina</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="num_habitaciones" class="form-label">Número de Habitaciones:</label>
+                    <input type="number" class="form-control" id="num_habitaciones" name="num_habitaciones" min="0">
+                </div>
+                <div class="mb-3">
+                    <label for="num_banos" class="form-label">Número de Baños Completos:</label>
+                    <input type="number" class="form-control" id="num_banos" name="num_banos" min="0">
+                </div>
+                <div class="mb-3">
+                    <label for="num_medios_banos" class="form-label">Número de Medios Baños:</label>
+                    <input type="number" class="form-control" id="num_medios_banos" name="num_medios_banos" min="0">
+                </div>
+                <div class="mb-3">
+                    <label for="num_estacionamientos" class="form-label">Número de Estacionamientos:</label>
+                    <input type="number" class="form-control" id="num_estacionamientos" name="num_estacionamientos" min="0">
+                </div>
+                <div class="mb-3">
+                    <label for="area_terreno_metros_cuadrados" class="form-label">Área de Terreno (m²):</label>
+                    <input type="number" class="form-control" id="area_terreno_metros_cuadrados" name="area_terreno_metros_cuadrados" step="0.01" min="0">
+                </div>
+                <div class="mb-3">
+                    <label for="area_construccion_metros_cuadrados" class="form-label">Área de Construcción (m²):</label>
+                    <input type="number" class="form-control" id="area_construccion_metros_cuadrados" name="area_construccion_metros_cuadrados" step="0.01" min="0">
+                </div>
+                <div class="mb-3">
+                    <label for="cuota_mantenimiento" class="form-label">Cuota de Mantenimiento:</label>
+                    <input type="number" class="form-control" id="cuota_mantenimiento" name="cuota_mantenimiento" step="0.01" min="0">
+                </div>
+                <div class="mb-3">
+                    <label for="imagenes" class="form-label">Imágenes (selecciona múltiples):</label>
+                    <input type="file" class="form-control" id="imagenes" name="imagenes" multiple accept="image/*">
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Añadir Propiedad</button>
+            </form>
+        </div>
     </div>
+</div>
 {% endblock %}

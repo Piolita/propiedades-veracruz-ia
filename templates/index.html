@@ -1,169 +1,168 @@
-{% extends "base.html" %} {# Indica que esta plantilla extiende (hereda de) base.html #}
+{% extends "base.html" %}
 
-{% block title %}Inicio - Propiedades Veracruz IA{% endblock %} {# Sobrescribe el título de la página #}
+{% block title %}Inicio - Propiedades Veracruz IA{% endblock %}
 
-{% block content %} {# Define el bloque de contenido específico para esta página #}
+{% block content %}
+<div class="hero-background"> {# Cambiado de video-background a hero-background #}
+    {# Eliminado el tag <video> y su contenido #}
+    <div class="overlay"></div>
+    <div class="hero-content text-white text-center"> {# Cambiado de video-content a hero-content #}
+        <h1 class="display-3 fw-bold mb-3 animate__animated animate__fadeInDown">ENCUENTRA TU HOGAR IDEAL EN VERACRUZ</h1>
+        <p class="lead mb-4 animate__animated animate__fadeInUp">Explora las mejores propiedades en Boca del Río, Medellín, Veracruz y Alvarado.</p>
+        <div class="d-flex justify-content-center gap-3 animate__animated animate__fadeInUp animate__delay-1s">
+            {# Botón que abre el modal de Venta #}
+            <button type="button" class="btn btn-primary btn-lg custom-btn-primary" data-bs-toggle="modal" data-bs-target="#searchModalVenta">
+                Buscar en Venta
+            </button>
+            {# Botón que abre el modal de Renta #}
+            <button type="button" class="btn btn-outline-light btn-lg custom-btn-outline" data-bs-toggle="modal" data-bs-target="#searchModalRenta">
+                Buscar en Renta
+            </button>
+        </div>
+    </div>
+</div>
 
-    {# Sección principal con video de fondo y contenido flotante #}
-    <div class="main-hero-section position-relative vh-100 d-flex flex-column justify-content-center align-items-center text-white text-center">
-        {# Video de fondo #}
-        <video autoplay muted loop class="background-video">
-            {# Ruta a tu video local en la carpeta static/videos/ #}
-            <source src="{{ url_for('static', filename='videos/background_video.mp4') }}" type="video/mp4">
-            Tu navegador no soporta el elemento de video.
-        </video>
-
-        {# Overlay para oscurecer el video y mejorar legibilidad del texto #}
-        <div class="video-overlay"></div>
-
-        {# Contenido flotante sobre el video #}
-        {# Añadimos clases para centrar su contenido, y un padding superior para compensar la navbar fija #}
-        <div class="hero-content z-1 position-relative w-100 px-3 pt-5 d-flex flex-column justify-content-center align-items-center">
-            {# Navbar de Bootstrap (basada en tu estructura, con ajustes para el blur y enlaces) #}
-            <nav class="navbar navbar-expand-lg navbar-dark bg-transparent fixed-top py-3 custom-navbar"> {# custom-navbar para el blur #}
-                <div class="container-fluid"> {# container-fluid para ancho completo #}
-                    <a class="navbar-brand fs-3 fw-light text-shadow" href="{{ url_for('main.home') }}"> {# fw-light para letra más fina #}
-                        {# Logo de tu marca - Eliminado el borde blanco #}
-                        <img src="{{ url_for('static', filename='img/banners/logo_01.jpg') }}" alt="logo" width="40" height="40" class="d-inline-block align-middle me-2 rounded-circle">
-                        Propiedades-Veracruz IA
-                    </a>
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                            <li class="nav-item">
-                                <a class="nav-link active text-white fs-5 fw-bold text-shadow mx-2" aria-current="page" href="{{ url_for('main.home') }}">Inicio</a>
-                            </li>
-                            {# Otros enlaces de navegación para los usuarios #}
-                        </ul>
-                        {# Lógica de autenticación en la Navbar - Ajustada para alineación y botones #}
-                        <ul class="navbar-nav align-items-center"> {# align-items-center para alineación vertical #}
-                            {% if current_user.is_authenticated %}
-                                <li class="nav-item d-flex align-items-center"> {# d-flex align-items-center para alinear texto con botones #}
-                                    <span class="nav-link text-white fs-5 fw-bold text-shadow mx-2 p-0">Hola, {{ current_user.username }}</span> {# p-0 para quitar padding extra #}
-                                </li>
-                                <li class="nav-item">
-                                    {# Panel Admin: Ahora solo un nav-link con estilo de texto #}
-                                    <a class="nav-link text-white fw-bold mx-2 custom-admin-link" href="{{ url_for('main.add_property') }}">Panel Admin</a>
-                                </li>
-                                <li class="nav-item">
-                                    {# Cerrar Sesión: Ahora solo un nav-link con estilo de texto #}
-                                    <a class="nav-link text-white fw-bold mx-2 custom-admin-link" href="{{ url_for('main.logout') }}">Cerrar Sesión</a>
-                                </li>
-                            {% else %}
-                                <li class="nav-item">
-                                    {# Acceso Administrativo: Mantiene estilo de botón para ser visible #}
-                                    <a class="nav-link btn btn-sm btn-success text-white fw-bold mx-2" href="{{ url_for('main.login') }}">Acceso Administrativo</a>
-                                </li>
+<section class="py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center mb-5 display-4 fw-bold text-primary">Propiedades Destacadas</h2>
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4"> {# Vuelto a 3 cards por línea #}
+            {% if propiedades %} {# propiedades ahora viene de pagination.items #}
+                {% for propiedad in propiedades %}
+                <div class="col">
+                    <div class="card h-100 shadow-sm border-0 rounded-lg overflow-hidden property-card animate__animated animate__fadeInUp">
+                        {# Miniatura de imagen con enlace #}
+                        <a href="{{ url_for('main.property_detail', property_id=propiedad.id) }}" class="d-block">
+                            {% set principal_image = '' %}
+                            {% for imagen in propiedad.imagenes %}
+                                {% if imagen.es_principal %}
+                                    {% set principal_image = imagen.nombre_archivo %}
+                                {% endif %}
+                            {% endfor %}
+                            {% if not principal_image and propiedad.imagenes %}
+                                {% set principal_image = propiedad.imagenes[0].nombre_archivo %}
                             {% endif %}
-                        </ul>
+                            <img src="{{ url_for('static', filename='uploads/' + principal_image) }}" class="card-img-top property-img" alt="Imagen de la propiedad">
+                        </a>
+                        <div class="card-body d-flex flex-column">
+                            {# Tipo de Propiedad y Estado de Propiedad (juntos, primera posición) #}
+                            <p class="card-text text-muted small mb-1">
+                                <span class="fw-bold">{{ propiedad.tipo_propiedad }}</span> | <span class="fw-bold">{{ propiedad.estado_propiedad }}</span>
+                            </p>
+                            <h5 class="card-title text-primary fw-bold">{{ propiedad.titulo }}</h5> {# Título de la propiedad #}
+                            {# Ubicación: Mostrar solo Municipio y Estado #}
+                            <p class="card-text text-muted mb-2 property-location-text"><i class="bi bi-geo-alt-fill me-1"></i> {{ propiedad.municipio }}, {{ propiedad.estado }}</p>
+                            
+                            {# Iconos de características en negritas #}
+                            <div class="d-flex align-items-center mb-2 text-muted small fw-bold">
+                                {% if propiedad.num_habitaciones %}
+                                    <span class="me-3"><i class="fas fa-bed me-1"></i> {{ propiedad.num_habitaciones }}</span>
+                                {% endif %}
+                                {% if propiedad.num_banos %}
+                                    <span class="me-3"><i class="fas fa-bath me-1"></i> {{ propiedad.num_banos }}{% if propiedad.num_medios_banos %}.5{% endif %}</span>
+                                {% endif %}
+                                {% if propiedad.num_estacionamientos %}
+                                    <span class="me-3"><i class="fas fa-car me-1"></i> {{ propiedad.num_estacionamientos }}</span>
+                                {% endif %}
+                            </div>
+                            
+                            {# Área de terreno y construcción en negritas #}
+                            <div class="d-flex align-items-center mb-2 text-muted small fw-bold">
+                                {% if propiedad.area_terreno_metros_cuadrados %}
+                                    <span class="me-3"><i class="fas fa-ruler-combined me-1"></i> {{ "{:,.0f}".format(propiedad.area_terreno_metros_cuadrados) }} m² t</span>
+                                {% endif %}
+                                {% if propiedad.area_construccion_metros_cuadrados %}
+                                    <span class="me-3"><i class="fas fa-square me-1"></i> {{ "{:,.0f}".format(propiedad.area_construccion_metros_cuadrados) }} m² c</span>
+                                {% endif %}
+                            </div>
+
+                            {# Cuota de Mantenimiento en nueva línea con texto completo #}
+                            {% if propiedad.cuota_mantenimiento %}
+                                <p class="card-text text-muted small mb-2">
+                                    <span class="fw-bold">Cuota de Mtto:</span> ${{ "{:,.2f}".format(propiedad.cuota_mantenimiento) }}
+                                </p>
+                            {% endif %}
+
+                            <div class="d-flex justify-content-between align-items-center mt-auto pt-2"> {# mt-auto para empujar al final, pt-2 para padding superior #}
+                                <p class="card-text text-dark fs-6 fw-bold mb-0"> {# Precio en negro, tamaño ajustado, sin margen inferior #}
+                                    ${{ "{:,.2f}".format(propiedad.precio) }}
+                                    {% if propiedad.estado_propiedad == 'Renta' %}
+                                        /mes
+                                    {% endif %}
+                                </p>
+                                <a href="{{ url_for('main.property_detail', property_id=propiedad.id) }}" class="btn btn-sm btn-outline-primary custom-detail-btn">Ver Detalles</a>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </nav>
+                {% endfor %}
+            {% else %}
+            <div class="col-12 text-center">
+                <p class="lead text-muted">No hay propiedades disponibles en este momento.</p>
+                <a href="{{ url_for('main.add_property') }}" class="btn btn-primary">Añadir Nueva Propiedad</a>
+            </div>
+            {% endif %}
+        </div>
 
-            {# Formulario de búsqueda - Ajustado para ancho y alto, y AHORA VISIBLE #}
-            <div class="container search-form-container px-4 py-3" style="max-width: 750px;"> {# Eliminado d-none, ajustado max-width #}
-                <form class="d-flex flex-column gap-2 p-0 rounded-3 shadow-lg bg-white bg-opacity-75"> {# gap-2 para menos espacio entre elementos #}
-                    {# Fila superior: Venta o Renta - Alineado a la izquierda y más largo #}
-                    <div class="d-flex justify-content-start flex-grow-1"> {# flex-grow-1 para que ocupe el espacio disponible #}
-                        <select class="form-select form-select-lg custom-select-width" aria-label="Venta o Renta"> {# Nueva clase custom-select-width #}
-                            <option selected value="">Venta o Renta</option> {# Valor vacío para la opción por defecto #}
-                            <option value="venta">Comprar</option> {# CAMBIADO A "Comprar" #}
-                            <option value="renta">Rentar</option>
-                        </select>
-                    </div>
-                    {# Fila inferior: Tipo de Propiedad, Ubicación, Precio, Buscar #}
-                    <div class="d-flex flex-column flex-md-row gap-2 w-100"> {# w-100 para que ocupe todo el ancho, gap-2 para menos espacio #}
-                        <select class="form-select form-select-lg flex-grow-1" aria-label="Tipo de Propiedad">
-                            <option selected value="">Tipo de Propiedad</option>
-                            <option value="casa">Casa</option>
-                            <option value="departamento">Departamento</option>
-                            <option value="terreno">Terreno</option>
-                            <option value="local">Local/Oficina</option>
-                        </select>
-                        {# CAMBIADO: Input de Ubicación a Select #}
-                        <select class="form-select form-select-lg flex-grow-1" aria-label="Ubicación">
-                            <option selected value="">Ubicación</option>
-                            <option value="boca_del_rio">Boca del Río</option>
-                            <option value="medellin">Medellín</option>
-                            <option value="veracruz">Veracruz</option>
-                            <option value="riviera_veracruzana">Riviera Veracruzana (Alvarado)</option>
-                            <option value="otras_ubicaciones">Otras Ubicaciones</option>
-                        </select>
-                        <input class="form-control form-control-lg flex-grow-1" type="number" placeholder="Precio" aria-label="Precio"> {# Eliminado "Máximo" #}
-                        <button class="btn btn-primary btn-lg px-5" type="submit">Buscar</button>
-                    </div>
-                </form>
+        {# Controles de Paginación #}
+        {% if pagination.pages > 1 %}
+        <nav aria-label="Page navigation" class="mt-5">
+            <ul class="pagination justify-content-center">
+                {# Botón Anterior #}
+                <li class="page-item {% if not pagination.has_prev %}disabled{% endif %}">
+                    <a class="page-link" href="{{ url_for('main.home', page=pagination.prev_num, operation=request.args.get('operation'), property_type=request.args.get('property_type'), location=request.args.get('location'), min_bedrooms=request.args.get('min_bedrooms'), max_bedrooms=request.args.get('max_bedrooms'), price_range=request.args.get('price_range')) }}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                {# Números de Página #}
+                {% for page_num in pagination.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+                    {% if page_num %}
+                        {% if pagination.page == page_num %}
+                            <li class="page-item active"><a class="page-link" href="#">{{ page_num }}</a></li>
+                        {% else %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ url_for('main.home', page=page_num, operation=request.args.get('operation'), property_type=request.args.get('property_type'), location=request.args.get('location'), min_bedrooms=request.args.get('min_bedrooms'), max_bedrooms=request.args.get('max_bedrooms'), price_range=request.args.get('price_range')) }}">
+                                    {{ page_num }}
+                                </a>
+                            </li>
+                        {% endif %}
+                    {% else %}
+                        <li class="page-item disabled"><a class="page-link" href="#">...</a></li>
+                    {% endif %}
+                {% endfor %}
+                {# Botón Siguiente #}
+                <li class="page-item {% if not pagination.has_next %}disabled{% endif %}">
+                    <a class="page-link" href="{{ url_for('main.home', page=pagination.next_num, operation=request.args.get('operation'), property_type=request.args.get('property_type'), location=request.args.get('location'), min_bedrooms=request.args.get('min_bedrooms'), max_bedrooms=request.args.get('max_bedrooms'), price_range=request.args.get('price_range')) }}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        {% endif %}
+    </div>
+</section>
+
+{# Modales de búsqueda (incluidos desde archivos separados) #}
+{% include 'modals/search_modal_venta.html' %}
+{% include 'modals/search_modal_renta.html' %}
+
+{# Modal de Validación Personalizado (para mensajes de error) #}
+<div class="modal fade" id="validationModal" tabindex="-1" aria-labelledby="validationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-warning text-dark">
+                <h5 class="modal-title" id="validationModalLabel">Atención</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <p id="validationMessage"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Aceptar</button>
             </div>
         </div>
     </div>
+</div>
 
-    {# Sección de Propiedades Disponibles #}
-    <div class="container my-5">
-        <h2 class="text-center mb-4 display-5 fw-bold text-primary">Propiedades Disponibles</h2>
-        {% if propiedades %} {# Verifica si hay propiedades en la lista #}
-            <div class="property-grid"> {# Contenedor para la cuadrícula de propiedades #}
-                {% for propiedad in propiedades %} {# Itera sobre cada propiedad en la lista #}
-                    {# Tarjeta individual para cada propiedad - Ahora usando clases de Bootstrap Card #}
-                    <div class="card property-card"> {# Añadimos la clase 'card' de Bootstrap #}
-                        {# Envuelve la imagen (o placeholder) con un enlace a la página de detalles #}
-                        <a href="{{ url_for('main.property_detail', property_id=propiedad.id) }}" class="thumbnail-link">
-                            {% set primary_image = (propiedad.imagenes | selectattr('es_principal')) | first %}
-                            {% if primary_image %} {# Si se encontró una imagen principal #}
-                                <img src="{{ url_for('static', filename='uploads/' + primary_image.nombre_archivo) }}"
-                                     alt="Imagen principal de {{ propiedad.titulo }}"
-                                     class="card-img-top property-thumbnail"> {# Añadimos 'card-img-top' #}
-                            {% else %} {# Si no hay imagen principal o no hay imágenes #}
-                                {# Usa tu archivo placeholder.png #}
-                                <img src="{{ url_for('static', filename='placeholder.png') }}"
-                                     alt="No hay imagen disponible"
-                                     class="card-img-top property-thumbnail"> {# Muestra una imagen de marcador de posición #}
-                            {% endif %}
-                        </a>
 
-                        <div class="card-body card-content"> {# card-body para el contenido textual #}
-                            <p class="card-text property-status">{{ propiedad.estado_propiedad }}</p> {# card-text para párrafos #}
-                            <h5 class="card-title property-address">{{ propiedad.direccion }}</h5> {# card-title para el título #}
-                            <p class="card-text property-location">{{ propiedad.municipio }}, {{ propiedad.estado }}</p>
-
-                            <div class="property-features"> {# Contenedor para habitaciones, baños, estacionamientos #}
-                                {% if propiedad.num_habitaciones %}
-                                    <span>{{ propiedad.num_habitaciones }} <i class="fas fa-bed"></i></span>
-                                {% endif %}
-                                {% if propiedad.num_banos %}
-                                    <span>{{ propiedad.num_banos }}{% if propiedad.num_medios_banos %}.5{% endif %} <i class="fas fa-bath"></i></span>
-                                {% endif %}
-                                {% if propiedad.num_estacionamientos %}
-                                    <span>{{ propiedad.num_estacionamientos }} <i class="fas fa-car"></i></span>
-                                {% endif %}
-                            </div>
-
-                            <div class="property-areas"> {# Nuevo contenedor para m2 de terreno y construcción #}
-                                <i class="fa fa-arrows-alt"></i> {# Icono de cruz del viento #}
-                                {% if propiedad.area_terreno_metros_cuadrados %}
-                                    <span>{{ "{:,.0f}".format(propiedad.area_terreno_metros_cuadrados) }} m² t</span>
-                                {% endif %}
-                                {% if propiedad.area_construccion_metros_cuadrados %}
-                                    <span>{{ "{:,.0f}".format(propiedad.area_construccion_metros_cuadrados) }} m² c</span>
-                                {% endif %}
-                            </div>
-
-                            <p class="card-text property-price"><strong>{{ "{:,.2f}".format(propiedad.precio) }}</strong></p> {# Precio en negritas #}
-                            {% if propiedad.cuota_mantenimiento %}
-                                <p class="card-text property-maintenance"><strong>Mtto:</strong> ${{ "{:,.2f}".format(propiedad.cuota_mantenimiento) }}</p> {# Cuota de Mantenimiento abreviada #}
-                            {% endif %}
-                        </div>
-
-                        <div class="card-actions px-3 pb-3"> {# Contenedor para los botones de acción, con padding de Bootstrap #}
-                            <a href="{{ url_for('main.property_detail', property_id=propiedad.id) }}" class="btn detail-link mb-2">Ver Detalles</a> {# btn y mb-2 de Bootstrap #}
-                        </div>
-                    </div>
-                {% endfor %}
-            </div>
-        {% else %} {# Si no hay propiedades #}
-            <p class="text-center lead">No hay propiedades disponibles en este momento. ¡Sé el primero en añadir una!</p>
-        {% endif %}
-    </div>
 
 {% endblock %}

@@ -3,61 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Propiedades Veracruz IA{% endblock %}</title>
-
-    {# Favicon - Apunta a tu archivo favicon.png #}
-    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicons/favicon.png') }}">
-
-    {# Bootstrap 5 CSS #}
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" xintegrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-
-    {# Font Awesome para iconos (versión 5.15.4) - Corregido el atributo integrity #}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" xintegrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
-
-    {# Tu CSS personalizado - Lo añadimos DESPUÉS de Bootstrap para poder sobrescribir sus estilos #}
+    <title>{% block title %}Tu Portal Inmobiliario{% endblock %}</title>
+    <!-- Favicon -->
+    <link rel="icon" href="{{ url_for('static', filename='favicons/favicon.png') }}" type="image/png">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <!-- Bootstrap Icons CSS (para iconos como geo-alt-fill, etc.) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Font Awesome CSS (para iconos como fa-bed, fa-bath, fa-car, fa-arrows-alt, fa-ruler-combined, fa-square, fa-heart, fa-share-alt, fa-whatsapp, fa-facebook, fa-youtube, fa-tiktok, fa-instagram) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Animate.css (para animaciones) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-
-    <!-- Puedes añadir más enlaces a CSS o scripts JS globales aquí -->
 </head>
 <body>
-    <header>
-        {# La navegación de Bootstrap se definirá en index.html #}
-        {# Este h1 y ul son solo placeholders de base.html, el diseño real viene de index.html #}
-        <nav class="d-none"> {# Ocultamos esta nav básica, la de Bootstrap la pondremos en index.html #}
-            <h1><a href="{{ url_for('main.home') }}">Propiedades Veracruz IA</a></h1>
-            <ul> {# Lista para enlaces de navegación #}
-                <li><a href="{{ url_for('main.add_property') }}">Añadir Propiedad</a></li> {# Enlace al formulario de añadir propiedad #}
-            </ul>
-        </nav>
-    </header>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top shadow">
+        <div class="container-fluid px-4"> {# Añadido padding horizontal #}
+            <a class="navbar-brand d-flex align-items-center me-auto" href="{{ url_for('main.home') }}"> {# me-auto para empujar a la izquierda #}
+                <img src="{{ url_for('static', filename='img/banners/logo_01.jpg') }}" alt="Logo" width="40" height="40" class="d-inline-block align-text-top rounded-circle me-2">
+                <span class="fw-bold">Propiedades Veracruz IA</span> {# Nombre corregido #}
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav"> {# Eliminado justify-content-end para control con CSS #}
+                <ul class="navbar-nav ms-auto"> {# ms-auto para empujar a la derecha #}
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="{{ url_for('main.home') }}">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Nosotros</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Contacto</a>
+                    </li>
+                    {% if current_user.is_authenticated %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownAdmin" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Panel Admin
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end" aria-labelledby="navbarDropdownAdmin">
+                            <li><a class="dropdown-item" href="{{ url_for('main.add_property') }}">Añadir Propiedad</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('main.home') }}">Ver Todas las Propiedades</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ url_for('main.logout') }}">Cerrar Sesión</a></li>
+                        </ul>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.login') }}">Iniciar Sesión</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
 
-    <main> {# Esta es la ÚNICA etiqueta <main> para el contenido principal #}
-        {# Bucle para mostrar mensajes flash (éxito, error, etc.) #}
+    <main>
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
-                <ul class="flashes">
+                <div class="container mt-5 pt-5">
                     {% for category, message in messages %}
-                        <li class="{{ category }}">{{ message }}</li>
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
                     {% endfor %}
-                </ul>
+                </div>
             {% endif %}
         {% endwith %}
-
-        {# Este es el ÚNICO bloque de contenido principal que las plantillas hijas rellenarán #}
-        {% block content %}
-        <!-- Este bloque será rellenado por las plantillas hijas -->
-        {% endblock %}
+        {% block content %}{% endblock %}
     </main>
 
-    <footer>
-        <p>&copy; {{ 2025 }} Propiedades Veracruz IA. Todos los derechos reservados.</p>
-        <!-- Puedes añadir más información de pie de página aquí -->
+    <footer class="bg-dark text-white text-center py-4 mt-5">
+        <div class="container">
+            <p class="mb-0">&copy; 2025 Propiedades Veracruz IA. Todos los derechos reservados.</p>
+            <div class="social-icons mt-2">
+                <a href="#" class="text-white mx-2"><i class="fab fa-whatsapp"></i></a> {# WhatsApp #}
+                <a href="#" class="text-white mx-2"><i class="fab fa-facebook-f"></i></a> {# Facebook #}
+                <a href="#" class="text-white mx-2"><i class="fab fa-youtube"></i></a> {# YouTube #}
+                <a href="#" class="text-white mx-2"><i class="fab fa-tiktok"></i></a> {# TikTok #}
+                <a href="#" class="text-white mx-2"><i class="fab fa-instagram"></i></a> {# Instagram #}
+            </div>
+        </div>
     </footer>
 
-    {# Bootstrap 5 JavaScript Bundle (incluye Popper) #}
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" xintegrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-
-    {# Tu JavaScript personalizado para el carrusel #}
+    <!-- Bootstrap Bundle with Popper (siempre al final del body) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Tus scripts personalizados (después de Bootstrap) -->
+    <script src="{{ url_for('static', filename='js/search_modals.js') }}"></script>
     <script src="{{ url_for('static', filename='js/carousel.js') }}"></script>
+    <script>
+        // Script para el efecto blur en la navbar al hacer scroll
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) { // Si el scroll es mayor a 50px
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+    </script>
 </body>
 </html>

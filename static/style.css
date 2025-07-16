@@ -1,712 +1,213 @@
-/* Aplicar box-sizing: border-box a todos los elementos para un modelo de caja consistente */
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
-/* Asegurar que html y body ocupen toda la altura para el video de fondo */
+/* General Body and HTML */
 html, body {
     height: 100%;
-    overflow-x: hidden; /* Evitar scroll horizontal */
+    margin: 0;
+    font-family: 'Inter', sans-serif; /* Using Inter font */
+    background-color: #f8f9fa; /* Light background for the whole page */
+    color: #343a40; /* Default text color */
 }
 
-/* Estilos generales del cuerpo de la página */
-body {
-    font-family: Arial, sans-serif; /* Define la fuente del texto */
-    color: #333; /* Color de texto oscuro */
-    text-align: center; /* Centra el texto */
-    /* El padding y margin del body se manejarán de forma más específica en los contenedores */
+/* Navbar adjustments */
+.navbar {
+    transition: background-color 0.3s ease-in-out;
+    backdrop-filter: blur(5px); /* Efecto blur */
+    background-color: rgba(33, 37, 41, 0.7) !important; /* Fondo oscuro semi-transparente */
 }
 
-/* Estilos para el encabezado principal */
-h1 {
-    color: #0056b3; /* Color azul para el título */
-    margin-bottom: 10px; /* Espacio debajo del título */
+.navbar.scrolled {
+    background-color: rgba(33, 37, 41, 0.9) !important; /* Más opaco al hacer scroll */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
-/* Estilos para los párrafos */
-p {
-    font-size: 1.1em; /* Tamaño de fuente ligeramente más grande */
-    line-height: 1.6; /* Espaciado entre líneas para mejor lectura */
+.navbar-brand .fw-bold {
+    font-weight: 700 !important;
 }
 
-/* Estilos para los mensajes flash */
-.flashes {
-    list-style: none; /* Quita los puntos de la lista */
-    padding: 0; /* Elimina el padding predeterminado */
-    margin: 20px auto; /* Centra la lista y añade margen superior/inferior */
-    width: 80%; /* Ancho de la lista */
-    max-width: 600px; /* Ancho máximo para pantallas grandes */
-    text-align: center; /* Centra el texto dentro de la lista */
-}
-
-.flashes li {
-    padding: 10px 15px; /* Relleno interno */
-    margin-bottom: 10px; /* Margen entre mensajes */
-    border-radius: 5px; /* Bordes redondeados */
-    font-weight: bold; /* Texto en negrita */
-}
-
-.flashes .success {
-    background-color: #d4edda; /* Fondo verde claro para éxito */
-    color: #155724; /* Texto verde oscuro para éxito */
-    border: 1px solid #c3e6cb; /* Borde verde para éxito */
-}
-
-.flashes .danger {
-    background-color: #f8d7da; /* Fondo rojo claro para error */
-    color: #721c24; /* Texto rojo oscuro para error */
-    border: 1px solid #f5c6cb; /* Borde rojo para error */
-}
-
-/* Estilos para el contenedor del formulario (general) */
-.container {
-    background-color: #fff; /* Fondo blanco para el contenedor */
-    padding: 30px; /* Relleno interno */
-    border-radius: 8px; /* Bordes redondeados */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
-    max-width: 700px; /* Ancho máximo del contenedor */
-    margin: 30px auto; /* Centra el contenedor horizontalmente y añade margen vertical */
-    text-align: left; /* Alinea el texto a la izquierda dentro del contenedor */
-}
-
-/* Estilos para los formularios (general) */
-form {
-    display: flex; /* Usa Flexbox para organizar los elementos */
-    flex-direction: column; /* Apila los elementos verticalmente */
-    gap: 15px; /* Espacio entre cada elemento del formulario */
-}
-
-/* Estilos para las etiquetas (labels) */
-label {
-    font-weight: bold; /* Texto en negrita para las etiquetas */
-    margin-bottom: 5px; /* Espacio debajo de la etiqueta */
-    color: #555; /* Color de texto para las etiquetas */
-}
-
-/* Estilos para los campos de entrada de texto, números, áreas de texto y selectores */
-input[type="text"],
-input[type="number"],
-textarea,
-select {
-    width: 100%; /* Ocupa todo el ancho disponible */
-    padding: 10px; /* Relleno interno */
-    border: 1px solid #ddd; /* Borde gris claro */
-    border-radius: 5px; /* Bordes redondeados */
-    box-sizing: border-box; /* Incluye padding y borde en el ancho total */
-    font-size: 1em; /* Tamaño de fuente */
-    color: #333; /* Color de texto */
-}
-
-/* Estilos para el botón de enviar */
-button[type="submit"] {
-    background-color: #007bff; /* Color de fondo azul */
-    color: white; /* Texto blanco */
-    padding: 12px 20px; /* Relleno interno */
-    border: none; /* Sin borde */
-    border-radius: 5px; /* Bordes redondeados */
-    cursor: pointer; /* Cambia el cursor a una mano al pasar por encima */
-    font-size: 1.1em; /* Tamaño de fuente */
-    font-weight: bold; /* Texto en negrita */
-    transition: background-color 0.3s ease; /* Transición suave al pasar el ratón */
-    margin-top: 20px; /* Margen superior */
-}
-
-button[type="submit"]:hover {
-    background-color: #0056b3; /* Color de fondo más oscuro al pasar el ratón */
-}
-
-/* ################################################################## */
-/* INICIO: Estilos para la Sección Principal (Video de Fondo, Navbar, Búsqueda) */
-/* ################################################################## */
-.main-hero-section {
-    min-height: 100vh; /* Asegura que ocupe toda la altura de la ventana */
+/* Hero Section with Background Image */
+.hero-background { /* Cambiado de video-background */
+    position: relative;
     width: 100%;
-    position: relative; /* Necesario para posicionar elementos internos de forma absoluta */
-    overflow: hidden; /* Oculta cualquier desbordamiento del video */
-    display: flex; /* Para centrar contenido */
-    flex-direction: column;
-    justify-content: center;
+    height: 100vh; /* Full viewport height */
+    overflow: hidden;
+    display: flex;
     align-items: center;
-    color: white; /* Color de texto predeterminado para el contenido flotante */
+    justify-content: center;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+    background-image: url('/static/img/banners/hero_background.jpg'); /* RUTA CORREGIDA */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Dark overlay for text readability */
+    z-index: 0;
+}
+
+.hero-content { /* Cambiado de video-content */
+    position: relative;
+    z-index: 1;
+    padding: 20px;
+    max-width: 900px;
     text-align: center;
 }
 
-.background-video {
-    position: absolute; /* Posicionamiento absoluto para cubrir todo el contenedor */
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* Asegura que el video cubra todo el espacio sin distorsionarse */
-    z-index: -2; /* Coloca el video por debajo del overlay y el contenido */
+.hero-content h1 {
+    font-size: 3.5rem; /* Adjust font size for responsiveness */
+    margin-bottom: 1rem;
 }
 
-.video-overlay {
-    position: absolute; /* Posicionamiento absoluto para cubrir todo el contenedor */
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* Fondo oscuro semitransparente */
-    z-index: -1; /* Coloca el overlay entre el video y el contenido */
+.hero-content p.lead {
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
 }
 
-.hero-content {
-    z-index: 1; /* Asegura que el contenido esté por encima del video y el overlay */
-    width: 100%;
-    max-width: 960px; /* Ancho máximo para el contenido flotante */
-    padding: 0 15px; /* Padding horizontal para evitar que el contenido toque los bordes */
-    /* Flexbox ya está en main-hero-section para centrar hero-content */
+/* Custom Buttons for Hero Section */
+.custom-btn-primary {
+    background-color: #007bff; /* Bootstrap primary blue */
+    border-color: #007bff;
+    padding: 12px 30px;
+    font-size: 1.25rem;
+    border-radius: 50px; /* Pill shape */
+    transition: all 0.3s ease;
 }
 
-/* Estilos para la Navbar personalizada (efecto blur) */
-.custom-navbar {
-    background-color: rgba(0, 0, 0, 0.3) !important; /* Fondo semitransparente para el blur */
-    backdrop-filter: blur(5px); /* Efecto blur */
-    -webkit-backdrop-filter: blur(5px); /* Prefijo para compatibilidad con Safari */
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2); /* Línea sutil en la parte inferior */
+.custom-btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #004085;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
 
-/* Estilos para los enlaces administrativos en la Navbar (sin fondo de botón) */
-.custom-admin-link {
-    /* Eliminar cualquier estilo de botón que Bootstrap pueda aplicar por defecto a nav-link */
-    background-color: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-    padding: var(--bs-nav-link-padding-y) var(--bs-nav-link-padding-x) !important; /* Usar padding de nav-link */
-    display: inline-block; /* Para que padding y margin funcionen */
-    text-decoration: none; /* Asegurar que no haya subrayado */
+.custom-btn-outline {
+    border-color: #ffffff;
+    color: #ffffff;
+    padding: 12px 30px;
+    font-size: 1.25rem;
+    border-radius: 50px; /* Pill shape */
+    transition: all 0.3s ease;
 }
 
-.custom-admin-link:hover {
-    background-color: rgba(255, 255, 255, 0.1) !important; /* Fondo sutil al pasar el ratón */
-    border-radius: var(--bs-border-radius); /* Bordes redondeados al pasar el ratón */
+.custom-btn-outline:hover {
+    background-color: rgba(255,255,255,0.2);
+    color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
 
-/* Estilos para el botón de "Acceso Administrativo" (mantener el verde) */
-.navbar-nav .nav-item .nav-link.btn-success {
-    background-color: #28a745 !important; /* Verde Bootstrap */
-    border-color: #28a745 !important;
-    padding: 6px 12px; /* Padding para botones compactos */
-    font-size: 0.9em; /* Fuente más pequeña */
-    border-radius: 5px; /* Bordes redondeados */
-}
-.navbar-nav .nav-item .nav-link.btn-success:hover {
-    background-color: #218838 !important;
-    border-color: #218838 !important;
-}
-
-
-/* Estilos para el contenedor del formulario de búsqueda */
-.search-form-container {
-    margin-top: 100px; /* Ajusta este valor para bajar o subir el formulario */
-    /* max-width se define ahora en el HTML para más flexibilidad */
-    padding: 0 !important; /* ¡IMPORTANTE! Elimina el padding del contenedor */
-}
-
-.search-form-container form {
-    background-color: rgba(255, 255, 255, 0.85) !important; /* Fondo blanco semitransparente para el formulario */
-    padding: 20px !important; /* ¡IMPORTANTE! Mueve el padding al formulario */
-    border-radius: 10px !important; /* Bordes más redondeados */
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3) !important; /* Sombra más pronunciada */
-    gap: 10px; /* Espacio entre los elementos del formulario, reducido para más compacidad */
-}
-
-/* Ancho personalizado para el select de Venta o Renta */
-.custom-select-width {
-    width: 33% !important; /* Aproximadamente un tercio del ancho */
-    min-width: 180px; /* Asegura que no sea demasiado pequeño en pantallas grandes */
-    max-width: 250px; /* Limita el ancho máximo */
-}
-
-.search-form-container .form-select,
-.search-form-container .form-control {
-    border: none; /* Sin borde */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Sombra sutil en los inputs */
-    padding: 8px 12px; /* Ajuste de padding para inputs, menos alto */
-    font-size: 0.95em; /* Fuente ligeramente más pequeña para que quepa */
-}
-
-.search-form-container .btn-primary {
-    background-color: #CC4400 !important; /* Naranja aún más intenso para el botón de búsqueda */
-    border-color: #CC4400 !important;
-    font-weight: bold;
-    padding: 10px 25px; /* Ajuste de padding para el botón */
-}
-
-.search-form-container .btn-primary:hover {
-    background-color: #A33600 !important; /* Naranja más oscuro al pasar el ratón */
-    border-color: #A33600 !important;
-}
-
-/* Estilos para el texto con sombra (para mejor legibilidad sobre el video) */
-.text-shadow {
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
-}
-
-/* ################################################################## */
-/* FIN: Estilos para la Sección Principal */
-/* ################################################################## */
-
-
-/* Estilos para la cuadrícula de propiedades */
-.property-grid {
-    display: grid; /* Usa CSS Grid para la disposición */
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Columnas responsivas */
-    gap: 20px; /* Espacio entre las tarjetas */
-    margin-top: 30px; /* Margen superior */
-    justify-content: center; /* Centra las tarjetas en la cuadrícula */
-    padding: 0 20px; /* Añade padding para que no toque los bordes en móvil */
-}
-
-/* ################################################################## */
-/* INICIO: Estilos para cada tarjeta de propiedad individual (REFINADOS) */
-/* ################################################################## */
+/* Property Cards on Index Page */
 .property-card {
-    background-color: #fff; /* Fondo blanco */
-    border: 1px solid #e0e0e0; /* Borde suave */
-    border-radius: 12px; /* Bordes más redondeados */
-    box-shadow: 8px 8px 15px rgba(0, 0, 0, 0.2); /* Sombra más pronunciada en bottom/right */
-    padding: 0; /* Eliminamos el padding aquí y lo pondremos en card-content */
-    text-align: left; /* Alinea el texto a la izquierda dentro de la tarjeta */
-    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out; /* Efecto de transición al pasar el ratón */
-    display: flex; /* Usar flexbox para organizar el contenido verticalmente */
-    flex-direction: column; /* Apilar elementos verticalmente */
-    justify-content: space-between; /* Distribuye el espacio entre los elementos */
-    height: 100%; /* Asegura que la tarjeta ocupe toda la altura disponible en la cuadrícula */
-    overflow: hidden; /* Asegura que la imagen no se desborde de los bordes redondeados */
+    border: none;
+    background-color: #ffffff; /* Fondo blanco para que no se pierda */
+    box-shadow: 4px 4px 12px rgba(0,0,0,0.25); /* Sombra más visible (bottom and right) por defecto */
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 }
 
 .property-card:hover {
-    transform: translateY(-8px); /* Levantamiento más pronunciado al pasar el ratón */
-    box-shadow: 12px 12px 25px rgba(0, 0, 0, 0.3); /* Sombra más intensa al pasar el ratón */
+    transform: scale(1.03); /* Ligero zoom */
+    box-shadow: 6px 6px 20px rgba(0,0,0,0.4); /* Sombra más intensa en hover */
 }
 
-/* Contenido textual de la tarjeta */
-.property-card .card-content {
-    padding: 20px; /* Relleno interno para el contenido textual */
-    flex-grow: 1; /* Permite que el contenido crezca para llenar el espacio */
-    display: flex; /* Usar flexbox para organizar el contenido verticalmente */
-    flex-direction: column; /* Apilar elementos verticalmente */
-    gap: 8px; /* Espacio entre los elementos de texto */
+.property-img {
+    height: 200px; /* Fixed height for images */
+    object-fit: cover; /* Ensures images cover the area without distortion */
+    border-bottom: 1px solid #eee;
 }
 
-.property-card .property-status {
-    font-size: 0.9em;
-    color: #666;
-    margin-bottom: 5px;
+.card-title {
+    font-size: 1.4rem;
+    margin-bottom: 0.5rem;
 }
 
-.property-card .property-address {
-    font-size: 1.4em; /* Más grande */
-    font-weight: bold; /* Negritas */
-    color: #333; /* Color oscuro */
-    margin-bottom: 5px;
-    line-height: 1.2;
+.property-location-text { /* Estilo para el texto de ubicación */
+    font-size: 1.1rem; /* Un poco más grande que los features, más pequeño que el título */
 }
 
-.property-card .property-location {
-    font-size: 0.95em;
-    color: #555;
-    margin-bottom: 10px;
+.card-text.text-muted {
+    font-size: 0.9rem;
 }
 
-/* Contenedor para las características (habitaciones, baños, estacionamientos) */
-.property-card .property-features {
-    display: flex; /* Para poner los elementos en una línea */
-    gap: 15px; /* Espacio entre cada característica */
-    margin-bottom: 8px; /* Espacio debajo de esta línea */
-    font-size: 1em;
-    color: #444;
-    flex-wrap: wrap; /* Permite que los elementos se envuelvan en pantallas pequeñas */
+.card-text.text-dark { /* Color negro para el precio */
+    color: #212529 !important; /* Bootstrap dark color */
+    font-size: 1.2rem !important; /* Tamaño ajustado para el precio (un poco más pequeño) */
+    font-weight: bold;
 }
 
-.property-card .property-features span {
-    display: flex;
-    align-items: center;
-    gap: 5px; /* Espacio entre número e icono */
+.custom-detail-btn { /* Estilo para el botón "Ver Detalles" */
+    border-radius: 0.5rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
 }
 
-.property-card .property-features i {
-    color: #E67E22; /* Color cálido para los iconos (naranja) */
-    font-size: 1.2em; /* Tamaño de los iconos */
+
+/* Property Detail Page */
+.property-detail-img {
+    max-height: 500px;
+    object-fit: contain; /* Ensures the whole image is visible */
+    width: 100%;
 }
 
-/* Contenedor para las áreas (m2 terreno, m2 construcción) */
-.property-card .property-areas {
-    display: flex; /* Para poner los elementos en una línea */
-    align-items: center; /* Centrar verticalmente */
-    gap: 10px; /* Espacio entre el icono y los valores */
-    margin-bottom: 15px; /* Espacio debajo de esta línea */
-    font-size: 0.95em;
-    color: #444;
-    flex-wrap: wrap; /* Permite que los elementos se envuelvan */
+/* Form Styling (Add/Edit Property) */
+.form-label {
+    font-weight: 600;
+    color: #495057;
 }
 
-.property-card .property-areas i {
-    color: #E67E22; /* Color cálido para el icono (naranja) */
-    font-size: 1.2em; /* Tamaño del icono */
+.form-control, .form-select {
+    border-radius: 0.5rem;
+    border: 1px solid #ced4da;
 }
 
-.property-card .property-areas span {
-    font-weight: bold; /* Negritas para los valores de m2 */
+.form-control:focus, .form-select:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
 }
 
-.property-card .property-price {
-    font-size: 1.2em; /* Tamaño más grande para el precio */
-    font-weight: bold; /* Negritas */
-    color: #27AE60; /* Color verde más suave para el precio */
-    margin-bottom: 5px;
+/* Footer */
+footer {
+    background-color: #212529; /* Dark background */
+    color: #f8f9fa;
 }
 
-.property-card .property-maintenance {
-    font-size: 0.9em;
-    color: #555;
-    margin-bottom: 15px; /* Espacio antes de los botones */
+.social-icons a {
+    font-size: 1.5rem;
+    margin: 0 10px;
+    color: #f8f9fa;
+    transition: color 0.3s ease;
 }
 
-/* ################################################################## */
-/* FIN: Estilos para cada tarjeta de propiedad individual (REFINADOS) */
-/* ################################################################## */
-
-
-/* ################################################################## */
-/* INICIO: Estilos de ENLACES DENTRO de .property-card (REFINADOS) */
-/* ################################################################## */
-
-/* Estilo para el enlace que envuelve la miniatura */
-.thumbnail-link {
-    display: block; /* Asegura que el enlace ocupe todo el espacio */
-    width: 100%; /* El enlace ahora define el ancho */
-    height: 200px; /* El enlace ahora define la altura */
-    line-height: 0; /* Elimina espacio extra de línea */
-    font-size: 0; /* Elimina tamaño de fuente si el enlace tuviera texto */
-    text-decoration: none; /* Elimina el subrayado por defecto */
-    padding: 0; /* Eliminamos padding */
-    margin: 0; /* Eliminamos margin */
-    border: none; /* Eliminamos borde */
-    border-radius: 8px 8px 0 0; /* Bordes redondeados solo arriba para la imagen */
-    overflow: hidden; /* Oculta cualquier desbordamiento dentro del enlace */
+.social-icons a:hover {
+    color: #007bff; /* Highlight on hover */
 }
 
-/* Estilo para la miniatura de la propiedad dentro del enlace */
-.property-thumbnail {
-    width: 100%; /* Ocupa todo el ancho disponible en su contenedor (el enlace) */
-    height: 100%; /* Ocupa toda la altura disponible en su contenedor (el enlace) */
-    object-fit: cover; /* Recorta la imagen para que cubra el área sin distorsionarse */
-    border-radius: 0; /* La imagen no necesita border-radius si el padre ya lo tiene y tiene overflow:hidden */
-    display: block; /* Asegura que la imagen se comporte como un bloque */
-    background-color: #f0f0f0; /* Fondo gris claro (para placeholders) */
-    vertical-align: top; /* Elimina el espacio extra debajo de las imágenes */
-}
-
-/* Contenedor para los botones de acción dentro de la tarjeta */
-.property-card .card-actions {
-    padding: 0 20px 20px 20px; /* Relleno para los botones, ajustado al padding del card-content */
-    display: flex; /* Usar flexbox para alinear los botones */
-    flex-direction: column; /* Apilar los botones verticalmente */
-    gap: 10px; /* Espacio entre los grupos de botones */
-    align-items: stretch; /* Estira los botones para que ocupen todo el ancho disponible */
-}
-
-/* Estilos base para el botón "Ver Detalles" */
-.property-card .detail-link {
-    display: block; /* Ocupa su propia línea */
-    padding: 14px 20px; /* Relleno */
-    border-radius: 8px; /* Bordes redondeados más suaves */
-    text-decoration: none; /* Sin subrayado */
-    font-weight: bold; /* Negrita */
-    transition: background-color 0.3s ease, transform 0.2s ease; /* Transición suave */
-    text-align: center; /* Centra el texto dentro del botón */
-    white-space: nowrap; /* Evita que el texto del botón se rompa en varias líneas */
-    font-size: 1.2em; /* Tamaño más grande */
-    background-color: #FF8C00; /* Naranja oscuro (cálido) */
-    color: white; /* Texto blanco */
-}
-
-.property-card .detail-link:hover {
-    background-color: #E57E00; /* Naranja más oscuro al pasar el ratón */
-    transform: translateY(-3px); /* Levantamiento más pronunciado */
-}
-
-/* ################################################################## */
-/* FIN: Estilos de ENLACES DENTRO de .property-card (REFINADOS) */
-/* ################################################################## */
-
-
-/* Estilos para la página de detalles de la propiedad */
-.property-detail {
-    max-width: 900px; /* Ancho máximo para la página de detalles */
-    margin: 30px auto; /* Centra el contenedor */
-    padding: 30px;
-}
-
-.property-detail .back-link {
-    display: block; /* Ocupa su propia línea */
-    margin-bottom: 20px; /* Espacio debajo del enlace */
-    color: #007bff; /* Color azul */
-    text-decoration: none; /* Sin subrayado */
-    font-weight: bold; /* Negrita */
-    text-align: left; /* Alineado a la izquierda */
-}
-
-.property-detail .back-link:hover {
-    text-decoration: underline; /* Subrayado al pasar el ratón */
-}
-
-.property-detail .price {
-    font-size: 1.8em; /* Tamaño grande para el precio */
-    color: #28a745; /* Color verde para el precio */
-    font-weight: bold; /* Negrita */
-    margin-bottom: 20px; /* Margen inferior */
-}
-
-.property-detail h2 {
-    color: #0056b3; /* Color azul para los subtítulos */
-    border-bottom: 2px solid #eee; /* Línea divisoria */
-    padding-bottom: 10px; /* Relleno debajo del texto */
-    margin-top: 30px; /* Margen superior */
-    margin-bottom: 20px; /* Margen inferior */
-}
-
-.property-detail p {
-    margin-bottom: 10px; /* Espacio entre párrafos */
-}
-
-/* Ajuste para que el enlace de edición en property_detail se vea bien */
-.property-detail .edit-link {
-    margin-bottom: 20px; /* Espacio debajo del botón de edición */
-    margin-top: 0; /* Elimina el margen superior si no es necesario */
-    float: right; /* Flota a la derecha para que esté al lado del título */
-}
-
-/* Ajuste para que el enlace de eliminación en property_detail se vea bien */
-.property-detail .delete-link {
-    margin-bottom: 20px; /* Espacio debajo del botón de eliminación */
-    margin-top: 0; /* Elimina el margen superior si no es necesario */
-    float: right; /* Flota a la derecha para que esté al lado del título */
-    margin-left: 10px; /* Margen a la izquierda para separarlo del botón de edición */
-}
-
-/* Estilos para la tarjeta de confirmación de eliminación */
-.delete-confirmation-card {
-    border: 2px solid #dc3545; /* Borde rojo para la tarjeta de confirmación */
-    background-color: #fff3cd; /* Fondo amarillo claro para la advertencia */
-    padding: 25px; /* Relleno */
-    margin-bottom: 20px; /* Margen inferior */
-}
-
-.delete-confirmation-card h3 {
-    color: #dc3545; /* Color de texto rojo para el título de la propiedad */
-}
-
-/* Estilos para el mensaje de advertencia */
-.warning-message {
-    color: #dc3545; /* Texto rojo oscuro */
-    font-weight: bold; /* Negrita */
-    font-size: 1.2em; /* Tamaño de fuente más grande */
-    margin-top: 20px; /* Margen superior */
-    margin-bottom: 20px; /* Margen inferior */
-    text-align: center; /* Centra el texto */
-}
-
-/* Estilos para el botón de confirmar eliminación */
-.delete-confirm-button {
-    background-color: #dc3545; /* Rojo */
-    color: white; /* Texto blanco */
-    padding: 12px 20px; /* Relleno */
-    border: none; /* Sin borde */
-    border-radius: 5px; /* Bordes redondeados */
-    cursor: pointer; /* Cursor de mano */
-    font-size: 1.1em; /* Tamaño de fuente */
-    font-weight: bold; /* Negrita */
-    transition: background-color 0.3s ease; /* Transición suave */
-    margin-top: 20px; /* Margen superior */
-}
-
-.delete-confirm-button:hover {
-    background-color: #c82333; /* Rojo más oscuro al pasar el ratón */
-}
-
-/* Estilos para el botón de cancelar */
-.cancel-button {
-    display: inline-block; /* Permite aplicar padding y margin */
-    background-color: #6c757d; /* Gris */
-    color: white; /* Texto blanco */
-    padding: 12px 20px; /* Relleno */
-    border-radius: 5px; /* Bordes redondeados */
-    text-decoration: none; /* Sin subrayado */
-    margin-top: 20px; /* Margen superior */
-    margin-left: 15px; /* Margen a la izquierda para separarlo del botón de eliminar */
-    transition: background-color 0.3s ease; /* Transición suave */
-    font-weight: bold; /* Negrita */
-}
-
-.cancel-button:hover {
-    background-color: #5a6268; /* Gris más oscuro al pasar el ratón */
-}
-
-/* Estilos para el Carrusel de Imágenes */
-.carousel-container {
-    position: relative; /* Necesario para posicionar los botones y puntos */
-    max-width: 700px; /* Ancho máximo del carrusel */
-    margin: 30px auto; /* Centra el carrusel */
-    overflow: hidden; /* Oculta las imágenes que no están activas */
-    border-radius: 8px; /* Bordes redondeados */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); /* Sombra para el carrusel */
-    background-color: #fff; /* Fondo blanco */
-}
-
-.carousel-images {
-    display: flex; /* Usa flexbox para alinear las imágenes horizontalmente */
-    width: 100%; /* Ocupa todo el ancho del contenedor */
-    transition: transform 0.5s ease-in-out; /* Transición suave para el deslizamiento */
-}
-
-.carousel-image {
-    width: 100%; /* Cada imagen ocupa el 100% del ancho del carousel-container */
-    height: 400px; /* Altura fija para todas las imágenes del carrusel */
-    object-fit: cover; /* Recorta la imagen para que cubra el área sin distorsionarse */
-    flex-shrink: 0; /* Evita que las imágenes se encojan */
-    border-radius: 8px; /* Bordes redondeados */
-}
-
-/* Botones de navegación del carrusel */
-.carousel-button {
-    position: absolute; /* Posicionamiento absoluto dentro del carousel-container */
-    top: 50%; /* Centra verticalmente */
-    transform: translateY(-50%); /* Ajuste para centrado perfecto */
-    background-color: rgba(0, 0, 0, 0.5); /* Fondo semitransparente oscuro */
-    color: white; /* Texto blanco */
-    border: none; /* Sin borde */
-    padding: 15px; /* Relleno */
-    cursor: pointer; /* Cursor de mano */
-    font-size: 2em; /* Tamaño grande para las flechas */
-    border-radius: 50%; /* Botones circulares */
-    z-index: 10; /* Asegura que estén por encima de las imágenes */
-    transition: background-color 0.3s ease; /* Transición suave */
-}
-
-.carousel-button:hover {
-    background-color: rgba(0, 0, 0, 0.8); /* Más oscuro al pasar el ratón */
-}
-
-.carousel-button.prev {
-    left: 10px; /* Posiciona el botón izquierdo */
-}
-
-.carousel-button.next {
-    right: 10px; /* Posiciona el botón derecho */
-}
-
-/* Puntos de navegación del carrusel (indicadores) */
-.carousel-dots {
-    position: absolute; /* Posicionamiento absoluto */
-    bottom: 15px; /* En la parte inferior */
-    left: 50%; /* Centra horizontalmente */
-    transform: translateX(-50%); /* Ajuste para centrado perfecto */
-    display: flex; /* Usa flexbox para alinear los puntos */
-    gap: 10px; /* Espacio entre los puntos */
-    z-index: 10; /* Asegura que estén por encima de las imágenes */
-}
-
-.dot {
-    width: 12px; /* Ancho del punto */
-    height: 12px; /* Alto del punto */
-    background-color: rgba(255, 255, 255, 0.5); /* Color blanco semitransparente */
-    border-radius: 50%; /* Forma circular */
-    cursor: pointer; /* Cursor de mano */
-    transition: background-color 0.3s ease, transform 0.2s ease; /* Transición suave */
-}
-
-.dot.active {
-    background-color: white; /* Blanco sólido para el punto activo */
-    transform: scale(1.2); /* Ligeramente más grande */
-}
-
-/* ################################################################## */
-/* INICIO: Media Queries para Diseño Responsivo */
-/* ################################################################## */
-
-/* Para pantallas más pequeñas (tablets y móviles grandes) */
+/* Responsive Adjustments */
 @media (max-width: 768px) {
-    .property-grid {
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* 2 columnas en pantallas medianas */
+    .hero-content h1 {
+        font-size: 2.5rem;
     }
-
-    .carousel-image {
-        height: 300px; /* Altura un poco menor para el carrusel en pantallas más pequeñas */
+    .hero-content p.lead {
+        font-size: 1.2rem;
     }
-
-    .property-card .card-actions {
-        flex-direction: column; /* Apila los botones verticalmente en pantallas pequeñas */
-        align-items: stretch; /* Estira los botones para que ocupen todo el ancho */
+    .custom-btn-primary, .custom-btn-outline {
+        padding: 10px 20px;
+        font-size: 1rem;
     }
-
-    .property-card .detail-link {
-        width: 100%; /* Asegura que el botón ocupe todo el ancho disponible */
-        margin-left: 0; /* Elimina margen izquierdo si existe */
+    .property-img {
+        height: 180px;
     }
-
-    .search-form-container {
-        padding: 15px !important; /* Menos padding en formularios en móviles */
+    .card-title {
+        font-size: 1.2rem;
     }
-    .search-form-container .form-select,
-    .search-form-container .form-control {
-        font-size: 0.9em; /* Ajusta el tamaño de fuente de los inputs/botones de búsqueda en móviles */
-        padding: 8px 12px; /* Ajusta el padding */
+    .card-text.text-success {
+        font-size: 1.4rem !important;
     }
-    .search-form-container .btn-primary {
-        font-size: 0.9em; /* Ajusta el tamaño de fuente del botón buscar en móviles */
-        padding: 8px 12px; /* Ajusta el padding */
-    }
-    .search-form-container .form-select-lg,
-    .search-form-container .form-control-lg,
-    .search-form-container .btn-lg {
-        /* Estas clases de Bootstrap ya no necesitan ser ajustadas aquí si los estilos específicos de .search-form-container son más específicos */
-    }
-    .search-form-container .w-100 { /* Asegura que los elementos ocupen todo el ancho en móvil */
-        width: 100% !important;
-    }
-    .custom-select-width { /* Ajuste para el select de venta/renta en móvil */
-        width: 100% !important; /* Ocupa todo el ancho en móvil */
-        max-width: none; /* Elimina el max-width en móvil */
+    .property-location-text {
+        font-size: 0.95rem;
     }
 }
-
-/* Para pantallas muy pequeñas (móviles) */
-@media (max-width: 500px) {
-    .property-grid {
-        grid-template-columns: 1fr; /* 1 columna en pantallas pequeñas */
-    }
-
-    .carousel-image {
-        height: 250px; /* Altura aún menor para el carrusel en móviles */
-    }
-
-    .container {
-        padding: 15px; /* Menos padding en contenedores en móviles */
-    }
-
-    h1 {
-        font-size: 1.8em; /* Tamaño de fuente más pequeño para títulos principales */
-    }
-
-    .property-card h3 {
-        font-size: 1.1em; /* Tamaño de fuente más pequeño para títulos de tarjeta */
-    }
-
-    .property-card p {
-        font-size: 0.85em; /* Tamaño de fuente más pequeño para texto de tarjeta */
-    }
-
-    .property-detail .price {
-        font-size: 1.5em; /* Tamaño de fuente más pequeño para precio en detalles */
-    }
-}
-
-/* ################################################################## */
-/* FIN: Media Queries para Diseño Responsivo */
-/* ################################################################## */

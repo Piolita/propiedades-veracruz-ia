@@ -1,0 +1,66 @@
+{# Modal de Búsqueda para Propiedades en Renta #}
+<div class="modal fade" id="searchModalRenta" tabindex="-1" aria-labelledby="searchModalRentaLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white"> {# Título en azul #}
+                <h5 class="modal-title" id="searchModalRentaLabel">Buscar Propiedades en Renta</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <form id="searchFormRenta">
+                    {# Campo oculto para la operación #}
+                    <input type="hidden" name="operation" value="rentar">
+
+                    <div class="mb-3">
+                        <label for="propertyTypeRenta" class="form-label">Tipo de Propiedad:</label>
+                        <select class="form-select" id="propertyTypeRenta" name="property_type">
+                            <option value="">Cualquier Tipo</option>
+                            <option value="Casa">Casa</option>
+                            <option value="Departamento">Departamento</option>
+                            <option value="Terreno">Terreno</option>
+                            <option value="Local">Local/Oficina</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="locationRenta" class="form-label">Ubicación (Municipio):</label>
+                        <select class="form-select" id="locationRenta" name="location">
+                            <option value="">Cualquier Ubicación</option>
+                            {# Asegúrate que estos valores coincidan EXACTAMENTE con los de tu DB #}
+                            <option value="Boca del Río">Boca del Río</option>
+                            <option value="Medellín">Medellín</option>
+                            <option value="Veracruz">Veracruz</option>
+                            <option value="Alvarado">Alvarado (Riviera Veracruzana)</option> {# Valor exacto de la DB #}
+                            <option value="Otro">Otro</option>
+                        </select>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="minBedroomsRenta" class="form-label">Recámaras (Mín.):</label>
+                            <input type="number" class="form-control" id="minBedroomsRenta" name="min_bedrooms" min="0">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="maxBedroomsRenta" class="form-label">Recámaras (Máx.):</label>
+                            <input type="number" class="form-control" id="maxBedroomsRenta" name="max_bedrooms" min="0">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="priceRangeRenta" class="form-label">Presupuesto (Renta Mensual):</label>
+                        <select class="form-select" id="priceRangeRenta" name="price_range">
+                            <option value="">Cualquier Presupuesto</option>
+                            <option value="0-10000">Hasta $10,000</option>
+                            <option value="10000-20000">$10,000 - $20,000</option>
+                            <option value="20000-30000">$20,000 - $30,000</option>
+                            <option value="30000-40000">$30,000 - $40,000</option>
+                            <option value="40000-50000">$40,000 - $50,000</option>
+                            <option value="50000-max">Más de $50,000</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" id="submitSearchRenta">Buscar</button>
+            </div>
+        </div>
+    </div>
+</div>

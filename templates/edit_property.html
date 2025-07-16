@@ -1,100 +1,128 @@
-{% extends "base.html" %} {# Indica que esta plantilla hereda de base.html #}
+{% extends "base.html" %}
 
-{% block title %}Editar Propiedad - {{ propiedad.titulo }}{% endblock %} {# Título dinámico con el nombre de la propiedad #}
+{% block title %}Editar Propiedad{% endblock %}
 
-{% block content %} {# Bloque de contenido principal de la página #}
-    <div class="container"> {# Contenedor para centrar y dar espacio al formulario #}
-        <h1>Editar Propiedad: {{ propiedad.titulo }}</h1>
-        {# IMPORTANTE: enctype="multipart/form-data" es necesario para la carga de archivos #}
-        {# La acción del formulario ahora apunta a la ruta de edición con el ID de la propiedad #}
-        <form method="POST" action="{{ url_for('main.edit_property', property_id=propiedad.id) }}" enctype="multipart/form-data">
-            <label for="titulo">Título:</label> {# Etiqueta para el campo de entrada #}
-            <input type="text" id="titulo" name="titulo" value="{{ propiedad.titulo }}" required> {# Pre-rellena con el título actual #}
-
-            <label for="descripcion">Descripción:</label>
-            <textarea id="descripcion" name="descripcion" rows="5" required>{{ propiedad.descripcion }}</textarea> {# Pre-rellena con la descripción actual #}
-
-            <label for="precio">Precio:</label>
-            <input type="number" id="precio" name="precio" step="0.01" value="{{ propiedad.precio }}" required> {# Pre-rellena con el precio actual #}
-
-            <label for="direccion">Dirección:</label>
-            <input type="text" id="direccion" name="direccion" value="{{ propiedad.direccion }}" required>
-
-            <label for="municipio">Municipio:</label>
-            <input type="text" id="municipio" name="municipio" value="{{ propiedad.municipio }}" required>
-
-            <label for="estado">Estado:</label>
-            <input type="text" id="estado" name="estado" value="{{ propiedad.estado }}" required> {# Valor predeterminado "Veracruz" #}
-
-            <label for="codigo_postal">Código Postal:</label>
-            <input type="text" id="codigo_postal" name="codigo_postal" value="{{ propiedad.codigo_postal if propiedad.codigo_postal else '' }}"> {# Pre-rellena, maneja si es None #}
-
-            <label for="num_habitaciones">Número de Habitaciones:</label>
-            <input type="number" id="num_habitaciones" name="num_habitaciones" value="{{ propiedad.num_habitaciones }}" required>
-
-            <label for="num_banos">Número de Baños:</label>
-            <input type="number" id="num_banos" name="num_banos" value="{{ propiedad.num_banos }}" required>
-
-            <label for="num_medios_banos">Número de Medios Baños:</label> {# Etiqueta para el campo de medios baños #}
-            <input type="number" id="num_medios_banos" name="num_medios_banos" value="{{ propiedad.num_medios_banos if propiedad.num_medios_banos else '' }}"> {# Pre-rellena, maneja si es None #}
-
-            <label for="num_estacionamientos">Número de Estacionamientos:</label>
-            <input type="number" id="num_estacionamientos" name="num_estacionamientos" value="{{ propiedad.num_estacionamientos if propiedad.num_estacionamientos else '' }}"> {# Pre-rellena, maneja si es None #}
-
-            <label for="antiguedad">Antigüedad (años):</label> {# Etiqueta para el campo de antigüedad #}
-            <input type="number" id="antiguedad" name="antiguedad" value="{{ propiedad.antiguedad if propiedad.antiguedad else '' }}"> {# Pre-rellena, maneja si es None #}
-
-            <label for="area_terreno_metros_cuadrados">Área de Terreno (m²):</label>
-            <input type="number" id="area_terreno_metros_cuadrados" name="area_terreno_metros_cuadrados" step="0.01" value="{{ propiedad.area_terreno_metros_cuadrados if propiedad.area_terreno_metros_cuadrados else '' }}"> {# Pre-rellena, maneja si es None #}
-
-            <label for="area_construccion_metros_cuadrados">Área de Construcción (m²):</label>
-            <input type="number" id="area_construccion_metros_cuadrados" name="area_construccion_metros_cuadrados" step="0.01" value="{{ propiedad.area_construccion_metros_cuadrados }}" required>
-
-            <label for="tipo">Tipo de Propiedad:</label>
-            <select id="tipo" name="tipo" required> {# Menú desplegable para el tipo de propiedad #}
-                <option value="">Seleccione un tipo</option>
-                {# Marca la opción como seleccionada si coincide con el tipo de propiedad actual #}
-                <option value="Casa" {% if propiedad.tipo == 'Casa' %}selected{% endif %}>Casa</option>
-                <option value="Departamento" {% if propiedad.tipo == 'Departamento' %}selected{% endif %}>Departamento</option>
-                <option value="Terreno" {% if propiedad.tipo == 'Terreno' %}selected{% endif %}>Terreno</option>
-                <option value="Oficina" {% if propiedad.tipo == 'Oficina' %}selected{% endif %}>Oficina</option>
-                <option value="Local Comercial" {% if propiedad.tipo == 'Local Comercial' %}selected{% endif %}>Local Comercial</option>
-                <option value="Bodega" {% if propiedad.tipo == 'Bodega' %}selected{% endif %}>Bodega</option>
-                <option value="Rancho" {% if propiedad.tipo == 'Rancho' %}selected{% endif %}>Rancho</option>
-            </select>
-
-            <label for="cuota_mantenimiento">Cuota de Mantenimiento:</label>
-            <input type="number" id="cuota_mantenimiento" name="cuota_mantenimiento" step="0.01" value="{{ propiedad.cuota_mantenimiento if propiedad.cuota_mantenimiento else '' }}"> {# Pre-rellena, maneja si es None #}
-
-            <label for="estado_propiedad">Estado de la Propiedad:</label>
-            <select id="estado_propiedad" name="estado_propiedad" required> {# Menú desplegable para el estado de la propiedad #}
-                <option value="">Seleccione un estado</option>
-                {# Marca la opción como seleccionada si coincide con el estado de propiedad actual #}
-                <option value="Venta" {% if propiedad.estado_propiedad == 'Venta' %}selected{% endif %}>Venta</option>
-                <option value="Alquiler" {% if propiedad.estado_propiedad == 'Alquiler' %}selected{% endif %}>Alquiler</option>
-            </select>
-
-            {# Sección para las imágenes existentes (sección futura para eliminar/marcar principal) #}
-            <h2>Imágenes Actuales</h2>
-            <div class="current-images-gallery">
+{% block content %}
+<div class="container my-5">
+    <h2 class="text-center mb-4 display-5 fw-bold text-primary">Editar Propiedad</h2>
+    <div class="row justify-content-center">
+        {# Ajustado el ancho de la columna a col-md-10 col-lg-8 para que sea más amplio #}
+        <div class="col-md-10 col-lg-8">
+            <form method="POST" action="{{ url_for('main.edit_property', property_id=propiedad.id) }}" enctype="multipart/form-data" class="p-4 border rounded shadow-sm bg-light">
+                <div class="mb-3">
+                    <label for="titulo" class="form-label">Título de la Propiedad:</label>
+                    <input type="text" class="form-control" id="titulo" name="titulo" value="{{ propiedad.titulo }}" required>
+                </div>
+                <div class="mb-3">
+                    <label for="descripcion" class="form-label">Descripción:</label>
+                    <textarea class="form-control" id="descripcion" name="descripcion" rows="5" required>{{ propiedad.descripcion }}</textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="precio" class="form-label">Precio:</label>
+                    <input type="number" class="form-control" id="precio" name="precio" step="0.01" value="{{ propiedad.precio }}" required>
+                </div>
+                <div class="mb-3">
+                    <label for="ubicacion" class="form-label">Dirección (Calle y Número):</label>
+                    <input type="text" class="form-control" id="ubicacion" name="ubicacion" value="{{ propiedad.ubicacion }}" required>
+                </div>
+                <div class="mb-3">
+                    <label for="municipio" class="form-label">Municipio:</label>
+                    <select class="form-select" id="municipio" name="municipio" required>
+                        <option value="">Selecciona un municipio</option>
+                        <option value="Boca del Río" {% if propiedad.municipio == 'Boca del Río' %}selected{% endif %}>Boca del Río</option>
+                        <option value="Medellín" {% if propiedad.municipio == 'Medellín' %}selected{% endif %}>Medellín</option>
+                        <option value="Veracruz" {% if propiedad.municipio == 'Veracruz' %}selected{% endif %}>Veracruz</option>
+                        <option value="Alvarado" {% if propiedad.municipio == 'Alvarado' %}selected{% endif %}>Alvarado (Riviera Veracruzana)</option>
+                        <option value="Otro" {% if propiedad.municipio == 'Otro' %}selected{% endif %}>Otro</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="estado_propiedad" class="form-label">Estado de la Propiedad:</label>
+                    <select class="form-select" id="estado_propiedad" name="estado_propiedad" required>
+                        <option value="">Selecciona estado</option>
+                        <option value="Venta" {% if propiedad.estado_propiedad == 'Venta' %}selected{% endif %}>Venta</option>
+                        <option value="Renta" {% if propiedad.estado_propiedad == 'Renta' %}selected{% endif %}>Renta</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="tipo_propiedad" class="form-label">Tipo de Propiedad:</label>
+                    <select class="form-select" id="tipo_propiedad" name="tipo_propiedad" required>
+                        <option value="">Selecciona tipo</option>
+                        <option value="Casa" {% if propiedad.tipo_propiedad == 'Casa' %}selected{% endif %}>Casa</option>
+                        <option value="Departamento" {% if propiedad.tipo_propiedad == 'Departamento' %}selected{% endif %}>Departamento</option>
+                        <option value="Terreno" {% if propiedad.tipo_propiedad == 'Terreno' %}selected{% endif %}>Terreno</option>
+                        <option value="Local" {% if propiedad.tipo_propiedad == 'Local' %}selected{% endif %}>Local/Oficina</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="num_habitaciones" class="form-label">Número de Habitaciones:</label>
+                    <input type="number" class="form-control" id="num_habitaciones" name="num_habitaciones" min="0" value="{{ propiedad.num_habitaciones if propiedad.num_habitaciones is not none else '' }}">
+                </div>
+                <div class="mb-3">
+                    <label for="num_banos" class="form-label">Número de Baños Completos:</label>
+                    <input type="number" class="form-control" id="num_banos" name="num_banos" min="0" value="{{ propiedad.num_banos if propiedad.num_banos is not none else '' }}">
+                </div>
+                <div class="mb-3">
+                    <label for="num_medios_banos" class="form-label">Número de Medios Baños:</label>
+                    <input type="number" class="form-control" id="num_medios_banos" name="num_medios_banos" min="0" value="{{ propiedad.num_medios_banos if propiedad.num_medios_banos is not none else '' }}">
+                </div>
+                <div class="mb-3">
+                    <label for="num_estacionamientos" class="form-label">Número de Estacionamientos:</label>
+                    <input type="number" class="form-control" id="num_estacionamientos" name="num_estacionamientos" min="0" value="{{ propiedad.num_estacionamientos if propiedad.num_estacionamientos is not none else '' }}">
+                </div>
+                <div class="mb-3">
+                    <label for="area_terreno_metros_cuadrados" class="form-label">Área de Terreno (m²):</label>
+                    <input type="number" class="form-control" id="area_terreno_metros_cuadrados" name="area_terreno_metros_cuadrados" step="0.01" min="0" value="{{ propiedad.area_terreno_metros_cuadrados if propiedad.area_terreno_metros_cuadrados is not none else '' }}">
+                </div>
+                <div class="mb-3">
+                    <label for="area_construccion_metros_cuadrados" class="form-label">Área de Construcción (m²):</label>
+                    <input type="number" class="form-control" id="area_construccion_metros_cuadrados" name="area_construccion_metros_cuadrados" step="0.01" min="0" value="{{ propiedad.area_construccion_metros_cuadrados if propiedad.area_construccion_metros_cuadrados is not none else '' }}">
+                </div>
+                <div class="mb-3">
+                    <label for="cuota_mantenimiento" class="form-label">Cuota de Mantenimiento:</label>
+                    <input type="number" class="form-control" id="cuota_mantenimiento" name="cuota_mantenimiento" step="0.01" min="0" value="{{ propiedad.cuota_mantenimiento if propiedad.cuota_mantenimiento is not none else '' }}">
+                </div>
+                
+                {# Sección para imágenes existentes #}
                 {% if propiedad.imagenes %}
-                    {% for imagen in propiedad.imagenes %}
-                        <div class="image-preview-item">
-                            <img src="{{ url_for('static', filename='uploads/' + imagen.nombre_archivo) }}" alt="Imagen actual">
-                            <p>Principal: {{ 'Sí' if imagen.es_principal else 'No' }}</p>
-                            {# Futuros botones para eliminar o marcar como principal #}
+                <div class="mb-3">
+                    <label class="form-label">Imágenes Actuales:</label>
+                    <div class="row row-cols-1 row-cols-md-3 g-3 mb-3">
+                        {% for imagen in propiedad.imagenes %}
+                        <div class="col">
+                            <div class="card h-100">
+                                <img src="{{ url_for('static', filename='uploads/' + imagen.nombre_archivo) }}" class="card-img-top img-fluid" alt="Imagen de propiedad" style="height: 150px; object-fit: cover;">
+                                <div class="card-body text-center p-2">
+                                    <input type="checkbox" name="delete_images" value="{{ imagen.id }}" id="delete_image_{{ imagen.id }}">
+                                    <label for="delete_image_{{ imagen.id }}" class="form-check-label">Eliminar</label>
+                                    {# Opción para marcar como principal (si hay más de una imagen) #}
+                                    {% if propiedad.imagenes|length > 1 %}
+                                    <div class="form-check form-check-inline ms-2">
+                                        <input class="form-check-input" type="radio" name="principal_image" id="principal_image_{{ imagen.id }}" value="{{ imagen.id }}" {% if imagen.es_principal %}checked{% endif %}>
+                                        <label class="form-check-label" for="principal_image_{{ imagen.id }}">Principal</label>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
                         </div>
-                    {% endfor %}
-                {% else %}
-                    <p>No hay imágenes subidas para esta propiedad.</p>
+                        {% endfor %}
+                    </div>
+                    <small class="text-muted">Marca las casillas para eliminar imágenes o selecciona una nueva imagen principal.</small>
+                </div>
                 {% endif %}
+
+                <div class="mb-3">
+                    <label for="nuevas_imagenes" class="form-label">Añadir Nuevas Imágenes (selecciona múltiples):</label>
+                    <input type="file" class="form-control" id="nuevas_imagenes" name="imagenes" multiple accept="image/*">
+                    <small class="text-muted">Las imágenes se añadirán a las existentes.</small>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100">Guardar Cambios</button>
+            </form>
+            <div class="text-center mt-3">
+                <a href="{{ url_for('main.property_detail', property_id=propiedad.id) }}" class="btn btn-secondary">Cancelar</a>
             </div>
-
-            {# Campo para añadir nuevas imágenes #}
-            <label for="imagenes">Añadir Nuevas Imágenes (múltiples):</label>
-            <input type="file" id="imagenes" name="imagenes" accept="image/*" multiple>
-
-            <button type="submit">Actualizar Propiedad</button> {# Botón para enviar el formulario #}
-        </form>
+        </div>
     </div>
+</div>
 {% endblock %}

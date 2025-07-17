@@ -3,18 +3,15 @@
 {% block title %}Inicio - Propiedades Veracruz IA{% endblock %}
 
 {% block content %}
-<div class="hero-background"> {# Cambiado de video-background a hero-background #}
-    {# Eliminado el tag <video> y su contenido #}
+<div class="hero-background">
     <div class="overlay"></div>
-    <div class="hero-content text-white text-center"> {# Cambiado de video-content a hero-content #}
-        <h1 class="display-3 fw-bold mb-3 animate__animated animate__fadeInDown">ENCUENTRA TU HOGAR IDEAL EN VERACRUZ</h1>
-        <p class="lead mb-4 animate__animated animate__fadeInUp">Explora las mejores propiedades en Boca del Río, Medellín, Veracruz y Alvarado.</p>
+    <div class="hero-content text-white text-center">
+        <h1 class="fw-bold mb-3 animate__animated animate__fadeInDown">Siente Veracruz, vive junto al mar.</h1>
+        <p class="lead mb-4 animate__animated animate__fadeInUp">Encuentra tu casa cerca de la playa.</p>
         <div class="d-flex justify-content-center gap-3 animate__animated animate__fadeInUp animate__delay-1s">
-            {# Botón que abre el modal de Venta #}
             <button type="button" class="btn btn-primary btn-lg custom-btn-primary" data-bs-toggle="modal" data-bs-target="#searchModalVenta">
                 Buscar en Venta
             </button>
-            {# Botón que abre el modal de Renta #}
             <button type="button" class="btn btn-outline-light btn-lg custom-btn-outline" data-bs-toggle="modal" data-bs-target="#searchModalRenta">
                 Buscar en Renta
             </button>
@@ -22,15 +19,37 @@
     </div>
 </div>
 
+{# Nueva Sección: Síguenos en Redes Sociales #}
+<section class="social-follow-section py-5 bg-white text-center">
+    <div class="container">
+        {# Contenedor principal para la imagen y el contenido superpuesto #}
+        <div class="social-image-wrapper position-relative mx-auto rounded shadow-lg overflow-hidden">
+            <img src="{{ url_for('static', filename='img/banners/social_promo.jpg') }}" alt="Síguenos en Redes Sociales" class="img-fluid social-promo-image">
+            
+            {# Contenedor para el título y los iconos superpuestos #}
+            <div class="social-overlay-content position-absolute p-4 text-end">
+                <h2 class="social-section-title-overlay fw-bold text-white mb-3">Síguenos en Redes Sociales</h2>
+                
+                <div class="social-icons-overlay d-flex justify-content-end gap-3">
+                    {# Enlaces a tus perfiles reales de redes sociales #}
+                    <a href="https://www.facebook.com/cMagnaDjesus" class="social-icon-large facebook-bg" target="_blank" rel="noopener noreferrer"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.youtube.com/@propiedades-veracruz_2024" class="social-icon-large youtube-bg" target="_blank" rel="noopener noreferrer"><i class="fab fa-youtube"></i></a>
+                    <a href="https://www.tiktok.com/@cmagnadj" class="social-icon-large tiktok-bg" target="_blank" rel="noopener noreferrer"><i class="fab fa-tiktok"></i></a>
+                    <a href="https://www.instagram.com/propiedades_veracruz/" class="social-icon-large instagram-bg" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
 <section class="py-5 bg-light">
     <div class="container">
-        <h2 class="text-center mb-5 display-4 fw-bold text-primary">Propiedades Destacadas</h2>
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4"> {# Vuelto a 3 cards por línea #}
-            {% if propiedades %} {# propiedades ahora viene de pagination.items #}
+        <h2 class="text-center mb-5 fw-bold text-primary">Echa un vistazo a estas recomendaciones</h2> {# TÍTULO CAMBIADO A LA OPCIÓN FINAL #}
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            {% if propiedades %}
                 {% for propiedad in propiedades %}
                 <div class="col">
                     <div class="card h-100 shadow-sm border-0 rounded-lg overflow-hidden property-card animate__animated animate__fadeInUp">
-                        {# Miniatura de imagen con enlace #}
                         <a href="{{ url_for('main.property_detail', property_id=propiedad.id) }}" class="d-block">
                             {% set principal_image = '' %}
                             {% for imagen in propiedad.imagenes %}
@@ -44,15 +63,12 @@
                             <img src="{{ url_for('static', filename='uploads/' + principal_image) }}" class="card-img-top property-img" alt="Imagen de la propiedad">
                         </a>
                         <div class="card-body d-flex flex-column">
-                            {# Tipo de Propiedad y Estado de Propiedad (juntos, primera posición) #}
                             <p class="card-text text-muted small mb-1">
                                 <span class="fw-bold">{{ propiedad.tipo_propiedad }}</span> | <span class="fw-bold">{{ propiedad.estado_propiedad }}</span>
                             </p>
-                            <h5 class="card-title text-primary fw-bold">{{ propiedad.titulo }}</h5> {# Título de la propiedad #}
-                            {# Ubicación: Mostrar solo Municipio y Estado #}
+                            <h5 class="card-title text-primary fw-bold">{{ propiedad.titulo }}</h5>
                             <p class="card-text text-muted mb-2 property-location-text"><i class="bi bi-geo-alt-fill me-1"></i> {{ propiedad.municipio }}, {{ propiedad.estado }}</p>
                             
-                            {# Iconos de características en negritas #}
                             <div class="d-flex align-items-center mb-2 text-muted small fw-bold">
                                 {% if propiedad.num_habitaciones %}
                                     <span class="me-3"><i class="fas fa-bed me-1"></i> {{ propiedad.num_habitaciones }}</span>
@@ -65,7 +81,6 @@
                                 {% endif %}
                             </div>
                             
-                            {# Área de terreno y construcción en negritas #}
                             <div class="d-flex align-items-center mb-2 text-muted small fw-bold">
                                 {% if propiedad.area_terreno_metros_cuadrados %}
                                     <span class="me-3"><i class="fas fa-ruler-combined me-1"></i> {{ "{:,.0f}".format(propiedad.area_terreno_metros_cuadrados) }} m² t</span>
@@ -75,15 +90,14 @@
                                 {% endif %}
                             </div>
 
-                            {# Cuota de Mantenimiento en nueva línea con texto completo #}
                             {% if propiedad.cuota_mantenimiento %}
                                 <p class="card-text text-muted small mb-2">
                                     <span class="fw-bold">Cuota de Mtto:</span> ${{ "{:,.2f}".format(propiedad.cuota_mantenimiento) }}
                                 </p>
                             {% endif %}
 
-                            <div class="d-flex justify-content-between align-items-center mt-auto pt-2"> {# mt-auto para empujar al final, pt-2 para padding superior #}
-                                <p class="card-text text-dark fs-6 fw-bold mb-0"> {# Precio en negro, tamaño ajustado, sin margen inferior #}
+                            <div class="d-flex justify-content-between align-items-center mt-auto pt-2">
+                                <p class="card-text text-dark fs-6 fw-bold mb-0">
                                     ${{ "{:,.2f}".format(propiedad.precio) }}
                                     {% if propiedad.estado_propiedad == 'Renta' %}
                                         /mes
@@ -162,7 +176,4 @@
         </div>
     </div>
 </div>
-
-
-
 {% endblock %}

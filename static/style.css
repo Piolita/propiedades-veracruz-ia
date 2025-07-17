@@ -24,17 +24,17 @@ html, body {
 }
 
 /* Hero Section with Background Image */
-.hero-background { /* Cambiado de video-background */
+.hero-background {
     position: relative;
     width: 100%;
-    height: 100vh; /* Full viewport height */
+    height: 80vh; /* ALTURA AUMENTADA para que la imagen de fondo se vea más grande */
     overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
     text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
-    background-image: url('/static/img/banners/hero_background.jpg'); /* RUTA CORREGIDA */
+    background-image: url('/static/img/banners/hero_background.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -50,7 +50,7 @@ html, body {
     z-index: 0;
 }
 
-.hero-content { /* Cambiado de video-content */
+.hero-content {
     position: relative;
     z-index: 1;
     padding: 20px;
@@ -59,22 +59,23 @@ html, body {
 }
 
 .hero-content h1 {
-    font-size: 3.5rem; /* Adjust font size for responsiveness */
+    font-size: 2.5rem; /* Tamaño de letra H1 mantenido */
     margin-bottom: 1rem;
 }
 
 .hero-content p.lead {
-    font-size: 1.5rem;
+    font-size: 1.1rem; /* Tamaño de letra subtítulo mantenido */
     margin-bottom: 2rem;
 }
 
+
 /* Custom Buttons for Hero Section */
 .custom-btn-primary {
-    background-color: #007bff; /* Bootstrap primary blue */
+    background-color: #007bff;
     border-color: #007bff;
     padding: 12px 30px;
     font-size: 1.25rem;
-    border-radius: 50px; /* Pill shape */
+    border-radius: 50px;
     transition: all 0.3s ease;
 }
 
@@ -90,7 +91,7 @@ html, body {
     color: #ffffff;
     padding: 12px 30px;
     font-size: 1.25rem;
-    border-radius: 50px; /* Pill shape */
+    border-radius: 50px;
     transition: all 0.3s ease;
 }
 
@@ -104,19 +105,19 @@ html, body {
 /* Property Cards on Index Page */
 .property-card {
     border: none;
-    background-color: #ffffff; /* Fondo blanco para que no se pierda */
-    box-shadow: 4px 4px 12px rgba(0,0,0,0.25); /* Sombra más visible (bottom and right) por defecto */
+    background-color: #ffffff;
+    box-shadow: 4px 4px 12px rgba(0,0,0,0.25);
     transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 }
 
 .property-card:hover {
-    transform: scale(1.03); /* Ligero zoom */
-    box-shadow: 6px 6px 20px rgba(0,0,0,0.4); /* Sombra más intensa en hover */
+    transform: scale(1.03);
+    box-shadow: 6px 6px 20px rgba(0,0,0,0.4);
 }
 
 .property-img {
-    height: 200px; /* Fixed height for images */
-    object-fit: cover; /* Ensures images cover the area without distortion */
+    height: 200px;
+    object-fit: cover;
     border-bottom: 1px solid #eee;
 }
 
@@ -125,21 +126,21 @@ html, body {
     margin-bottom: 0.5rem;
 }
 
-.property-location-text { /* Estilo para el texto de ubicación */
-    font-size: 1.1rem; /* Un poco más grande que los features, más pequeño que el título */
+.property-location-text {
+    font-size: 1.1rem;
 }
 
 .card-text.text-muted {
     font-size: 0.9rem;
 }
 
-.card-text.text-dark { /* Color negro para el precio */
-    color: #212529 !important; /* Bootstrap dark color */
-    font-size: 1.2rem !important; /* Tamaño ajustado para el precio (un poco más pequeño) */
+.card-text.text-dark {
+    color: #212529 !important;
+    font-size: 1.2rem !important;
     font-weight: bold;
 }
 
-.custom-detail-btn { /* Estilo para el botón "Ver Detalles" */
+.custom-detail-btn {
     border-radius: 0.5rem;
     padding: 0.5rem 1rem;
     font-size: 0.9rem;
@@ -149,7 +150,7 @@ html, body {
 /* Property Detail Page */
 .property-detail-img {
     max-height: 500px;
-    object-fit: contain; /* Ensures the whole image is visible */
+    object-fit: contain;
     width: 100%;
 }
 
@@ -171,7 +172,7 @@ html, body {
 
 /* Footer */
 footer {
-    background-color: #212529; /* Dark background */
+    background-color: #212529;
     color: #f8f9fa;
 }
 
@@ -183,16 +184,128 @@ footer {
 }
 
 .social-icons a:hover {
-    color: #007bff; /* Highlight on hover */
+    color: #007bff;
 }
+
+/* Botón Flotante de WhatsApp */
+.whatsapp-float {
+    position: fixed;
+    width: 60px;
+    height: 60px;
+    bottom: 40px;
+    right: 40px;
+    background-color: #25d366;
+    color: #FFF;
+    border-radius: 50px;
+    text-align: center;
+    font-size: 30px;
+    box-shadow: 2px 2px 3px #999;
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.whatsapp-float i {
+    margin-top: 0;
+}
+
+.whatsapp-float:hover {
+    background-color: #1da851;
+    transform: scale(1.05);
+    color: #FFF;
+}
+
+/* Sección "Síguenos en Redes Sociales" */
+.social-follow-section {
+    background-color: #f8f9fa;
+    padding: 60px 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+/* Contenedor principal para la imagen y el contenido superpuesto */
+.social-image-wrapper {
+    position: relative;
+    max-width: 900px; /* VUELTO AL ANCHO ORIGINAL para la imagen de redes sociales */
+    margin: 0 auto;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.social-promo-image {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Contenedor para el título y los iconos superpuestos */
+.social-overlay-content {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background-color: transparent;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: flex-end;
+    max-width: 50%;
+    box-sizing: border-box;
+}
+
+.social-section-title-overlay {
+    font-size: 1.5rem;
+    color: #000 !important;
+    margin-bottom: 15px;
+    text-shadow: none;
+    white-space: nowrap;
+}
+
+.social-icons-overlay {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+/* Estilos de los iconos dentro del overlay */
+.social-icons-overlay .social-icon-large {
+    width: 45px;
+    height: 45px;
+    font-size: 22px;
+    border-radius: 50%;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.social-icons-overlay .social-icon-large:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+}
+
+/* Colores de fondo para los iconos de redes sociales */
+.whatsapp-bg { background-color: #25d366; }
+.facebook-bg { background-color: #1877f2; }
+.youtube-bg { background-color: #ff0000; }
+.tiktok-bg { background-color: #000000; }
+.instagram-bg {
+    background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285aeb 90%);
+}
+
 
 /* Responsive Adjustments */
 @media (max-width: 768px) {
     .hero-content h1 {
-        font-size: 2.5rem;
+        font-size: 2rem;
     }
     .hero-content p.lead {
-        font-size: 1.2rem;
+        font-size: 1rem;
     }
     .custom-btn-primary, .custom-btn-outline {
         padding: 10px 20px;
@@ -209,5 +322,35 @@ footer {
     }
     .property-location-text {
         font-size: 0.95rem;
+    }
+
+    /* Ajuste para el botón flotante en móviles */
+    .whatsapp-float {
+        width: 50px;
+        height: 50px;
+        bottom: 20px;
+        right: 20px;
+        font-size: 25px;
+    }
+
+    /* Ajustes para la sección de redes sociales en móviles */
+    .social-image-wrapper {
+        max-width: 100%;
+        border-radius: 0;
+    }
+    .social-overlay-content {
+        padding: 10px;
+        max-width: 70%;
+        border-radius: 0;
+    }
+    .social-section-title-overlay {
+        font-size: 1.2rem;
+        margin-bottom: 8px;
+    }
+    .social-icons-overlay .social-icon-large {
+        width: 35px;
+        height: 35px;
+        font-size: 18px;
+        gap: 8px;
     }
 }

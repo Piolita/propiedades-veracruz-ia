@@ -1,4 +1,4 @@
-// Espera a que el DOM esté completamente cargado (más fiable que window.onload para elementos dinámicos)
+// Espera a que el DOM esté completamente cargado
 document.addEventListener('DOMContentLoaded', function() {
     console.log('search_modals.js se está ejecutando (versión final y corregida).');
 
@@ -16,13 +16,15 @@ document.addEventListener('DOMContentLoaded', function() {
     const searchModalVenta = searchModalVentaElement ? new bootstrap.Modal(searchModalVentaElement) : null;
     const searchModalRenta = searchModalRentaElement ? new bootstrap.Modal(searchModalRentaElement) : null;
     const validationModal = validationModalElement ? new bootstrap.Modal(validationModalElement) : null;
-    // La instancia de deleteConfirmationModal se creará más tarde, bajo demanda.
 
     let propertyIdToDelete = null; // Variable para almacenar el ID de la propiedad a eliminar
 
     // Referencias a los botones "Buscar" dentro de cada modal de búsqueda
     const submitSearchVentaBtn = document.getElementById('submitSearchVenta');
     const submitSearchRentaBtn = document.getElementById('submitSearchRenta');
+
+    // Referencia al botón flotante de WhatsApp
+    const whatsappFloatBtn = document.getElementById('whatsapp-float-btn');
 
     // ##################################################################
     // FIN: Referencias a elementos del DOM y variables de estado
@@ -120,6 +122,39 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
     // ##################################################################
+    // INICIO: Lógica del Botón Flotante de WhatsApp
+    // ##################################################################
+
+    function updateWhatsAppLink() {
+        if (!whatsappFloatBtn) {
+            console.warn("Botón flotante de WhatsApp no encontrado.");
+            return;
+        }
+
+        const currentPath = window.location.pathname;
+        let message = "Hola, me interesa saber más sobre Propiedades Veracruz IA.";
+        let phoneNumber = "522293019294"; // ¡NÚMERO DE TELÉFONO CORREGIDO!
+
+        // Detectar si estamos en la página de detalle de una propiedad
+        const propertyDetailMatch = currentPath.match(/\/property\/(\d+)/);
+        if (propertyDetailMatch) {
+            const propertyId = propertyDetailMatch[1];
+            message = `Hola, me interesa la propiedad con ID ${propertyId}. ¿Podrías darme más información?`;
+        }
+
+        const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+        whatsappFloatBtn.href = whatsappUrl;
+    }
+
+    // Llamar a la función al cargar la página
+    updateWhatsAppLink();
+
+    // ##################################################################
+    // FIN: Lógica del Botón Flotante de WhatsApp
+    // ##################################################################
+
+
+    // ##################################################################
     // INICIO: Event Listeners (Controladores de Eventos)
     // ##################################################################
 
@@ -142,42 +177,25 @@ document.addEventListener('DOMContentLoaded', function() {
     // Event listener para abrir el modal de confirmación de eliminación
     // Delegamos el evento al documento para capturar clics en botones de eliminación dinámicos
     document.addEventListener('click', function(event) {
-        // Asegúrate de que el elemento clicado sea el botón "Eliminar Propiedad"
-        // y que tenga los atributos data-bs-toggle y data-property-id
         if (event.target && event.target.matches('button[data-bs-target="#deleteConfirmationModal"]')) {
             propertyIdToDelete = event.target.dataset.propertyId; // Captura el ID de la propiedad
             console.log("Botón Eliminar clicado. propertyIdToDelete:", propertyIdToDelete); // Debugging
 
-            // Crea la instancia del modal aquí, justo antes de mostrarlo
             if (deleteConfirmationModalElement) {
                 const deleteConfirmationModalInstance = new bootstrap.Modal(deleteConfirmationModalElement);
                 deleteConfirmationModalInstance.show(); // Muestra el modal de confirmación
 
-                // Adjunta el listener al botón de confirmación *dentro del modal*
-                // Esto asegura que el botón existe cuando se intenta adjuntar el listener
                 const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
                 if (confirmDeleteBtn) {
-                    // Eliminar cualquier listener previo para evitar duplicados
                     confirmDeleteBtn.removeEventListener('click', handleDeleteConfirmation);
                     confirmDeleteBtn.addEventListener('click', handleDeleteConfirmation);
                     console.log("Listener adjuntado a confirmDeleteBtn."); // Debugging
                 }
-                // No necesitamos el 'else' aquí porque la advertencia ya no es relevante.
             } else {
                 console.error("Elemento del modal de confirmación de eliminación no encontrado. Asegúrate de que el modal esté en el DOM.");
             }
         }
     });
-
-    // Eliminamos la advertencia que causaba confusión, ya que el listener se adjunta correctamente al abrir el modal.
-    // if (confirmDeleteBtn) { // Esta sección se ha movido al listener 'shown.bs.modal'
-    //     confirmDeleteBtn.addEventListener('click', function() {
-    //         console.log("Botón Confirmar Eliminar clicado."); // Debugging
-    //         handleDeleteConfirmation();
-    //     });
-    // } else {
-    //     console.warn("Botón 'confirmDeleteBtn' no encontrado. Asegúrate de que el ID sea correcto."); // Debugging
-    // }
 
     // ##################################################################
     // FIN: Event Listeners

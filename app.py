@@ -6,25 +6,19 @@ from datetime import datetime
 import os
 from werkzeug.utils import secure_filename
 from sqlalchemy import or_
+from config import config_by_name
+
 
 # Inicialización de la aplicación Flask
 app = Flask(__name__)
 
-# Configuración de la base de datos SQLite
-# Asegúrate de que la ruta sea absoluta para evitar problemas
-basedir = os.path.abspath(os.path.dirname(__file__))
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'site.db')
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SECRET_KEY'] = 'your_secret_key_here' # ¡Cambia esto por una clave secreta fuerte!
+# --- APLICA LA CONFIGURACIÓN SEGÚN EL ENTORNO ---
+# Obtiene el entorno de la variable de entorno FLASK_ENV, por defecto 'development'
+config_name = os.environ.get('FLASK_ENV', 'development')
+app.config.from_object(config_by_name[config_name]) # Carga la configuración correspondiente
 
-# Configuración para la carga de imágenes
-UPLOAD_FOLDER = os.path.join(basedir, 'static/uploads')
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # Límite de 16MB para archivos
-
-# Asegúrate de que la carpeta de subida exista
-if not os.path.exists(UPLOAD_FOLDER):
-    os.makedirs(UPLOAD_FOLDER)
+if not os.path.exists(app.config['UPLOAD_FOLDER']):
+    os.makedirs(app.config['UPLOAD_FOLDER'])
 
 # Inicialización de SQLAlchemy
 db = SQLAlchemy(app)
@@ -396,4 +390,4 @@ with app.app_context():
         print("Usuario 'admin' creado.")
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run() 

@@ -1,0 +1,12 @@
+Flask==2.3.3
+Flask-SQLAlchemy==3.1.1
+Flask-Login==0.6.3
+Flask-Migrate==4.0.5
+Flask-Moment==1.0.6
+Werkzeug==2.3.7
+SQLAlchemy==2.0.23
+python-dotenv==1.0.0
+psycopg2-binary==2.9.9 # Si usas PostgreSQL en producción, si no, es opcional
+gunicorn==21.2.0 # Para producción, opcional en desarrollo
+Pillow==10.0.1 # Para manejo de imágenes
+passlib==1.7.4 # Para hashing de contraseñas

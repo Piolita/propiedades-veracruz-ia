@@ -1,0 +1,65 @@
+{# templates/dashboard.html #}
+
+{% extends "base.html" %} {# Extiende tu plantilla base para heredar la estructura y estilos #}
+
+{% block title %}Mi Panel de Administración{% endblock %} {# Título específico para esta página #}
+
+{% block content %}
+    <div class="container mt-5 pt-5"> {# Contenedor principal con margen superior para evitar solapamiento con la navbar #}
+        <h1 class="mb-4 text-center">Panel de Administración de Propiedades</h1>
+
+        {# Botón para añadir nueva propiedad #}
+        <div class="d-flex justify-content-end mb-4">
+            <a href="{{ url_for('main.add_property') }}" class="btn btn-primary">Añadir Nueva Propiedad</a>
+        </div>
+
+        {# Tabla para listar las propiedades del usuario #}
+        {% if properties %} {# Verifica si hay propiedades para mostrar #}
+            <div class="table-responsive"> {# Hace la tabla responsive en pantallas pequeñas #}
+                <table class="table table-striped table-hover align-middle"> {# Estilos de tabla de Bootstrap #}
+                    <thead class="table-dark">
+                        <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Título</th>
+                            <th scope="col">Ubicación</th>
+                            <th scope="col">Precio</th>
+                            <th scope="col">Estado</th>
+                            <th scope="col">Tipo</th>
+                            <th scope="col">Fecha Publicación</th>
+                            <th scope="col" class="text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for property in properties %} {# Itera sobre la lista de propiedades #}
+                        <tr>
+                            <td>{{ property.id }}</td>
+                            <td><a href="{{ url_for('main.property_detail', property_id=property.id) }}">{{ property.titulo }}</a></td>
+                            <td>{{ property.ubicacion }}, {{ property.municipio }}</td>
+                            <td>${{ "{:,.2f}".format(property.precio) }}</td> {# Formato de moneda #}
+                            <td>{{ property.estado_propiedad }}</td>
+                            <td>{{ property.tipo_propiedad }}</td>
+                            <td>{{ property.fecha_publicacion.strftime('%Y-%m-%d') }}</td> {# Formato de fecha #}
+                            <td class="text-center">
+                                {# Botón para editar la propiedad #}
+                                <a href="{{ url_for('main.edit_property', property_id=property.id) }}" class="btn btn-sm btn-info text-white me-2">
+                                    <i class="fas fa-edit"></i> Editar
+                                </a>
+                                {# Botón para eliminar la propiedad (usando un formulario POST para seguridad) #}
+                                <form action="{{ url_for('main.delete_property', property_id=property.id) }}" method="POST" class="d-inline">
+                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('¿Estás seguro de que quieres eliminar esta propiedad? Esta acción no se puede deshacer.');">
+                                        <i class="fas fa-trash-alt"></i> Eliminar
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %} {# Mensaje si no hay propiedades #}
+            <div class="alert alert-info text-center" role="alert">
+                Aún no has añadido ninguna propiedad. ¡Haz clic en "Añadir Nueva Propiedad" para empezar!
+            </div>
+        {% endif %}
+    </div>
+{% endblock content %}

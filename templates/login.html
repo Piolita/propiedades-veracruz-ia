@@ -2,25 +2,41 @@
 
 {% block title %}Iniciar Sesión{% endblock %} {# Título de la página #}
 
-{% block content %} {# Bloque de contenido principal #}
-    <div class="container mt-5"> {# Contenedor de Bootstrap con margen superior #}
-        <div class="row justify-content-center"> {# Fila para centrar el contenido #}
-            <div class="col-md-6 col-lg-4"> {# Columnas para controlar el ancho en diferentes tamaños de pantalla #}
-                <div class="card shadow-lg p-4"> {# Tarjeta de Bootstrap con sombra y padding #}
-                    <h2 class="card-title text-center mb-4">Acceso Administrativo</h2> {# Título del formulario #}
-                    <form method="POST" action="{{ url_for('main.login') }}"> {# Formulario que envía datos a la ruta de login #}
-                        <div class="mb-3"> {# Margen inferior para el grupo de formulario #}
-                            <label for="username" class="form-label">Nombre de Usuario</label> {# Etiqueta del campo #}
-                            <input type="text" class="form-control" id="username" name="username" required> {# Campo de entrada #}
+{% block content %}
+    <div class="content-section">
+        <form method="POST" action="" novalidate>
+            {{ form.hidden_tag() }} <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Iniciar Sesión</legend>
+                <div class="form-group">
+                    {{ form.username.label(class="form-control-label") }}
+                    {{ form.username(class="form-control form-control-lg") }}
+                    {% if form.username.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.username.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
                         </div>
-                        <div class="mb-4"> {# Margen inferior para el grupo de formulario #}
-                            <label for="password" class="form-label">Contraseña</label> {# Etiqueta del campo #}
-                            <input type="password" class="form-control" id="password" name="password" required> {# Campo de entrada de contraseña #}
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100">Iniciar Sesión</button> {# Botón de enviar #}
-                    </form>
+                    {% endif %}
                 </div>
+                <div class="form-group">
+                    {{ form.password.label(class="form-control-label") }}
+                    {{ form.password(class="form-control form-control-lg") }}
+                    {% if form.password.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.password.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="form-check">
+                    {{ form.remember(class="form-check-input") }}
+                    {{ form.remember.label(class="form-check-label") }}
+                </div>
+            </fieldset>
+            <div class="form-group">
+                {{ form.submit(class="btn btn-outline-info") }}
             </div>
-        </div>
+        </form>
     </div>
-{% endblock %}
+{% endblock content %}

@@ -1,93 +1,219 @@
+<!-- templates/add_property.html -->
+
 {% extends "base.html" %}
 
-{% block title %}Añadir Propiedad{% endblock %}
+{% block title %}Añadir Nueva Propiedad{% endblock %} {# Mantén tu bloque de título aquí #}
 
 {% block content %}
-<div class="container my-5">
-    <h2 class="text-center mb-4 display-5 fw-bold text-primary">Añadir Nueva Propiedad</h2>
-    <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-7">
-            <form method="POST" action="{{ url_for('main.add_property') }}" enctype="multipart/form-data" class="p-4 border rounded shadow-sm bg-light">
-                <div class="mb-3">
-                    <label for="titulo" class="form-label">Título de la Propiedad:</label>
-                    <input type="text" class="form-control" id="titulo" name="titulo" required>
+    <div class="content-section">
+        {# CRÍTICO: Asegúrate de que form method="POST" action="" enctype="multipart/form-data" novalidate esté presente #}
+        <form method="POST" action="" enctype="multipart/form-data" novalidate>
+            {# CRÍTICO: Esto renderiza el token CSRF y otros campos ocultos. ¡Esencial para la seguridad! #}
+            {{ form.hidden_tag() }} 
+            
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Añadir Nueva Propiedad</legend>
+
+                <!-- Título -->
+                <div class="form-group">
+                    {{ form.titulo.label(class="form-control-label") }}
+                    {{ form.titulo(class="form-control form-control-lg {% if form.titulo.errors %}is-invalid{% endif %}") }}
+                    {# CRÍTICO: Este bloque muestra los errores de validación para el campo 'titulo' #}
+                    {% if form.titulo.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.titulo.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
                 </div>
-                <div class="mb-3">
-                    <label for="descripcion" class="form-label">Descripción:</label>
-                    <textarea class="form-control" id="descripcion" name="descripcion" rows="5" required></textarea>
+
+                <!-- Descripción -->
+                <div class="form-group">
+                    {{ form.descripcion.label(class="form-control-label") }}
+                    {{ form.descripcion(class="form-control form-control-lg {% if form.descripcion.errors %}is-invalid{% endif %}", rows=5) }}
+                    {# CRÍTICO: Bloque de errores para 'descripcion' #}
+                    {% if form.descripcion.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.descripcion.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
                 </div>
-                <div class="mb-3">
-                    <label for="precio" class="form-label">Precio:</label>
-                    <input type="number" class="form-control" id="precio" name="precio" step="0.01" required>
+
+                <!-- Precio -->
+                <div class="form-group">
+                    {{ form.precio.label(class="form-control-label") }}
+                    {{ form.precio(class="form-control form-control-lg {% if form.precio.errors %}is-invalid{% endif %}") }}
+                    {# CRÍTICO: Bloque de errores para 'precio' #}
+                    {% if form.precio.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.precio.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
                 </div>
-                <div class="mb-3">
-                    <label for="ubicacion" class="form-label">Dirección (Calle y Número):</label>
-                    <input type="text" class="form-control" id="ubicacion" name="ubicacion" required>
+
+                <!-- Ubicación -->
+                <div class="form-group">
+                    {{ form.ubicacion.label(class="form-control-label") }}
+                    {{ form.ubicacion(class="form-control form-control-lg {% if form.ubicacion.errors %}is-invalid{% endif %}") }}
+                    {% if form.ubicacion.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.ubicacion.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
                 </div>
-                <div class="mb-3">
-                    <label for="municipio" class="form-label">Municipio:</label>
-                    <select class="form-select" id="municipio" name="municipio" required>
-                        <option value="">Selecciona un municipio</option>
-                        <option value="Boca del Río">Boca del Río</option>
-                        <option value="Medellín">Medellín</option>
-                        <option value="Veracruz">Veracruz</option>
-                        <option value="Alvarado">Alvarado (Riviera Veracruzana)</option>
-                        <option value="Otro">Otro</option>
-                    </select>
+
+                <!-- Municipio -->
+                <div class="form-group">
+                    {{ form.municipio.label(class="form-control-label") }}
+                    {{ form.municipio(class="form-control form-control-lg {% if form.municipio.errors %}is-invalid{% endif %}") }}
+                    {% if form.municipio.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.municipio.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
                 </div>
-                <div class="mb-3">
-                    <label for="estado_propiedad" class="form-label">Estado de la Propiedad:</label>
-                    <select class="form-select" id="estado_propiedad" name="estado_propiedad" required>
-                        <option value="">Selecciona estado</option>
-                        <option value="Venta">Venta</option>
-                        <option value="Renta">Renta</option>
-                    </select>
+
+                <!-- Estado de la Propiedad (Venta/Renta) -->
+                <div class="form-group">
+                    {{ form.estado_propiedad.label(class="form-control-label") }}
+                    {{ form.estado_propiedad(class="form-control form-control-lg {% if form.estado_propiedad.errors %}is-invalid{% endif %}") }}
+                    {% if form.estado_propiedad.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.estado_propiedad.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
                 </div>
-                <div class="mb-3">
-                    <label for="tipo_propiedad" class="form-label">Tipo de Propiedad:</label>
-                    <select class="form-select" id="tipo_propiedad" name="tipo_propiedad" required>
-                        <option value="">Selecciona tipo</option>
-                        <option value="Casa">Casa</option>
-                        <option value="Departamento">Departamento</option>
-                        <option value="Terreno">Terreno</option>
-                        <option value="Local">Local/Oficina</option>
-                    </select>
+
+                <!-- Tipo de Propiedad -->
+                <div class="form-group">
+                    {{ form.tipo_propiedad.label(class="form-control-label") }}
+                    {{ form.tipo_propiedad(class="form-control form-control-lg {% if form.tipo_propiedad.errors %}is-invalid{% endif %}") }}
+                    {% if form.tipo_propiedad.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.tipo_propiedad.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
                 </div>
-                <div class="mb-3">
-                    <label for="num_habitaciones" class="form-label">Número de Habitaciones:</label>
-                    <input type="number" class="form-control" id="num_habitaciones" name="num_habitaciones" min="0">
+
+                <!-- Campos numéricos opcionales -->
+                <div class="form-row">
+                    <div class="form-group col-md-4">
+                        {{ form.num_habitaciones.label(class="form-control-label") }}
+                        {{ form.num_habitaciones(class="form-control {% if form.num_habitaciones.errors %}is-invalid{% endif %}") }}
+                        {% if form.num_habitaciones.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.num_habitaciones.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-md-4">
+                        {{ form.num_banos.label(class="form-control-label") }}
+                        {{ form.num_banos(class="form-control {% if form.num_banos.errors %}is-invalid{% endif %}") }}
+                        {% if form.num_banos.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.num_banos.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-md-4">
+                        {{ form.num_medios_banos.label(class="form-control-label") }}
+                        {{ form.num_medios_banos(class="form-control {% if form.num_medios_banos.errors %}is-invalid{% endif %}") }}
+                        {% if form.num_medios_banos.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.num_medios_banos.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
                 </div>
-                <div class="mb-3">
-                    <label for="num_banos" class="form-label">Número de Baños Completos:</label>
-                    <input type="number" class="form-control" id="num_banos" name="num_banos" min="0">
+
+                <div class="form-row">
+                    <div class="form-group col-md-4">
+                        {{ form.num_estacionamientos.label(class="form-control-label") }}
+                        {{ form.num_estacionamientos(class="form-control {% if form.num_estacionamientos.errors %}is-invalid{% endif %}") }}
+                        {% if form.num_estacionamientos.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.num_estacionamientos.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-md-4">
+                        {{ form.area_terreno_metros_cuadrados.label(class="form-control-label") }}
+                        {{ form.area_terreno_metros_cuadrados(class="form-control {% if form.area_terreno_metros_cuadrados.errors %}is-invalid{% endif %}") }}
+                        {% if form.area_terreno_metros_cuadrados.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.area_terreno_metros_cuadrados.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-md-4">
+                        {{ form.area_construccion_metros_cuadrados.label(class="form-control-label") }}
+                        {{ form.area_construccion_metros_cuadrados(class="form-control {% if form.area_construccion_metros_cuadrados.errors %}is-invalid{% endif %}") }}
+                        {% if form.area_construccion_metros_cuadrados.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.area_construccion_metros_cuadrados.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
                 </div>
-                <div class="mb-3">
-                    <label for="num_medios_banos" class="form-label">Número de Medios Baños:</label>
-                    <input type="number" class="form-control" id="num_medios_banos" name="num_medios_banos" min="0">
+
+                <!-- Cuota de Mantenimiento -->
+                <div class="form-group">
+                    {{ form.cuota_mantenimiento.label(class="form-control-label") }}
+                    {{ form.cuota_mantenimiento(class="form-control form-control-lg {% if form.cuota_mantenimiento.errors %}is-invalid{% endif %}") }}
+                    {% if form.cuota_mantenimiento.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.cuota_mantenimiento.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
                 </div>
-                <div class="mb-3">
-                    <label for="num_estacionamientos" class="form-label">Número de Estacionamientos:</label>
-                    <input type="number" class="form-control" id="num_estacionamientos" name="num_estacionamientos" min="0">
+
+                <!-- Campo de Imágenes -->
+                <div class="form-group">
+                    {{ form.imagenes.label(class="form-control-label") }}
+                    <div class="custom-file">
+                        {{ form.imagenes(class="custom-file-input {% if form.imagenes.errors %}is-invalid{% endif %}", multiple=True) }}
+                        <label class="custom-file-label" for="imagenes">Elegir archivo(s)</label>
+                    </div>
+                    {% if form.imagenes.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.imagenes.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
                 </div>
-                <div class="mb-3">
-                    <label for="area_terreno_metros_cuadrados" class="form-label">Área de Terreno (m²):</label>
-                    <input type="number" class="form-control" id="area_terreno_metros_cuadrados" name="area_terreno_metros_cuadrados" step="0.01" min="0">
-                </div>
-                <div class="mb-3">
-                    <label for="area_construccion_metros_cuadrados" class="form-label">Área de Construcción (m²):</label>
-                    <input type="number" class="form-control" id="area_construccion_metros_cuadrados" name="area_construccion_metros_cuadrados" step="0.01" min="0">
-                </div>
-                <div class="mb-3">
-                    <label for="cuota_mantenimiento" class="form-label">Cuota de Mantenimiento:</label>
-                    <input type="number" class="form-control" id="cuota_mantenimiento" name="cuota_mantenimiento" step="0.01" min="0">
-                </div>
-                <div class="mb-3">
-                    <label for="imagenes" class="form-label">Imágenes (selecciona múltiples):</label>
-                    <input type="file" class="form-control" id="imagenes" name="imagenes" multiple accept="image/*">
-                </div>
-                <button type="submit" class="btn btn-primary w-100">Añadir Propiedad</button>
-            </form>
-        </div>
+
+            </fieldset>
+            <div class="form-group">
+                {{ form.submit(class="btn btn-outline-info") }}
+            </div>
+        </form>
     </div>
-</div>
-{% endblock %}
+{% endblock content %}

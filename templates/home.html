@@ -46,69 +46,89 @@
     <div class="container">
         <h2 class="text-center mb-5 fw-bold text-primary">Echa un vistazo a estas recomendaciones</h2> {# TÍTULO CAMBIADO A LA OPCIÓN FINAL #}
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-            {% if propiedades %}
-                {% for propiedad in propiedades %}
+            {# CAMBIO: 'propiedades' a 'properties' #}
+            {% if properties %}
+                {# CAMBIO: 'propiedad' a 'property' y 'propiedades' a 'properties' #}
+                {% for property in properties %}
                 <div class="col">
                     <div class="card h-100 shadow-sm border-0 rounded-lg overflow-hidden property-card animate__animated animate__fadeInUp">
-                        <a href="{{ url_for('main.property_detail', property_id=propiedad.id) }}" class="d-block">
+                        {# CAMBIO: 'propiedad.id' a 'property.id' #}
+                        <a href="{{ url_for('main.property_detail', property_id=property.id) }}" class="d-block">
                             {% set principal_image = '' %}
-                            {% for imagen in propiedad.imagenes %}
-                                {% if imagen.es_principal %}
-                                    {% set principal_image = imagen.nombre_archivo %}
+                            {# CAMBIO: 'propiedad.imagenes' a 'property.images' #}
+                            {% for image in property.images %} {# CAMBIO: 'imagen' a 'image' #}
+                                {% if image.es_principal %} {# CAMBIO: 'imagen.es_principal' a 'image.es_principal' #}
+                                    {% set principal_image = image.filename %} {# CAMBIO: 'imagen.nombre_archivo' a 'image.filename' #}
                                 {% endif %}
                             {% endfor %}
-                            {% if not principal_image and propiedad.imagenes %}
-                                {% set principal_image = propiedad.imagenes[0].nombre_archivo %}
+                            {# CAMBIO: 'propiedad.imagenes' a 'property.images' #}
+                            {% if not principal_image and property.images %}
+                                {% set principal_image = property.images[0].filename %} {# CAMBIO: 'propiedad.imagenes[0].nombre_archivo' a 'property.images[0].filename' #}
                             {% endif %}
                             <img src="{{ url_for('static', filename='uploads/' + principal_image) }}" class="card-img-top property-img" alt="Imagen de la propiedad">
                         </a>
                         <div class="card-body d-flex flex-column">
                             <p class="card-text text-muted small mb-1">
-                                <span class="fw-bold">{{ propiedad.tipo_propiedad }}</span> | <span class="fw-bold">{{ propiedad.estado_propiedad }}</span>
+                                {# CAMBIO: 'propiedad.tipo_propiedad' a 'property.tipo_propiedad' #}
+                                <span class="fw-bold">{{ property.tipo_propiedad }}</span> | 
+                                {# CAMBIO: 'propiedad.estado_propiedad' a 'property.estado_propiedad' #}
+                                <span class="fw-bold">{{ property.estado_propiedad }}</span>
                             </p>
-                            <h5 class="card-title text-primary fw-bold">{{ propiedad.titulo }}</h5>
-                            <p class="card-text text-muted mb-2 property-location-text"><i class="bi bi-geo-alt-fill me-1"></i> {{ propiedad.municipio }}, {{ propiedad.estado }}</p>
+                            {# CAMBIO: 'propiedad.titulo' a 'property.titulo' #}
+                            <h5 class="card-title text-primary fw-bold">{{ property.titulo }}</h5>
+                            {# CAMBIO: 'propiedad.municipio', 'propiedad.estado' a 'property.municipio', 'property.estado' #}
+                            <p class="card-text text-muted mb-2 property-location-text"><i class="bi bi-geo-alt-fill me-1"></i> {{ property.municipio }}, {{ property.estado }}</p>
                             
                             <div class="d-flex align-items-center mb-2 text-muted small fw-bold">
-                                {% if propiedad.num_habitaciones %}
-                                    <span class="me-3"><i class="fas fa-bed me-1"></i> {{ propiedad.num_habitaciones }}</span>
+                                {# CAMBIO: 'propiedad.num_habitaciones' a 'property.num_habitaciones' #}
+                                {% if property.num_habitaciones %}
+                                    <span class="me-3"><i class="fas fa-bed me-1"></i> {{ property.num_habitaciones }}</span>
                                 {% endif %}
-                                {% if propiedad.num_banos %}
-                                    <span class="me-3"><i class="fas fa-bath me-1"></i> {{ propiedad.num_banos }}{% if propiedad.num_medios_banos %}.5{% endif %}</span>
+                                {# CAMBIO: 'propiedad.num_banos', 'propiedad.num_medios_banos' a 'property.num_banos', 'property.num_medios_banos' #}
+                                {% if property.num_banos %}
+                                    <span class="me-3"><i class="fas fa-bath me-1"></i> {{ property.num_banos }}{% if property.num_medios_banos %}.5{% endif %}</span>
                                 {% endif %}
-                                {% if propiedad.num_estacionamientos %}
-                                    <span class="me-3"><i class="fas fa-car me-1"></i> {{ propiedad.num_estacionamientos }}</span>
+                                {# CAMBIO: 'propiedad.num_estacionamientos' a 'property.num_estacionamientos' #}
+                                {% if property.num_estacionamientos %}
+                                    <span class="me-3"><i class="fas fa-car me-1"></i> {{ property.num_estacionamientos }}</span>
                                 {% endif %}
                             </div>
                             
                             <div class="d-flex align-items-center mb-2 text-muted small fw-bold">
-                                {% if propiedad.area_terreno_metros_cuadrados %}
-                                    <span class="me-3"><i class="fas fa-ruler-combined me-1"></i> {{ "{:,.0f}".format(propiedad.area_terreno_metros_cuadrados) }} m² t</span>
+                                {# CAMBIO: 'propiedad.area_terreno_metros_cuadrados' a 'property.area_terreno_metros_cuadrados' #}
+                                {% if property.area_terreno_metros_cuadrados %}
+                                    <span class="me-3"><i class="fas fa-ruler-combined me-1"></i> {{ "{:,.0f}".format(property.area_terreno_metros_cuadrados) }} m² t</span>
                                 {% endif %}
-                                {% if propiedad.area_construccion_metros_cuadrados %}
-                                    <span class="me-3"><i class="fas fa-square me-1"></i> {{ "{:,.0f}".format(propiedad.area_construccion_metros_cuadrados) }} m² c</span>
+                                {# CAMBIO: 'propiedad.area_construccion_metros_cuadrados' a 'property.area_construccion_metros_cuadrados' #}
+                                {% if property.area_construccion_metros_cuadrados %}
+                                    <span class="me-3"><i class="fas fa-square me-1"></i> {{ "{:,.0f}".format(property.area_construccion_metros_cuadrados) }} m² c</span>
                                 {% endif %}
                             </div>
 
-                            {% if propiedad.cuota_mantenimiento %}
+                            {# CAMBIO: 'propiedad.cuota_mantenimiento' a 'property.cuota_mantenimiento' #}
+                            {% if property.cuota_mantenimiento %}
                                 <p class="card-text text-muted small mb-2">
-                                    <span class="fw-bold">Cuota de Mtto:</span> ${{ "{:,.2f}".format(propiedad.cuota_mantenimiento) }}
+                                    <span class="fw-bold">Cuota de Mtto:</span> ${{ "{:,.2f}".format(property.cuota_mantenimiento) }}
                                 </p>
                             {% endif %}
 
                             <div class="d-flex justify-content-between align-items-center mt-auto pt-2">
+                                {# CAMBIO: 'propiedad.precio' a 'property.precio' #}
                                 <p class="card-text text-dark fs-6 fw-bold mb-0">
-                                    ${{ "{:,.2f}".format(propiedad.precio) }}
-                                    {% if propiedad.estado_propiedad == 'Renta' %}
+                                    ${{ "{:,.2f}".format(property.precio) }}
+                                    {# CAMBIO: 'propiedad.estado_propiedad' a 'property.estado_propiedad' #}
+                                    {% if property.estado_propiedad == 'Renta' %}
                                         /mes
                                     {% endif %}
                                 </p>
-                                <a href="{{ url_for('main.property_detail', property_id=propiedad.id) }}" class="btn btn-sm btn-outline-primary custom-detail-btn">Ver Detalles</a>
+                                {# CAMBIO: 'propiedad.id' a 'property.id' #}
+                                <a href="{{ url_for('main.property_detail', property_id=property.id) }}" class="btn btn-sm btn-outline-primary custom-detail-btn">Ver Detalles</a>
                             </div>
                         </div>
                     </div>
                 </div>
                 {% endfor %}
+            {# CAMBIO: 'propiedades' a 'properties' #}
             {% else %}
             <div class="col-12 text-center">
                 <p class="lead text-muted">No hay propiedades disponibles en este momento.</p>

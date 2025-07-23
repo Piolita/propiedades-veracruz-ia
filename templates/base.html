@@ -33,10 +33,10 @@
                         <a class="nav-link active" aria-current="page" href="{{ url_for('main.home') }}">Inicio</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Nosotros</a>
+                        <a class="nav-link" href="{{ url_for('main.about_us') }}">Nosotros</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Contacto</a>
+                        <a class="nav-link" href="{{ url_for('main.contact') }}">Contacto</a>
                     </li>
                     {% if current_user.is_authenticated %}
                     <li class="nav-item dropdown">
@@ -81,11 +81,12 @@
         <div class="container">
             <p class="mb-0">&copy; 2025 Propiedades Veracruz IA. Todos los derechos reservados.</p>
             <div class="social-icons mt-2">
-                <a href="#" class="text-white mx-2"><i class="fab fa-whatsapp"></i></a> {# WhatsApp #}
-                <a href="#" class="text-white mx-2"><i class="fab fa-facebook-f"></i></a> {# Facebook #}
-                <a href="#" class="text-white mx-2"><i class="fab fa-youtube"></i></a> {# YouTube #}
-                <a href="#" class="text-white mx-2"><i class="fab fa-tiktok"></i></a> {# TikTok #}
-                <a href="#" class="text-white mx-2"><i class="fab fa-instagram"></i></a> {# Instagram #}
+                {# CAMBIO: Enlaces funcionales para redes sociales en el footer #}
+                <a href="https://wa.me/522293019294" class="text-white mx-2" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp"></i></a> {# WhatsApp #}
+                <a href="https://www.facebook.com/cMagnaDjesus" class="text-white mx-2" target="_blank" rel="noopener noreferrer"><i class="fab fa-facebook-f"></i></a> {# Facebook #}
+                <a href="https://www.youtube.com/@propiedades-veracruz_2024" class="text-white mx-2" target="_blank" rel="noopener noreferrer"><i class="fab fa-youtube"></i></a> {# YouTube #}
+                <a href="https://www.tiktok.com/@cmagnadj" class="text-white mx-2" target="_blank" rel="noopener noreferrer"><i class="fab fa-tiktok"></i></a> {# TikTok #}
+                <a href="https://www.instagram.com/propiedades_veracruz/" class="text-white mx-2" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i></a> {# Instagram #}
             </div>
         </div>
     </footer>

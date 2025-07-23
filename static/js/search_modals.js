@@ -132,14 +132,16 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         const currentPath = window.location.pathname;
-        let message = "Hola, me interesa saber más sobre Propiedades Veracruz IA.";
-        let phoneNumber = "522293019294"; // ¡NÚMERO DE TELÉFONO CORREGIDO!
+        let message = "Hola, me gustaría contactar con Propiedades Veracruz IA para una consulta.";
+        let phoneNumber = "522293019294";
 
         // Detectar si estamos en la página de detalle de una propiedad
         const propertyDetailMatch = currentPath.match(/\/property\/(\d+)/);
         if (propertyDetailMatch) {
-            const propertyId = propertyDetailMatch[1];
-            message = `Hola, me interesa la propiedad con ID ${propertyId}. ¿Podrías darme más información?`;
+            const propertyTitleElement = document.getElementById('propertyTitleForWhatsApp');
+            const propertyTitle = propertyTitleElement ? propertyTitleElement.textContent.trim() : 'una propiedad específica';
+            
+            message = `Hola, me interesa la propiedad "${propertyTitle}". ¿Podrías darme más información?`;
         }
 
         const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
@@ -151,9 +153,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // ##################################################################
     // FIN: Lógica del Botón Flotante de WhatsApp
-    // ##################################################################
-
-
+    // ############################################
     // ##################################################################
     // INICIO: Event Listeners (Controladores de Eventos)
     // ##################################################################

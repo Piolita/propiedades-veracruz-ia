@@ -208,6 +208,24 @@ def home():
     
     return render_template('home.html', pagination=pagination, properties=pagination.items) # Cambiado 'propiedades' a 'properties' para consistencia
 
+
+@main.route("/about_us")
+def about_us():
+    """
+    Ruta para la página "Nosotros".
+    """
+    return render_template('about_us.html', title='Nosotros')
+
+
+@main.route("/contact")
+def contact():
+    """
+    Ruta para la página de Contacto.
+    """
+    return render_template('contact.html', title='Contacto')
+
+
+
 @main.route("/login", methods=['GET', 'POST'])
 def login():
     """

@@ -1,0 +1,123 @@
+{# templates/about_us.html #}
+
+{% extends "base.html" %} {# Extiende tu plantilla base para heredar la estructura y estilos #}
+
+{% block title %}Nosotros - Propiedades Veracruz IA{% endblock %} {# Título específico para esta página #}
+
+{% block content %}
+    <div class="container mt-5 pt-5"> {# Contenedor principal con margen superior para evitar solapamiento con la navbar #}
+        <h1 class="text-center mb-5 display-4 fw-bold text-primary animate__animated animate__fadeInDown">
+            Sobre Nosotros
+        </h1>
+
+        <section class="mb-5 animate__animated animate__fadeInUp">
+            <div class="row align-items-center">
+                <div class="col-md-6 order-md-2">
+                    <img src="{{ url_for('static', filename='img/placeholders/about_us_team.jpg') }}" class="img-fluid rounded shadow-lg mb-4 mb-md-0" alt="Equipo de Propiedades Veracruz IA">
+                </div>
+                <div class="col-md-6 order-md-1">
+                    <h2 class="h3 mb-3 text-secondary">Nuestra Historia y Propósito</h2>
+                    <p class="lead">
+                        En **Propiedades Veracruz IA**, nacimos de la pasión por conectar a las personas con el hogar de sus sueños en la hermosa región de Veracruz. Observamos la necesidad de una plataforma inmobiliaria que combinara la calidez del servicio local con la eficiencia de la tecnología moderna.
+                    </p>
+                    <p>
+                        Desde nuestros inicios, nuestro propósito ha sido simplificar el proceso de compra, venta y renta de propiedades, haciendo que sea una experiencia transparente, segura y, sobre todo, satisfactoria para todos.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-5 animate__animated animate__fadeInUp animate__delay-1s">
+            <h2 class="h3 text-center mb-4 text-primary">Nuestra Misión y Visión</h2>
+            <div class="row text-center">
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100 shadow-sm border-0">
+                        <div class="card-body">
+                            <i class="fas fa-bullseye fa-3x text-success mb-3"></i>
+                            <h3 class="h5 card-title">Misión</h3>
+                            <p class="card-text">
+                                Conectar a compradores y vendedores de propiedades en Veracruz, ofreciendo una plataforma intuitiva y un servicio excepcional basado en la integridad y el conocimiento profundo del mercado local.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100 shadow-sm border-0">
+                        <div class="card-body">
+                            <i class="fas fa-eye fa-3x text-info mb-3"></i>
+                            <h3 class="h5 card-title">Visión</h3>
+                            <p class="card-text">
+                                Ser el portal inmobiliario líder en Veracruz, reconocido por nuestra innovación, transparencia y por ser el socio de confianza preferido para todas las necesidades inmobiliarias.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-5 animate__animated animate__fadeInUp animate__delay-2s">
+            <h2 class="h3 text-center mb-4 text-primary">Nuestros Valores</h2>
+            <div class="row text-center">
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm border-0">
+                        <div class="card-body">
+                            <i class="fas fa-handshake fa-3x text-warning mb-3"></i>
+                            <h3 class="h5 card-title">Integridad y Transparencia</h3>
+                            <p class="card-text">
+                                Actuamos con honestidad y claridad en cada interacción, construyendo relaciones de confianza duraderas.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm border-0">
+                        <div class="card-body">
+                            <i class="fas fa-user-tie fa-3x text-danger mb-3"></i>
+                            <h3 class="h5 card-title">Profesionalismo</h3>
+                            <p class="card-text">
+                                Ofrecemos un servicio de alta calidad, respaldado por un profundo conocimiento del mercado inmobiliario veracruzano.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm border-0">
+                        <div class="card-body">
+                            <i class="fas fa-lightbulb fa-3x text-primary mb-3"></i>
+                            <h3 class="h5 card-title">Innovación</h3>
+                            <p class="card-text">
+                                Nos mantenemos a la vanguardia tecnológica para ofrecer las mejores herramientas y experiencias a nuestros usuarios.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="text-center mb-5 animate__animated animate__fadeInUp animate__delay-3s">
+            <h2 class="h3 mb-4 text-primary">¿Por Qué Elegirnos?</h2>
+            <p class="lead">
+                Elegir **Propiedades Veracruz IA** significa optar por:
+            </p>
+            <ul class="list-unstyled text-muted mx-auto" style="max-width: 700px;">
+                <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> **Conocimiento Local:** Expertos en el mercado de Veracruz, especialmente en propiedades cerca de la playa.</li>
+                <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> **Tecnología Intuitiva:** Una plataforma fácil de usar que simplifica tu búsqueda.</li>
+                <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> **Atención Personalizada:** Nos dedicamos a entender tus necesidades y superar tus expectativas.</li>
+                <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> **Seguridad y Confianza:** Tu tranquilidad es nuestra prioridad en cada transacción.</li>
+            </ul>
+        </section>
+
+        <section class="text-center py-5 bg-light rounded shadow-sm animate__animated animate__fadeInUp animate__delay-4s">
+            <h2 class="h3 mb-4 text-primary">¿Listo para encontrar tu hogar ideal?</h2>
+            <p class="lead mb-4">
+                Explora nuestras propiedades o contáctanos para una asesoría personalizada.
+            </p>
+            <a href="{{ url_for('main.home') }}" class="btn btn-primary btn-lg me-3">
+                <i class="fas fa-search me-2"></i> Buscar Propiedades
+            </a>
+            <a href="{{ url_for('main.contact') }}" class="btn btn-outline-secondary btn-lg">
+                <i class="fas fa-phone me-2"></i> Contáctanos
+            </a>
+        </section>
+    </div>
+{% endblock content %}

@@ -1,0 +1,105 @@
+{# templates/contact.html #}
+
+{% extends "base.html" %} {# Extiende tu plantilla base para heredar la estructura y estilos #}
+
+{% block title %}Contacto - Propiedades Veracruz IA{% endblock %} {# Título específico para esta página #}
+
+{% block content %}
+    <div class="container mt-5 pt-5"> {# Contenedor principal con margen superior para evitar solapamiento con la navbar #}
+        <h1 class="text-center mb-5 display-4 fw-bold text-primary animate__animated animate__fadeInDown">
+            Contáctanos
+        </h1>
+
+        <section class="mb-5 animate__animated animate__fadeInUp">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 col-md-10">
+                    <p class="lead text-center mb-4">
+                        ¿Tienes alguna pregunta, quieres vender tu propiedad o necesitas asesoramiento? Estamos aquí para ayudarte.
+                        Completa el formulario a continuación o utiliza nuestros datos de contacto directo.
+                    </p>
+
+                    <div class="card shadow-lg border-0 rounded-lg p-4">
+                        <div class="card-body">
+                            <h2 class="h4 mb-4 text-secondary text-center">Envíanos un Mensaje</h2>
+                            
+                            {# Formulario de Contacto (Ejemplo - Necesitaría lógica en app.py y un Forms.py) #}
+                            {# Por ahora, es un formulario HTML simple sin backend activo #}
+                            <form action="#" method="POST"> {# La acción actual es un placeholder #}
+                                <div class="mb-3">
+                                    <label for="nombre" class="form-label">Nombre Completo</label>
+                                    <input type="text" class="form-control" id="nombre" name="nombre" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">Correo Electrónico</label>
+                                    <input type="email" class="form-control" id="email" name="email" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="telefono" class="form-label">Teléfono (Opcional)</label>
+                                    <input type="tel" class="form-control" id="telefono" name="telefono">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="asunto" class="form-label">Asunto</label>
+                                    <input type="text" class="form-control" id="asunto" name="asunto" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="mensaje" class="form-label">Tu Mensaje</label>
+                                    <textarea class="form-control" id="mensaje" name="mensaje" rows="5" required></textarea>
+                                </div>
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-primary btn-lg">Enviar Mensaje</button>
+                                </div>
+                            </form>
+                            {# FIN del Formulario de Contacto #}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-5 animate__animated animate__fadeInUp animate__delay-1s">
+            <h2 class="h3 text-center mb-4 text-primary">Información de Contacto Directo</h2>
+            <div class="row justify-content-center text-center">
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm border-0">
+                        <div class="card-body">
+                            <i class="fas fa-phone-alt fa-3x text-success mb-3"></i>
+                            <h3 class="h5 card-title">Teléfono</h3>
+                            <p class="card-text">+52 229 301 9294</p> {# Tu número de WhatsApp #}
+                            <a href="tel:+522293019294" class="btn btn-sm btn-outline-success mt-2">Llamar Ahora</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm border-0">
+                        <div class="card-body">
+                            <i class="fas fa-envelope fa-3x text-info mb-3"></i>
+                            <h3 class="h5 card-title">Correo Electrónico</h3>
+                            <p class="card-text">contacto@propiedadesveracruz.com</p> {# Tu correo electrónico #}
+                            <a href="mailto:contacto@propiedadesveracruz.com" class="btn btn-sm btn-outline-info mt-2">Enviar Correo</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm border-0">
+                        <div class="card-body">
+                            <i class="fab fa-whatsapp fa-3x text-success mb-3"></i>
+                            <h3 class="h5 card-title">WhatsApp</h3>
+                            <p class="card-text">+52 229 301 9294</p> {# Tu número de WhatsApp #}
+                            <a href="https://wa.me/522293019294?text=Hola,%20me%20interesa%20contactar%20a%20Propiedades%20Veracruz%20IA." target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-success mt-2">Enviar WhatsApp</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="text-center py-5 bg-light rounded shadow-sm animate__animated animate__fadeInUp animate__delay-2s">
+            <h2 class="h3 mb-4 text-primary">¿Quieres vender tu propiedad?</h2>
+            <p class="lead mb-4">
+                Si estás pensando en vender tu inmueble en Veracruz, contáctanos. Te ofrecemos asesoría experta y una plataforma con gran alcance para tu propiedad.
+            </p>
+            <a href="{{ url_for('main.contact') }}" class="btn btn-primary btn-lg">
+                <i class="fas fa-hand-holding-usd me-2"></i> ¡Quiero Vender!
+            </a>
+        </section>
+    </div>
+{% endblock content %}

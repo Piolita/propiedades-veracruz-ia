@@ -19,7 +19,9 @@
 
                     {# CAMBIO: 'propiedad.titulo' a 'property.titulo' #}
                     <h1 class="card-title text-center text-primary mb-4 display-4 fw-bold">{{ property.titulo }}</h1>
-
+                  
+                    <div id="propertyTitleForWhatsApp" style="display:none;">{{ property.titulo }}</div>
+                  
                     {# Nuevo menú de "Me gusta" y "Compartir" #}
                     <div class="d-flex justify-content-center gap-4 mb-4">
                         <button type="button" class="btn btn-outline-secondary btn-lg d-flex align-items-center gap-2">

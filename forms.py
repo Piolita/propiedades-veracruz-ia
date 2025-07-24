@@ -18,7 +18,7 @@ class PropertyForm(FlaskForm):
     titulo = StringField('Título de la Propiedad', validators=[DataRequired(), Length(min=5, max=100)])
     descripcion = TextAreaField('Descripción Detallada', validators=[DataRequired(), Length(min=20)])
     precio = DecimalField('Precio de Venta/Renta', validators=[DataRequired(), NumberRange(min=0, message="El precio no puede ser negativo.")])
-    ubicacion = StringField('Ubicación (Calle y Número)', validators=[DataRequired(), Length(min=5, max=100)])
+    ubicacion = StringField('Ubicación (Colonia, Fraccionamiento)', validators=[DataRequired(), Length(min=5, max=100)])
 
     # Opciones para municipio (puedes expandir esta lista)
     municipio = SelectField('Municipio', validators=[DataRequired()],
@@ -26,18 +26,12 @@ class PropertyForm(FlaskForm):
                                 ('Veracruz', 'Veracruz'),
                                 ('Boca del Río', 'Boca del Río'),
                                 ('Medellín', 'Medellín de Bravo'),
-                                ('Alvarado', 'Alvarado'),
-                                ('Cotaxtla', 'Cotaxtla'),
-                                ('Jamapa', 'Jamapa'),
-                                ('La Antigua', 'La Antigua'),
-                                ('Manlio Fabio Altamirano', 'Manlio Fabio Altamirano'),
-                                ('Paso de Ovejas', 'Paso de Ovejas'),
-                                ('Soledad de Doblado', 'Soledad de Doblado')
+                                ('Alvarado', 'Alvarado Riviera Veracruzana'),
+                                ('Otro', 'Otro'),
                             ],
                             render_kw={'class': 'form-control'}) # render_kw es para atributos HTML
 
-    estado_propiedad = SelectField('Estado de la Propiedad', validators=[DataRequired()],
-                                   choices=[('Venta', 'En Venta'), ('Renta', 'En Renta')])
+    property_options = SelectField('Opción', choices=[('Venta', 'Venta'), ('Renta', 'Renta')], validators=[DataRequired()])
     tipo_propiedad = SelectField('Tipo de Propiedad', validators=[DataRequired()],
                                  choices=[
                                      ('Casa', 'Casa'),

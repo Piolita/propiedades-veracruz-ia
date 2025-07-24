@@ -16,6 +16,11 @@ from sqlalchemy import or_ # Para consultas de base de datos complejas
 from config import config_by_name # Tu módulo de configuración de entornos
 from forms import LoginForm, PropertyForm, EditPropertyForm # Tus formularios definidos en forms.py
 
+# --- CORRECCIÓN: AÑADIR migrate a la importación de extensions ---
+from extensions import db, login_manager, migrate # ¡Añade 'migrate' aquí!
+from models import User, Property, PropertyImage
+# --- FIN DE CORRECCIÓN ---
+
 # 2. Funciones Auxiliares
 # ==============================================================================
 # Se definen funciones que son útiles globalmente en tu aplicación, pero que
@@ -60,75 +65,37 @@ if not os.path.exists(app.config['UPLOAD_FOLDER']):
 # El orden entre ellas puede importar:
 # - SQLAlchemy (db): Generalmente va primero porque los modelos dependen de él.
 # - Flask-Login (login_manager): Necesita la instancia 'app'.
-db = SQLAlchemy(app) # SQLAlchemy necesita la instancia 'app'
+# CAMBIO: Ahora db se inicializa desde extensions.py, no aquí.
+db.init_app(app) # Inicializa la instancia 'db' con la aplicación Flask
 
-login_manager = LoginManager(app) # Flask-Login necesita la instancia 'app'
+# CAMBIO: login_manager también se inicializa con init_app si viene de extensions
+# Si lo tienes como en tu snippet anterior (login_manager = LoginManager()),
+# entonces usa login_manager.init_app(app)
+login_manager.init_app(app) # Inicializa Flask-Login con la instancia 'app'
 login_manager.login_view = 'main.login' # Ruta a la que redirigir si el usuario no está logueado
 login_manager.login_message_category = 'info' # Categoría de los mensajes flash para login
 
 # 6. Definición de Modelos de Base de Datos
 # ==============================================================================
-# Las clases de tus modelos (User, Property, PropertyImage) deben definirse AQUÍ.
-# Esto es CRÍTICO: Deben ir DESPUÉS de que 'db = SQLAlchemy(app)' haya sido ejecutado,
-# ya que heredan de 'db.Model'.
-# Si tus modelos estuvieran en un archivo 'models.py' separado, aquí importarías:
-# from models import User, Property, PropertyImage
-# Pero como los tienes en app.py, se definen directamente.
-
-class User(db.Model, UserMixin):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(20), unique=True, nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False) # Añadido de nuevo el campo email
-    password = db.Column(db.String(60), nullable=False)
-    properties = db.relationship('Property', backref='agente', lazy=True)
-
-    def __repr__(self):
-        return f"User('{self.username}', '{self.email}')"
-
-class Property(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    titulo = db.Column(db.String(100), nullable=False)
-    descripcion = db.Column(db.Text, nullable=False)
-    precio = db.Column(db.Numeric(10, 2), nullable=False) # Usar Numeric para precios
-    ubicacion = db.Column(db.String(100), nullable=False)
-    municipio = db.Column(db.String(50), nullable=False)
-    estado_propiedad = db.Column(db.String(50), nullable=False) # 'Venta' o 'Renta'
-    tipo_propiedad = db.Column(db.String(50), nullable=False)
-    num_habitaciones = db.Column(db.Integer)
-    num_banos = db.Column(db.Integer)
-    num_medios_banos = db.Column(db.Integer)
-    num_estacionamientos = db.Column(db.Integer)
-    area_terreno_metros_cuadrados = db.Column(db.Numeric(10, 2))
-    area_construccion_metros_cuadrados = db.Column(db.Numeric(10, 2))
-    cuota_mantenimiento = db.Column(db.Numeric(10, 2))
-    fecha_publicacion = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    agente_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False) # Clave foránea a User
-    images = db.relationship('PropertyImage', backref='property', lazy=True, cascade="all, delete-orphan") # Cambiado 'imagenes' a 'images' para consistencia con el código de rutas
-
-    def __repr__(self):
-        return f"Property('{self.titulo}', '{self.ubicacion}', '{self.precio}')"
-
-class PropertyImage(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    property_id = db.Column(db.Integer, db.ForeignKey('property.id'), nullable=False)
-    filename = db.Column(db.String(255), nullable=False) # Cambiado 'nombre_archivo' a 'filename'
-    es_principal = db.Column(db.Boolean, default=False)
-
-    def __repr__(self):
-        return f"PropertyImage('{self.filename}', principal={self.es_principal})"
+# Las clases de tus modelos (User, Property, PropertyImage) NO DEBEN DEFINIRSE AQUÍ.
+# Se importan desde models.py.
+# --- INICIO DE CAMBIO: ELIMINADAS LAS DEFINICIONES DE CLASES DE MODELOS ---
+# (Las clases User, Property, PropertyImage han sido movidas a models.py)
+# --- FIN DE CAMBIO ---
 
 # 7. Inicialización de Flask-Migrate
 # ==============================================================================
 # Flask-Migrate (Alembic) necesita conocer tanto la instancia de 'app' como la de 'db',
 # Y lo más importante, necesita que TODOS tus modelos de 'db.Model' ya estén definidos
-# para poder detectar cualquier cambio en la estructura de la base de datos.
-# Por eso, esta línea DEBE ir DESPUÉS de la definición de tus modelos.
-migrate = Migrate(app, db)
+# (o importados) para poder detectar cualquier cambio en la estructura de la base de datos.
+# Por eso, esta línea DEBE ir DESPUÉS de la importación de tus modelos.
+# CAMBIO: Ahora migrate se inicializa desde extensions.py
+migrate.init_app(app, db) # Inicializa Flask-Migrate con la aplicación y la instancia 'db'
 
 # 8. Función de Carga de Usuario para Flask-Login
 # ==============================================================================
 # Esta función es requerida por Flask-Login para cargar un usuario dado su ID de sesión.
-# Depende de que 'login_manager' esté inicializado y que el modelo 'User' esté definido.
+# Depende de que 'login_manager' esté inicializado y que el modelo 'User' esté definido (importado).
 @login_manager.user_loader
 def load_user(user_id):
     """
@@ -162,7 +129,7 @@ def home():
     price_range = request.args.get('price_range')
     page = request.args.get('page', 1, type=int)
 
-    query = Property.query
+    query = Property.query # Usa Property (nombre en inglés)
 
     if operation:
         if operation.lower() == 'comprar':
@@ -206,7 +173,7 @@ def home():
 
     pagination = query.order_by(Property.fecha_publicacion.desc()).paginate(page=page, per_page=app.config['PROPERTIES_PER_PAGE'], error_out=False)
     
-    return render_template('home.html', pagination=pagination, properties=pagination.items) # Cambiado 'propiedades' a 'properties' para consistencia
+    return render_template('home.html', pagination=pagination, properties=pagination.items)
 
 
 @main.route("/about_us")
@@ -225,7 +192,6 @@ def contact():
     return render_template('contact.html', title='Contacto')
 
 
-
 @main.route("/login", methods=['GET', 'POST'])
 def login():
     """
@@ -236,15 +202,38 @@ def login():
 
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).first()
-        if user and check_password_hash(user.password, form.password.data):
+        user = User.query.filter_by(username=form.username.data).first() # Usa User (nombre en inglés)
+        # CAMBIO: user.password a user.password_hash para usar el campo correcto en el modelo User
+        if user and check_password_hash(user.password_hash, form.password.data): 
             login_user(user, remember=form.remember.data)
             next_page = request.args.get('next')
             flash('¡Inicio de sesión exitoso!', 'success')
             return redirect(next_page or url_for('main.home'))
         else:
             flash('Inicio de sesión fallido. Por favor, verifica tu nombre de usuario y contraseña.', 'danger')
-    return render_template('login.html', title='Iniciar Sesión', form=form)
+    return render_template('login.html', title='Iniciar Sesión', form=form) # Asegúrate de pasar el formulario
+
+
+# CAMBIO: Añadida ruta de registro (si no la tienes, esto la añade)
+@main.route("/register", methods=['GET', 'POST'])
+def register():
+    """
+    Ruta para el registro de nuevos usuarios.
+    """
+    if current_user.is_authenticated:
+        return redirect(url_for('main.home'))
+    form = LoginForm() # Asumiendo que usas LoginForm para registro también o tendrías un RegisterForm
+    if form.validate_on_submit():
+        # CAMBIO: password_hash en lugar de password
+        hashed_password = generate_password_hash(form.password.data, method='pbkdf2:sha256')
+        # CAMBIO: Añadido email al crear el usuario
+        user = User(username=form.username.data, email=form.email.data, password_hash=hashed_password)
+        db.session.add(user)
+        db.session.commit()
+        flash('¡Tu cuenta ha sido creada exitosamente! Ahora puedes iniciar sesión.', 'success')
+        return redirect(url_for('main.login'))
+    return render_template('register.html', title='Registrarse', form=form)
+
 
 @main.route("/logout")
 @login_required
@@ -256,16 +245,33 @@ def logout():
     flash('Has cerrado sesión exitosamente.', 'info')
     return redirect(url_for('main.home'))
 
+
 @main.route("/dashboard")
 @login_required
 def dashboard():
     """
-    Ruta para el panel de control del agente, mostrando sus propiedades.
+    Ruta para el panel de control del agente, mostrando sus propiedades con paginación.
     """
-    user_properties = Property.query.filter_by(agente_id=current_user.id).order_by(Property.fecha_publicacion.desc()).all()
-    return render_template('dashboard.html', title='Mi Panel', properties=user_properties)
+    # Obtener el número de página de la URL, por defecto es 1
+    page = request.args.get('page', 1, type=int)
 
-# app.py
+    # Construir la consulta para las propiedades del usuario actual
+    # Ordenar por fecha de publicación descendente
+    user_properties_query = Property.query.filter_by(agente_id=current_user.id).order_by(Property.fecha_publicacion.desc()) # Usa Property (nombre en inglés)
+
+    # Aplicar paginación
+    # app.config['PROPERTIES_PER_PAGE'] debe estar definido en tu config.py
+    # Por ejemplo, app.config['PROPERTIES_PER_PAGE'] = 10
+    pagination = user_properties_query.paginate(page=page, per_page=current_app.config['PROPERTIES_PER_PAGE'], error_out=False)
+
+    # Obtener las propiedades para la página actual
+    properties = pagination.items
+
+    return render_template('dashboard.html', 
+                           properties=properties, 
+                           pagination=pagination, 
+                           title='Mi Panel de Administración')
+
 
 @main.route("/add_property", methods=['GET', 'POST'])
 @login_required
@@ -285,13 +291,13 @@ def add_property():
                     file.save(filepath)
                     imagenes_subidas.append(filename)
 
-        new_property = Property(
+        new_property = Property( # Usa Property (nombre en inglés)
             titulo=form.titulo.data,
             descripcion=form.descripcion.data,
             precio=form.precio.data,
             ubicacion=form.ubicacion.data,
             municipio=form.municipio.data,
-            estado_propiedad=form.estado_propiedad.data,
+            property_options=form.property_options.data,
             tipo_propiedad=form.tipo_propiedad.data,
             num_habitaciones=form.num_habitaciones.data,
             num_banos=form.num_banos.data,
@@ -307,24 +313,20 @@ def add_property():
         db.session.commit()
 
         for img_filename in imagenes_subidas:
-            new_image = PropertyImage(property_id=new_property.id, filename=img_filename)
+            new_image = PropertyImage(property_id=new_property.id, filename=img_filename) # Usa PropertyImage (nombre en inglés)
             db.session.add(new_image)
         db.session.commit()
 
         flash('¡Propiedad añadida exitosamente!', 'success')
         return redirect(url_for('main.dashboard'))
     else:
-        # ESTE ES EL BLOQUE CRÍTICO QUE NECESITAMOS VER EN LA TERMINAL
         print("DEBUG: form.validate_on_submit() es FALSE - Formulario inválido o no enviado.")
         print(f"DEBUG: Errores del formulario (form.errors): {form.errors}")
-        # También imprime errores de campo específicos si los hay
         for field_name, errors in form.errors.items():
             for error in errors:
                 print(f"DEBUG: Error en campo '{field_name}': {error}")
-        # Y errores no asociados a un campo específico (como CSRF)
         if form.csrf_token.errors:
             print(f"DEBUG: Errores de CSRF (form.csrf_token.errors): {form.csrf_token.errors}")
-
 
     return render_template('add_property.html', title='Añadir Nueva Propiedad', form=form)
 
@@ -334,11 +336,12 @@ def property_detail(property_id):
     """
     Ruta para mostrar los detalles de una propiedad específica.
     """
-    property_detail = db.session.get(Property, property_id) # Usar db.session.get()
+    property_detail = db.session.get(Property, property_id) # Usa Property (nombre en inglés)
     if not property_detail:
         flash('La propiedad solicitada no existe.', 'danger')
         return redirect(url_for('main.home'))
-    return render_template('property_detail.html', title=property_detail.titulo, property=property_detail) # Cambiado 'propiedad' a 'property' para consistencia
+    return render_template('property_detail.html', title=property_detail.titulo, property=property_detail)
+
 
 @main.route("/edit_property/<int:property_id>", methods=['GET', 'POST'])
 @login_required
@@ -346,9 +349,9 @@ def edit_property(property_id):
     """
     Ruta para editar una propiedad existente.
     """
-    property_to_edit = db.session.get(Property, property_id) # Usar db.session.get()
+    property_to_edit = db.session.get(Property, property_id) # Usa Property (nombre en inglés)
 
-    if not property_to_edit: # Manejar caso donde la propiedad no existe
+    if not property_to_edit:
         flash('La propiedad solicitada para editar no existe.', 'danger')
         return redirect(url_for('main.dashboard'))
 
@@ -364,8 +367,7 @@ def edit_property(property_id):
         property_to_edit.precio = form.precio.data
         property_to_edit.ubicacion = form.ubicacion.data
         property_to_edit.municipio = form.municipio.data
-        property_to_edit.estado_propiedad = form.estado_propiedad.data
-        property_to_edit.tipo_propiedad = form.tipo_propiedad.data
+        property_to_edit.property_options = form.property_options.data
         property_to_edit.num_habitaciones = form.num_habitaciones.data
         property_to_edit.num_banos = form.num_banos.data
         property_to_edit.num_medios_banos = form.num_medios_banos.data
@@ -384,7 +386,7 @@ def edit_property(property_id):
                     imagenes_subidas.append(filename)
 
         for img_filename in imagenes_subidas:
-            new_image = PropertyImage(property_id=property_to_edit.id, filename=img_filename) # Usar 'filename'
+            new_image = PropertyImage(property_id=property_to_edit.id, filename=img_filename) # Usa PropertyImage (nombre en inglés)
             db.session.add(new_image)
         db.session.commit()
 
@@ -397,7 +399,7 @@ def edit_property(property_id):
         form.precio.data = property_to_edit.precio
         form.ubicacion.data = property_to_edit.ubicacion
         form.municipio.data = property_to_edit.municipio
-        form.estado_propiedad.data = property_to_edit.estado_propiedad
+        form.property_options.data = property_to_edit.property_options
         form.tipo_propiedad.data = property_to_edit.tipo_propiedad
         form.num_habitaciones.data = property_to_edit.num_habitaciones
         form.num_banos.data = property_to_edit.num_banos
@@ -409,6 +411,7 @@ def edit_property(property_id):
 
     return render_template('edit_property.html', title='Editar Propiedad', form=form, property=property_to_edit)
 
+
 @main.route("/delete_property/<int:property_id>", methods=['POST'])
 @login_required
 def delete_property(property_id):
@@ -416,18 +419,17 @@ def delete_property(property_id):
     Ruta para eliminar una propiedad.
     Esta ruta debe ser llamada por un formulario POST para seguridad CSRF.
     """
-    property_to_delete = db.session.get(Property, property_id) # Usar db.session.get()
+    property_to_delete = db.session.get(Property, property_id) # Usa Property (nombre en inglés)
     if not property_to_delete:
         flash('La propiedad solicitada para eliminar no existe.', 'danger')
-        return redirect(url_for('main.dashboard')) # Redirigir al dashboard si no existe
+        return redirect(url_for('main.dashboard'))
 
     if property_to_delete.agente_id != current_user.id:
         flash('No tienes permiso para eliminar esta propiedad.', 'danger')
         return redirect(url_for('main.dashboard'))
 
-    # Eliminar imágenes asociadas del sistema de archivos
-    for image in property_to_delete.images: # Usar 'images'
-        filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], image.filename) # Usar 'filename'
+    for image in property_to_delete.images: # Usa images (nombre en inglés)
+        filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], image.filename)
         if os.path.exists(filepath):
             try:
                 os.remove(filepath)
@@ -438,7 +440,7 @@ def delete_property(property_id):
     db.session.delete(property_to_delete)
     db.session.commit()
     flash('Propiedad eliminada exitosamente.', 'success')
-    return redirect(url_for('main.dashboard')) # Redirigir al dashboard después de eliminar
+    return redirect(url_for('main.dashboard'))
 
 # Registra el Blueprint 'main' con la aplicación
 app.register_blueprint(main)
@@ -454,10 +456,11 @@ if __name__ == '__main__':
                          # Si la descomentas, asegúrate de que no cause conflictos con las migraciones.
 
         # Creación de un usuario 'admin' si no existe
+        # CAMBIO: Asegúrate de que el modelo User (en inglés) se use aquí
         if not User.query.filter_by(username='admin').first():
             hashed_password = generate_password_hash('adminpassword', method='pbkdf2:sha256')
-            admin_user = User(username='admin', email='admin@example.com', password=hashed_password) # Añadido email
+            admin_user = User(username='admin', email='admin@example.com', password_hash=hashed_password) # Usa password_hash
             db.session.add(admin_user)
             db.session.commit()
             print("Usuario 'admin' creado.")
-    app.run() # Inicia el servidor de desarrollo. El modo debug se controla por FLASK_ENV.
+    app.run()

@@ -72,23 +72,29 @@ class EditPropertyForm(PropertyForm):
     submit = SubmitField('Actualizar Propiedad')
 
 
-# --- Formulario para Registro (opcional, si decides añadir registro de nuevos usuarios) ---
-# class RegistrationForm(FlaskForm):
-#     username = StringField('Nombre de Usuario',
-#                            validators=[DataRequired(), Length(min=2, max=20)])
-#     email = StringField('Email',
-#                         validators=[DataRequired(), Email()])
-#     password = PasswordField('Contraseña', validators=[DataRequired()])
-#     confirm_password = PasswordField('Confirmar Contraseña',
-#                                      validators=[DataRequired(), EqualTo('password')])
-#     submit = SubmitField('Registrarse')
 
-    # def validate_username(self, username):
-    #     user = User.query.filter_by(username=username.data).first()
-    #     if user:
-    #         raise ValidationError('Ese nombre de usuario ya está en uso. Por favor, elige otro.')
 
-    # def validate_email(self, email):
-    #     user = User.query.filter_by(email=email.data).first()
-    #     if user:
-    #         raise ValidationError('Ese email ya está registrado. Por favor, elige otro o inicia sesión.')
+# Formulario de Registro de Usuario
+class RegisterForm(FlaskForm):
+    username = StringField('Nombre de Usuario',
+                           validators=[DataRequired(), Length(min=2, max=20)])
+    email = StringField('Email',
+                        validators=[DataRequired(), Email()])
+    password = PasswordField('Contraseña',
+                             validators=[DataRequired()])
+    confirm_password = PasswordField('Confirmar Contraseña',
+                                     validators=[DataRequired(), EqualTo('password', message='Las contraseñas deben coincidir.')])
+    submit = SubmitField('Registrarse')
+
+    # Validaciones personalizadas para username y email
+    def validate_username(self, username):
+        from app import User # Importa User aquí para evitar importación circular
+        user = User.query.filter_by(username=username.data).first()
+        if user:
+            raise ValidationError('Ese nombre de usuario ya está en uso. Por favor, elige uno diferente.')
+
+    def validate_email(self, email):
+        from app import User # Importa User aquí para evitar importación circular
+        user = User.query.filter_by(email=email.data).first()
+        if user:
+            raise ValidationError('Ese email ya está registrado. Por favor, utiliza uno diferente.')

@@ -17,7 +17,6 @@
                         </a>
                     </div>
 
-                    {# CAMBIO: 'propiedad.titulo' a 'property.titulo' #}
                     <h1 class="card-title text-center text-primary mb-4 display-4 fw-bold">{{ property.titulo }}</h1>
                   
                     <div id="propertyTitleForWhatsApp" style="display:none;">{{ property.titulo }}</div>
@@ -34,18 +33,15 @@
                     <hr class="mb-4"> {# Separador #}
 
                     {# Carrusel de imágenes (si hay imágenes) #}
-                    {# CAMBIO: 'propiedad.imagenes' a 'property.images' #}
                     {% if property.images %}
                     <div id="propertyCarousel" class="carousel slide mb-4" data-bs-ride="carousel">
                         <div class="carousel-inner rounded">
-                            {# CAMBIO: 'imagen' a 'image' y 'imagen.nombre_archivo' a 'image.filename' #}
                             {% for image in property.images %}
                             <div class="carousel-item {% if loop.first %}active{% endif %}">
                                 <img src="{{ url_for('static', filename='uploads/' + image.filename) }}" class="d-block w-100 rounded" alt="Imagen de la propiedad">
                             </div>
                             {% endfor %}
                         </div>
-                        {# CAMBIO: 'propiedad.imagenes|length' a 'property.images|length' #}
                         {% if property.images|length > 1 %}
                         <button class="carousel-control-prev" type="button" data-bs-target="#propertyCarousel" data-bs-slide="prev">
                             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -59,7 +55,6 @@
                     </div>
                     {% else %}
                     <div class="text-center mb-4">
-                        {# CAMBIO: 'placeholder.png' a 'img/placeholders/no_image.png' (asumiendo tu estructura actual) #}
                         <img src="{{ url_for('static', filename='img/placeholders/no_image.png') }}" class="img-fluid rounded shadow-sm" alt="No hay imagen disponible">
                         <p class="text-muted mt-2">No hay imágenes disponibles para esta propiedad.</p>
                     </div>
@@ -68,38 +63,27 @@
                     {# Sección de detalles con mejor presentación #}
                     <div class="row mb-3 p-3 border rounded bg-light"> {# Añadido padding, borde y fondo para destacar #}
                         <div class="col-md-6">
-                            {# CAMBIO: 'propiedad.precio' a 'property.precio' #}
                             <p class="lead mb-1"><strong>Precio:</strong> ${{ "{:,.2f}".format(property.precio) }}</p>
-                            {# CAMBIO: 'propiedad.cuota_mantenimiento' a 'property.cuota_mantenimiento' #}
                             {% if property.cuota_mantenimiento %}
                                 <p class="lead mb-1"><strong>Cuota de Mantenimiento:</strong> ${{ "{:,.2f}".format(property.cuota_mantenimiento) }}</p>
                             {% endif %}
-                            {# CAMBIO: 'propiedad.estado_propiedad' a 'property.estado_propiedad' #}
-                            <p class="lead mb-1"><strong>Estado:</strong> {{ property.estado_propiedad }}</p>
-                            {# CAMBIO: 'propiedad.tipo_propiedad' a 'property.tipo_propiedad' #}
+                            <p class="lead mb-1"><strong>Opción:</strong> {{ property.property_options }}</p>
                             <p class="lead mb-1"><strong>Tipo:</strong> {{ property.tipo_propiedad }}</p>
                         </div>
                         <div class="col-md-6">
-                            {# CAMBIO: 'propiedad.ubicacion', 'propiedad.municipio', 'propiedad.estado' a 'property.ubicacion', 'property.municipio', 'property.estado' #}
-                            {# NOTA: 'property.estado' no existe en tu modelo Property, si lo necesitas, deberías añadirlo. Por ahora lo dejo como estaba en tu código. #}
                             <p class="lead mb-1"><strong>Ubicación:</strong> {{ property.ubicacion }}, {{ property.municipio }}</p>
-                            {# CAMBIO: 'propiedad.num_habitaciones' a 'property.num_habitaciones' #}
                             {% if property.num_habitaciones %}
                                 <p class="lead mb-1"><strong>Habitaciones:</strong> {{ property.num_habitaciones }}</p>
                             {% endif %}
-                            {# CAMBIO: 'propiedad.num_banos', 'propiedad.num_medios_banos' a 'property.num_banos', 'property.num_medios_banos' #}
                             {% if property.num_banos %}
                                 <p class="lead mb-1"><strong>Baños:</strong> {{ property.num_banos }}{% if property.num_medios_banos %}.5{% endif %}</p>
                             {% endif %}
-                            {# CAMBIO: 'propiedad.num_estacionamientos' a 'property.num_estacionamientos' #}
                             {% if property.num_estacionamientos %}
                                 <p class="lead mb-1"><strong>Estacionamientos:</strong> {{ property.num_estacionamientos }}</p>
                             {% endif %}
-                            {# CAMBIO: 'propiedad.area_terreno_metros_cuadrados' a 'property.area_terreno_metros_cuadrados' #}
                             {% if property.area_terreno_metros_cuadrados %}
                                 <p class="lead mb-1"><strong>Área de Terreno:</strong> {{ "{:,.0f}".format(property.area_terreno_metros_cuadrados) }} m²</p>
                             {% endif %}
-                            {# CAMBIO: 'propiedad.area_construccion_metros_cuadrados' a 'property.area_construccion_metros_cuadrados' #}
                             {% if property.area_construccion_metros_cuadrados %}
                                 <p class="lead mb-1"><strong>Área de Construcción:</strong> {{ "{:,.0f}".format(property.area_construccion_metros_cuadrados) }} m²</p>
                             {% endif %}
@@ -108,23 +92,19 @@
 
                     <hr>
                     <h3 class="text-primary mb-3">Descripción Detallada</h3>
-                    {# CAMBIO: 'propiedad.descripcion' a 'property.descripcion' #}
                     <p class="card-text text-muted">{{ property.descripcion }}</p>
 
-                    {# CAMBIO: 'propiedad.fecha_publicacion' a 'property.fecha_publicacion' #}
                     <p class="text-end text-muted small mt-4">Publicado el: {{ property.fecha_publicacion.strftime('%d/%m/%Y') }}</p>
 
-                    {# Sección de botones de administración (solo visible para usuarios logueados) #}
-                    {% if current_user.is_authenticated %}
-                    <div class="d-flex justify-content-end gap-2 mt-4">
-                        {# CAMBIO: 'propiedad.id' a 'property.id' #}
-                        <a href="{{ url_for('main.edit_property', property_id=property.id) }}" class="btn btn-warning">Editar Propiedad</a>
-                        {# Botón que abre el modal de confirmación de eliminación #}
-                        {# CAMBIO: 'propiedad.id' a 'property.id' #}
-                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteConfirmationModal" data-property-id="{{ property.id }}">
-                            Eliminar Propiedad
-                        </button>
-                    </div>
+                    {# Sección de botones de administración (Solo visible para el propietario o un administrador) #}
+                    {% if current_user.is_authenticated and (current_user.id == property.agente_id or current_user.is_admin) %}
+                        <div class="d-flex justify-content-end gap-2 mt-4">
+                            <a href="{{ url_for('main.edit_property', property_id=property.id) }}" class="btn btn-warning">Editar Propiedad</a>
+                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteConfirmationModal" data-property-id="{{ property.id }}">
+                                Eliminar Propiedad
+                            </button>
+                            {# ELIMINADA LA ETIQUETA FORMULARIO REDUNDANTE AQUÍ #}
+                        </div>
                     {% endif %}
 
                     <div class="text-center mt-4">
@@ -137,24 +117,28 @@
 </div>
 
 
-{# Modal de Confirmación de Eliminación (reemplaza el confirm() nativo) #}
-{# Este modal debe estar en base.html o en property_detail.html, pero su lógica JS está en search_modals.js #}
+{# Modal de Confirmación de Eliminación (Este modal ahora se usa como disparador por JS) #}
+{# Su lógica de acción y CSRF está en search_modals.js. #}
 <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-header bg-danger text-white">
+            <div class="modal-header">
                 <h5 class="modal-title" id="deleteConfirmationModalLabel">Confirmar Eliminación</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p>¿Estás seguro de que deseas eliminar esta propiedad? Esta acción es irreversible.</p>
+                ¿Estás seguro de que quieres eliminar esta propiedad? Esta acción no se puede deshacer.
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                {# Este formulario ya se genera dinámicamente en search_modals.js #}
+                {# La acción del formulario y el token CSRF son manejados por JavaScript #}
                 <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Eliminar</button>
             </div>
         </div>
     </div>
 </div>
+
+{# ELIMINADO EL SCRIPT DUPLICADO QUE ESTABA AQUÍ ABAJO, AHORA search_modals.js SE ENCARGA #}
 
 {% endblock content %}

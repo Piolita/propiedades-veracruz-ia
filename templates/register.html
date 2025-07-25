@@ -1,0 +1,73 @@
+{% extends "base.html" %} {# Asegúrate de que tu plantilla base se llame "base.html" #}
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-body p-5">
+                    <h2 class="card-title text-center mb-4 fw-bold text-primary">Registrarse</h2>
+                    <form method="POST" action="">
+                        {{ form.hidden_tag() }} {# Campo oculto CSRF para seguridad #}
+
+                        <div class="mb-3">
+                            {{ form.username.label(class="form-label") }}
+                            {{ form.username(class="form-control form-control-lg rounded-3 {% if form.username.errors %}is-invalid{% endif %}") }}
+                            {% if form.username.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.username.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.email.label(class="form-label") }}
+                            {{ form.email(class="form-control form-control-lg rounded-3 {% if form.email.errors %}is-invalid{% endif %}") }}
+                            {% if form.email.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.email.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.password.label(class="form-label") }}
+                            {{ form.password(class="form-control form-control-lg rounded-3 {% if form.password.errors %}is-invalid{% endif %}") }}
+                            {% if form.password.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.password.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-4">
+                            {{ form.confirm_password.label(class="form-label") }}
+                            {{ form.confirm_password(class="form-control form-control-lg rounded-3 {% if form.confirm_password.errors %}is-invalid{% endif %}") }}
+                            {% if form.confirm_password.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.confirm_password.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="d-grid gap-2 mb-3">
+                            {{ form.submit(class="btn btn-primary btn-lg rounded-3 fw-bold") }}
+                        </div>
+
+                        <small class="text-muted text-center d-block">
+                            ¿Ya tienes una cuenta? <a href="{{ url_for('main.login') }}" class="text-decoration-none">Inicia Sesión</a>
+                        </small>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

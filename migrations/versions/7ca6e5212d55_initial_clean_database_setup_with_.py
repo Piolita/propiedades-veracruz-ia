@@ -1,8 +1,8 @@
-"""Renombrar columna estado a property_options y eliminar estado_propiedad
+"""Initial clean database setup with property_options
 
-Revision ID: 76bdd0e27e59
+Revision ID: 7ca6e5212d55
 Revises: 
-Create Date: 2025-07-23 17:21:27.888478
+Create Date: 2025-07-24 13:37:18.815186
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '76bdd0e27e59'
+revision = '7ca6e5212d55'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -23,6 +23,7 @@ def upgrade():
     sa.Column('username', sa.String(length=80), nullable=False),
     sa.Column('email', sa.String(length=120), nullable=False),
     sa.Column('password_hash', sa.String(length=128), nullable=False),
+    sa.Column('is_admin', sa.Boolean(), nullable=True),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email'),
     sa.UniqueConstraint('username')

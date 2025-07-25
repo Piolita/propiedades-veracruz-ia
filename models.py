@@ -37,7 +37,7 @@ class Property(db.Model):
 
     # Añadida relación con User para saber qué agente la publicó
     agente_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    agente = db.relationship('User', backref='properties') # Relación inversa para acceder a las propiedades de un usuario
+    agente = db.relationship('User', backref='managed_properties') # Relación inversa para acceder a las propiedades de un usuario
 
     def __repr__(self):
         return f"Property('{self.titulo}', '{self.ubicacion}', '{self.precio}')"
@@ -60,12 +60,13 @@ class PropertyImage(db.Model):
 # INICIO: Modelo de Usuario
 # ##################################################################
 class User(db.Model, UserMixin):
-    __tablename__ = 'user' # Añadido nombre de tabla explícito
+    __tablename__ = 'user' 
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
-    # CAMBIO: Añadir la columna email
     email = db.Column(db.String(120), unique=True, nullable=False) 
     password_hash = db.Column(db.String(128), nullable=False)
+    is_admin = db.Column(db.Boolean, default=False, nullable=True)
+
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password, method='pbkdf2:sha256')

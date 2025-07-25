@@ -27,7 +27,7 @@ html, body {
 .hero-background {
     position: relative;
     width: 100%;
-    height: 80vh; /* ALTURA AUMENTADA para que la imagen de fondo se vea más grande */
+    height: 50vh; 
     overflow: hidden;
     display: flex;
     align-items: center;
@@ -59,7 +59,7 @@ html, body {
 }
 
 .hero-content h1 {
-    font-size: 2.5rem; /* Tamaño de letra H1 mantenido */
+    font-size: 1.5rem; /* Tamaño de letra H1 mantenido */
     margin-bottom: 1rem;
 }
 
@@ -101,6 +101,13 @@ html, body {
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
+
+.container h2.text-primary {
+    font-size: 1.5rem; /* CAMBIO: Tamaño de letra más pequeño */
+    color: #343a40 !important; /* CAMBIO: Color negro (tu color de texto por defecto) */
+    text-align: left !important; /* CAMBIO: Alineado a la izquierda */
+}
+
 
 /* Property Cards on Index Page */
 .property-card {
@@ -239,7 +246,7 @@ footer {
 /* Contenedor principal para la imagen y el contenido superpuesto */
 .social-image-wrapper {
     position: relative;
-    max-width: 900px; /* VUELTO AL ANCHO ORIGINAL para la imagen de redes sociales */
+    max-width: 800px; /* VUELTO AL ANCHO ORIGINAL para la imagen de redes sociales */
     margin: 0 auto;
     box-shadow: 0 8px 20px rgba(0,0,0,0.15);
     border-radius: 15px;
@@ -313,7 +320,7 @@ footer {
 /* Responsive Adjustments */
 @media (max-width: 768px) {
     .hero-content h1 {
-        font-size: 2rem;
+        font-size: 1rem;
     }
     .hero-content p.lead {
         font-size: 1rem;

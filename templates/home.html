@@ -28,7 +28,7 @@
                 {# CAMBIO: 'propiedad' a 'property' y 'propiedades' a 'properties' #}
                 {% for property in properties %}
                 <div class="col">
-                    <div class="card h-100 shadow-sm border-0 rounded-lg overflow-hidden property-card animate__animated animate__fadeInUp">
+                    <div class="card h-100 rounded-lg overflow-hidden property-card animate__animated animate__fadeInUp">
                         {# CAMBIO: 'propiedad.id' a 'property.id' #}
                         <a href="{{ url_for('main.property_detail', property_id=property.id) }}" class="d-block">
                             {% set principal_image = '' %}

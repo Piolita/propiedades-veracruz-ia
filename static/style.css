@@ -23,6 +23,7 @@ html, body {
     font-weight: 700 !important;
 }
 
+
 /* Hero Section with Background Image */
 .hero-background {
     position: relative;
@@ -109,17 +110,18 @@ html, body {
 }
 
 
+
 /* Property Cards on Index Page */
 .property-card {
     border: none;
     background-color: #ffffff;
-    box-shadow: 4px 4px 12px rgba(0,0,0,0.25);
+    box-shadow: 5px 8px 15px rgba(0,0,0,0.50);
     transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 }
 
 .property-card:hover {
     transform: scale(1.03);
-    box-shadow: 6px 6px 20px rgba(0,0,0,0.4);
+    box-shadow: 8px 12px 25px rgba(0,0,0,0.5);
 }
 
 .property-img {
@@ -167,6 +169,10 @@ html, body {
     color: #495057;
 }
 
+
+
+
+
 /* --- REGLAS AÑADIDAS/MODIFICADAS PARA LA VALIDACIÓN DE FORMULARIOS (ESTAS SÍ SE MANTIENEN) --- */
 /* Estas reglas son para el estado de error y el mensaje de error, no para el estilo base del input */
 .form-control.is-invalid, .form-select.is-invalid {
@@ -186,6 +192,28 @@ html, body {
     color: #dc3545; /* Color rojo para el texto del error */
 }
 /* --- FIN DE REGLAS DE VALIDACIÓN --- */
+
+/* Estilos para formularios de autenticación (Registrarse e Iniciar Sesión) */
+.auth-form-container {
+    max-width: 500px; /* Ancho máximo para el formulario */
+    margin: 50px auto; /* Centra el formulario y le da un margen superior/inferior */
+    padding: 2.5rem; /* Relleno interno para que no esté pegado al borde */
+    border: 1px solid #dee2e6; /* Borde sutil */
+    border-radius: 0.5rem; /* Bordes redondeados */
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075); /* Sombra ligera */
+    background-color: #fff; /* Fondo blanco */
+}
+
+/* Ajuste responsivo para pantallas más pequeñas */
+@media (max-width: 768px) {
+    .auth-form-container {
+        max-width: 90%; /* En pantallas pequeñas, ocupa el 90% del ancho */
+        margin: 30px auto; /* Reduce el margen superior/inferior en móviles */
+        padding: 1.5rem; /* Reduce el relleno */
+    }
+}
+
+
 
 
 /* Footer */
@@ -317,6 +345,7 @@ footer {
 }
 
 
+
 /* Responsive Adjustments */
 @media (max-width: 768px) {
     .hero-content h1 {
@@ -342,6 +371,8 @@ footer {
         font-size: 0.95rem;
     }
 
+
+
     /* Ajuste para el botón flotante en móviles */
     .whatsapp-float {
         width: 50px;
@@ -350,6 +381,8 @@ footer {
         right: 20px;
         font-size: 25px;
     }
+
+
 
     /* Ajustes para la sección de redes sociales en móviles */
     .social-image-wrapper {
@@ -370,5 +403,38 @@ footer {
         height: 35px;
         font-size: 18px;
         gap: 8px;
+    }
+}
+
+
+
+/* Estilos para Mensajes Flash Fijos */
+.flash-messages-container {
+    position: fixed;
+    top: 65px; /* Ajusta la distancia desde la parte superior */
+    /* Eliminamos left: 0; y width: 100%; del contenedor principal */
+    right: 20px; /* CAMBIO: Lo posiciona a 20px del borde derecho */
+    z-index: 1050;
+    pointer-events: none;
+}
+
+.flash-messages-container .alert {
+    pointer-events: auto;
+    /* CAMBIO: Eliminamos margin-left: auto; y margin-right: auto; */
+    max-width: 300px; /* CAMBIO: Reduce el ancho máximo, hazlo menos largo */
+    width: auto; /* CAMBIO: Ajusta el ancho automáticamente según el contenido, pero limitado por max-width */
+    margin-left: auto; /* Alinea el alerta a la derecha dentro de su contenedor si el contenedor fuera más grande */
+    margin-right: 0; /* Asegura la alineación a la derecha */
+    box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
+}
+
+/* Ajuste para pantallas pequeñas */
+@media (max-width: 576px) {
+    .flash-messages-container {
+        right: 5px; /* Un poco menos margen a la derecha en móviles */
+        top: 70px; /* Ajuste si el navbar es más pequeño en móviles */
+    }
+    .flash-messages-container .alert {
+        max-width: 90%; /* Se adapta a un 90% del ancho de la pantalla en móviles */
     }
 }

@@ -65,12 +65,12 @@
         </div>
     </nav>
 
-    <main class="pt-5">
+    <div class="flash-messages-container">
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
-                <div class="container mt-5 pt-5">
+                <div class="container">
                     {% for category, message in messages %}
-                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        <div class="alert alert-{{ category }} alert-dismissible fade show mb-0" role="alert"> {# Añadido mb-0 para eliminar margen inferior #}
                             {{ message }}
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
@@ -78,6 +78,10 @@
                 </div>
             {% endif %}
         {% endwith %}
+    </div>
+
+
+    <main class="pt-5">
         {% block content %}{% endblock %}
     </main>
 
@@ -102,6 +106,33 @@
 
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" xintegrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    {# --- INICIO DE CAMBIO: SCRIPT REVISADO PARA AUTO-OCULTAR MENSAJES FLASH --- #}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Selecciona todas las alertas de Bootstrap
+            const alerts = document.querySelectorAll('.alert');
+
+            alerts.forEach(function(alertElement) {
+                // Espera 7 segundos y luego simula un clic en el botón de cerrar la alerta
+                setTimeout(() => {
+                    const closeButton = alertElement.querySelector('.btn-close');
+                    if (closeButton) {
+                        closeButton.click(); // Simula el clic en el botón de cerrar
+                    } else {
+                        // Si no hay botón de cerrar, simplemente oculta la alerta de otra manera
+                        alertElement.classList.remove('show'); // Elimina la clase 'show' para iniciar el fade out
+                        alertElement.classList.add('hide'); // Añade 'hide' (o 'd-none' para ocultar inmediatamente)
+                        // Puedes añadir un temporizador para eliminar el elemento del DOM después del fade out
+                        alertElement.addEventListener('transitionend', function() {
+                            alertElement.remove();
+                        });
+                    }
+                }, 7000); // 7000 milisegundos = 7 segundos
+            });
+        });
+    </script>
+    {# --- FIN DE CAMBIO --- #}
     <script src="{{ url_for('static', filename='js/search_modals.js') }}"></script>
     <script src="{{ url_for('static', filename='js/carousel.js') }}"></script>
     <script>

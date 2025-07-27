@@ -17,15 +17,18 @@ from extensions import db, login_manager, migrate
 from models import User, Property, PropertyImage
 
 
+
 # 2. Funciones Auxiliares
 # ==============================================================================
 def allowed_file(filename):
     """
     Verifica si la extensión de un archivo es permitida para la subida.
+    Ahora usa ALLOWED_EXTENSIONS desde la configuración de la aplicación.
     """
-    ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+    # CAMBIO: Usar ALLOWED_EXTENSIONS de la configuración de la aplicación
     return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+            filename.rsplit('.', 1)[1].lower() in current_app.config['ALLOWED_EXTENSIONS']
+
 
 # 3. Inicialización de la Aplicación Flask
 # ==============================================================================
@@ -133,13 +136,25 @@ def home():
     
     properties = pagination.items # Obtener las propiedades para la página actual
 
-    # --- INICIO DE CAMBIO: ORDENAR LAS IMÁGENES PARA CADA PROPIEDAD ---
-    # Asegurar que la imagen principal (is_main=True) vaya primero en cada conjunto de imágenes
-    for prop in properties: # Iterar sobre cada objeto Property en la lista
-        if prop.images: # Si la propiedad tiene imágenes
-            # Ordenar: principal (is_main=True) primero, luego por id
-            prop.images = sorted(prop.images, key=lambda img: (not img.is_main, img.id))
-    # --- FIN DE CAMBIO ---
+        # --- INICIO DE CAMBIO: Lógica para adjuntar la imagen principal a cada propiedad ---
+    for prop in properties:
+        principal_found = False
+        # Intentar encontrar la imagen marcada como principal
+        for img in prop.images:
+            if img.is_main:
+                prop.principal_image = img
+                principal_found = True
+                break # Salir del bucle una vez que se encuentra la principal
+
+        # Si no se encontró ninguna imagen marcada como principal, usar la primera disponible
+        if not principal_found and prop.images:
+            prop.principal_image = prop.images[0]
+        elif not prop.images:
+            prop.principal_image = None # O manejar un placeholder si no hay imágenes
+            
+        # Opcional: Si aún quieres ordenar la lista completa de imágenes para el carrusel en detalle
+        # prop.images = sorted(prop.images, key=lambda img: (not img.is_main, img.id))
+        # --- FIN DE CAMBIO ---
     
     # Pasamos el objeto pagination completo a la plantilla
     return render_template('home.html', pagination=pagination, properties=properties) # 'properties' ya está ordenado
@@ -276,23 +291,47 @@ def add_property():
 
             print(f"DEBUG: Propiedad guardada en DB con ID: {new_property.id}")
 
-            imagenes_subidas = []
-            if 'imagenes' in request.files:
+            # --- INICIO DE CAMBIO: Lógica de guardado de imágenes en subcarpetas ---
+            property_id = new_property.id # Obtener el ID de la propiedad recién creada
+
+            # Definir la carpeta de subida para esta propiedad específica
+            property_upload_folder = os.path.join(current_app.config['UPLOAD_FOLDER'], str(property_id))
+            os.makedirs(property_upload_folder, exist_ok=True) # Crear la carpeta si no existe
+
+            main_image_set = False # Bandera para la imagen principal
+
+            if 'imagenes' in request.files: # 'imagenes' es el nombre de tu campo de archivo en el formulario
                 for file in request.files.getlist('imagenes'):
-                    if file.filename != '' and allowed_file(file.filename):
+                    if file and allowed_file(file.filename):
                         filename = secure_filename(file.filename)
-                        filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+                        # Construir la ruta completa donde se guardará el archivo en el servidor
+                        filepath = os.path.join(property_upload_folder, filename)
                         file.save(filepath)
-                        imagenes_subidas.append(filename)
-                        print(f"DEBUG: Archivo guardado físicamente: {filename}")
+                        print(f"DEBUG: Archivo guardado físicamente en {filepath}")
+
+                        # Construir la ruta relativa para guardar en la base de datos
+                        # Ej: 'uploads/123/nombre_archivo.jpg'
+                        db_image_path = os.path.join('uploads', str(property_id), filename).replace('\\', '/')
+
+                        is_main = False
+                        if not main_image_set: # La primera imagen subida se marca como principal
+                            is_main = True
+                            main_image_set = True
+
+                        new_image = PropertyImage(
+                            property_id=property_id,
+                            filename=filename,
+                            path=db_image_path, # Guardar la ruta relativa completa
+                            is_main=is_main
+                        )
+                        db.session.add(new_image)
+                        print(f"DEBUG: Imagen {filename} con path {db_image_path} añadida a DB.")
                     elif file.filename == '':
                         print("DEBUG: Archivo de imagen vacío (Ignorado).")
                     else:
                         print(f"DEBUG: Archivo {file.filename} no permitido o inválido.")
-
-            for img_filename in imagenes_subidas:
-                new_image = PropertyImage(property_id=new_property.id, filename=img_filename, is_main=False)
-                db.session.add(new_image)
+            # --- FIN DE CAMBIO ---
+            
             db.session.commit()
 
             print("DEBUG: Imágenes de propiedad guardadas en DB.")
@@ -372,23 +411,30 @@ def edit_property(property_id):
         property_to_edit.area_construccion_metros_cuadrados = form.area_construccion_metros_cuadrados.data
         property_to_edit.cuota_mantenimiento = form.cuota_mantenimiento.data
 
+        # --- INICIO DE CAMBIO: Lógica de eliminación de imágenes ---
         delete_images_ids = request.form.getlist('delete_images')
         for img_id in delete_images_ids:
             image_to_delete = PropertyImage.query.get(int(img_id))
             if image_to_delete and image_to_delete.property_id == property_to_edit.id:
                 try:
-                    filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], image_to_delete.filename)
+                    # Usar la columna 'path' para construir la ruta física
+                    # current_app.config['UPLOAD_FOLDER'] es la base 'static/uploads'
+                    # image_to_delete.path es 'uploads/ID/filename.jpg'
+                    filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], image_to_delete.path)
+                    
                     if os.path.exists(filepath):
                         os.remove(filepath)
-                        print(f"DEBUG: Archivo {image_to_delete.filename} eliminado físicamente.")
+                        print(f"DEBUG: Archivo {image_to_delete.path} eliminado físicamente.")
                     else:
-                        print(f"DEBUG: Archivo {image_to_delete.filename} no encontrado en disco, eliminando solo de DB.")
+                        print(f"DEBUG: Archivo {image_to_delete.path} no encontrado en disco, eliminando solo de DB.")
                 except OSError as e:
-                    print(f"ERROR: No se pudo eliminar el archivo {image_to_delete.filename}: {e}")
+                    print(f"ERROR: No se pudo eliminar el archivo {image_to_delete.path}: {e}")
                 db.session.delete(image_to_delete)
-                print(f"DEBUG: Imagen {img_id} marcada para eliminación de DB.")
+                print(f"DEBUG: Imagen ID {img_id} (Path: {image_to_delete.path}) marcada para eliminación de DB.")
             else:
                 print(f"ADVERTENCIA: Intento de eliminar imagen ID {img_id} no encontrada o no pertenece a esta propiedad.")
+        # --- FIN DE CAMBIO: Lógica de eliminación de imágenes ---
+
 
         principal_image_id = request.form.get('principal_image', type=int)
         if principal_image_id:

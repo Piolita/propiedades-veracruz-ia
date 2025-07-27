@@ -47,14 +47,15 @@ class PropertyImage(db.Model):
     __tablename__ = 'property_image' # Añadido nombre de tabla explícito
     id = db.Column(db.Integer, primary_key=True)
     # CAMBIO: nombre_archivo a filename
-    filename = db.Column(db.String(100), nullable=False) 
+    filename = db.Column(db.String(100), nullable=False)
+    path = db.Column(db.String(200), nullable=True) # Ruta relativa del archivo (ej. 'uploads/1/foto.jpg')
     # CAMBIO: propiedad_id a property_id para consistencia
     property_id = db.Column(db.Integer, db.ForeignKey('property.id'), nullable=False)
     # CAMBIO: es_principal a is_main
     is_main = db.Column(db.Boolean, default=False) # Para identificar la imagen principal
 
     def __repr__(self):
-        return f"PropertyImage('{self.filename}', Property ID: {self.property_id})"
+        return f"PropertyImage('{self.filename}', Path: '{self.path}', Property ID: {self.property_id})"
 
 # ##################################################################
 # INICIO: Modelo de Usuario

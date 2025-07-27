@@ -31,18 +31,13 @@
                     <div class="card h-100 rounded-lg overflow-hidden property-card animate__animated animate__fadeInUp">
                         {# CAMBIO: 'propiedad.id' a 'property.id' #}
                         <a href="{{ url_for('main.property_detail', property_id=property.id) }}" class="d-block">
-                            {% set principal_image = '' %}
-                            {# CAMBIO: 'propiedad.imagenes' a 'property.images' #}
-                            {% for image in property.images %} {# CAMBIO: 'imagen' a 'image' #}
-                                {% if image.es_principal %} {# CAMBIO: 'imagen.es_principal' a 'image.es_principal' #}
-                                    {% set principal_image = image.filename %} {# CAMBIO: 'imagen.nombre_archivo' a 'image.filename' #}
-                                {% endif %}
-                            {% endfor %}
-                            {# CAMBIO: 'propiedad.imagenes' a 'property.images' #}
-                            {% if not principal_image and property.images %}
-                                {% set principal_image = property.images[0].filename %} {# CAMBIO: 'propiedad.imagenes[0].nombre_archivo' a 'property.images[0].filename' #}
+                            {% if property.principal_image and property.principal_image.path %}
+                                {# Usamos property.principal_image.path que ya contiene 'uploads/ID/nombre.jpg' #}
+                                <img src="{{ url_for('static', filename=property.principal_image.path) }}" class="card-img-top property-img" alt="Imagen de la propiedad">
+                            {% else %}
+                                {# Imagen de placeholder si no hay imagen principal o no hay imágenes #}
+                                <img src="{{ url_for('static', filename='img/banners/placeholder.png') }}" class="card-img-top property-img" alt="Imagen no disponible">
                             {% endif %}
-                            <img src="{{ url_for('static', filename='uploads/' + principal_image) }}" class="card-img-top property-img" alt="Imagen de la propiedad">
                         </a>
                         <div class="card-body d-flex flex-column">
                             <p class="card-text text-muted small mb-1">

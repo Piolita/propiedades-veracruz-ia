@@ -38,10 +38,17 @@
                         <div class="carousel-inner rounded">
                             {% for image in property.images %}
                             <div class="carousel-item {% if loop.first %}active{% endif %}">
-                                <img src="{{ url_for('static', filename='uploads/' + image.filename) }}" class="d-block w-100 rounded" alt="Imagen de la propiedad">
+                                {# CAMBIO CRUCIAL: Añadida la condición if image.path #}
+                                {% if image.path %}
+                                    <img src="{{ url_for('static', filename=image.path) }}" class="d-block w-100 property-carousel-img" alt="Imagen de propiedad">
+                                {% else %}
+                                    {# Si image.path es NULL o vacío, usa el placeholder #}
+                                    <img src="{{ url_for('static', filename='img/banners/placeholder.png') }}" class="d-block w-100 property-carousel-img" alt="Imagen no disponible">
+                                {% endif %}
                             </div>
                             {% endfor %}
                         </div>
+
                         {% if property.images|length > 1 %}
                         <button class="carousel-control-prev" type="button" data-bs-target="#propertyCarousel" data-bs-slide="prev">
                             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -55,7 +62,7 @@
                     </div>
                     {% else %}
                     <div class="text-center mb-4">
-                        <img src="{{ url_for('static', filename='img/placeholders/no_image.png') }}" class="img-fluid rounded shadow-sm" alt="No hay imagen disponible">
+                        <img src="{{ url_for('static', filename='img/banners/placeholders/no_image.png') }}" class="img-fluid rounded shadow-sm" alt="No hay imagen disponible">
                         <p class="text-muted mt-2">No hay imágenes disponibles para esta propiedad.</p>
                     </div>
                     {% endif %}

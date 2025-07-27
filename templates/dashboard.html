@@ -30,9 +30,9 @@
                                         <th scope="col">Título</th>
                                         <th scope="col">Ubicación</th>
                                         <th scope="col">Precio</th>
-                                        <th scope="col">Opciones</th> {# CAMBIO: "Estado" a "Opciones" #}
+                                        <th scope="col">Opciones</th> {# "Estado" a "Opciones" #}
                                         <th scope="col">Tipo</th>
-                                        <th scope="col">Fecha Publicación</th>
+                                        <th scope="col">Fecha Pub.</th> {# CAMBIO: Acortado para ahorrar espacio #}
                                         <th scope="col" class="text-center">Acciones</th>
                                     </tr>
                                 </thead>
@@ -43,17 +43,18 @@
                                         <td><a href="{{ url_for('main.property_detail', property_id=property.id) }}" class="text-decoration-none text-primary fw-bold">{{ property.titulo }}</a></td> {# Estilo de enlace #}
                                         <td>{{ property.ubicacion }}, {{ property.municipio }}</td>
                                         <td>${{ "{:,.2f}".format(property.precio) }}</td> {# Formato de moneda #}
-                                        <td>{{ property.property_options }}</td> {# CAMBIO: property.estado_propiedad a property.property_options #}
+                                        <td>{{ property.property_options }}</td> {# property.estado_propiedad a property.property_options #}
                                         <td>{{ property.tipo_propiedad }}</td>
                                         <td>{{ property.fecha_publicacion.strftime('%Y-%m-%d') }}</td> {# Formato de fecha #}
-                                        <td class="text-center text-nowrap"> {# text-nowrap para evitar que los botones se rompan en varias líneas #}
+                                        {# CAMBIO: Clases para hacer los botones de acción responsivos #}
+                                        <td class="text-center d-flex flex-column flex-sm-row justify-content-center align-items-center gap-1">
                                             {# Botón para editar la propiedad #}
-                                            <a href="{{ url_for('main.edit_property', property_id=property.id) }}" class="btn btn-sm btn-info text-white me-2 rounded"> {# Añadido rounded #}
+                                            <a href="{{ url_for('main.edit_property', property_id=property.id) }}" class="btn btn-sm btn-info text-white rounded">
                                                 <i class="fas fa-edit"></i> Editar
                                             </a>
                                             {# Botón para eliminar la propiedad (usando un formulario POST para seguridad) #}
-                                            <form action="{{ url_for('main.delete_property', property_id=property.id) }}" method="POST" class="d-inline">
-                                                <button type="submit" class="btn btn-sm btn-danger rounded" onclick="return confirm('¿Estás seguro de que quieres eliminar esta propiedad? Esta acción no se puede deshacer.');"> {# Añadido rounded #}
+                                            <form action="{{ url_for('main.delete_property', property_id=property.id) }}" method="POST" class="d-inline-block"> {# CAMBIO: d-inline a d-inline-block #}
+                                                <button type="submit" class="btn btn-sm btn-danger rounded" onclick="return confirm('¿Estás seguro de que quieres eliminar esta propiedad? Esta acción no se puede deshacer.');">
                                                     <i class="fas fa-trash-alt"></i> Eliminar
                                                 </button>
                                             </form>
@@ -69,7 +70,7 @@
                         </div>
                     {% endif %}
 
-                    {# Controles de Paginación (copiado de home.html) #}
+                    {# Controles de Paginación #}
                     {% if pagination.pages > 1 %}
                     <nav aria-label="Page navigation" class="mt-4"> {# mt-4 para margen superior #}
                         <ul class="pagination justify-content-center">

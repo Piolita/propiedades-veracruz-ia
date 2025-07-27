@@ -2,9 +2,9 @@
 {% block content %}
 <div class="container my-5">
     <div class="row justify-content-center">
-        <div class="col-md-6 col-lg-5">
-            <div class="card shadow-lg border-0 rounded-4">
-                <div class="card-body p-5">
+        <div class="col-md-6 col-lg-6"> {# AJUSTE AQUÍ: Hazlo más ancho para empezar. Puedes probar con col-md-8 col-lg-6. #}
+            <div class="card auth-form-container"> {# CAMBIO: Añadido 'auth-form-container', eliminado 'shadow-lg border-0 rounded-4' #}
+                <div class="card-body"> {# CAMBIO: Eliminado p-5 (o p-4 si lo tenías) para que el padding lo maneje auth-form-container #}
                     <h2 class="card-title text-center mb-4 fw-bold text-primary">Registrarse</h2>
                     <form method="POST" action="">
                         {{ form.hidden_tag() }} {# Campo oculto CSRF para seguridad #}

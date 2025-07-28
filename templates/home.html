@@ -90,14 +90,14 @@
                             {# CAMBIO: 'propiedad.cuota_mantenimiento' a 'property.cuota_mantenimiento' #}
                             {% if property.cuota_mantenimiento %}
                                 <p class="card-text text-muted small mb-2">
-                                    <span class="fw-bold">Cuota de Mtto:</span> ${{ "{:,.2f}".format(property.cuota_mantenimiento) }}
+                                    <span class="fw-bold">Cuota de Mtto:</span> ${{ "{:,.0f}".format(property.cuota_mantenimiento) }}
                                 </p>
                             {% endif %}
 
                             <div class="d-flex justify-content-between align-items-center mt-auto pt-2">
                                 {# CAMBIO: 'propiedad.precio' a 'property.precio' #}
                                 <p class="card-text text-dark fs-6 fw-bold mb-0">
-                                    ${{ "{:,.2f}".format(property.precio) }}
+                                    ${{ "{:,.0f}".format(property.precio) }}
                                     {# CAMBIO: 'propiedad.estado_propiedad' a 'property.estado_propiedad' #}
                                     {% if property.estado_propiedad == 'Renta' %}
                                         /mes

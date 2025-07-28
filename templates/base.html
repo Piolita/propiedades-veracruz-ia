@@ -26,12 +26,7 @@
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="{{ url_for('main.home') }}">Inicio</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('main.about_us') }}">Nosotros</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('main.contact') }}">Contacto</a>
-                    </li>
+
                     {% if current_user.is_authenticated %}
                         {# Enlaces para usuarios AUTENTICADOS #}
                         <li class="nav-item">
@@ -85,9 +80,58 @@
         {% block content %}{% endblock %}
     </main>
 
+    {# INICIO: Sección de enlaces del pie de página (PRE-FOOTER) #}
+    <section class="footer-links bg-secondary text-white py-5">
+        <div class="container">
+            <div class="row">
+                {# Columna 1: Navegación Principal #}
+                <div class="col-md-3 mb-4 mb-md-0">
+                    <h5 class="text-uppercase fw-bold mb-3">Navegación</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="{{ url_for('main.home') }}" class="text-white text-decoration-none mb-2 d-block">Inicio</a></li>
+                        <li><a href="{{ url_for('main.about_us') }}" class="text-white text-decoration-none mb-2 d-block">Nosotros</a></li> {# Reubicado aquí #}
+                        <li><a href="{{ url_for('main.contact') }}" class="text-white text-decoration-none mb-2 d-block">Contacto</a></li> {# Reubicado aquí #}
+                        {# Aquí podrías añadir más enlaces de navegación si los tuvieras #}
+                    </ul>
+                </div>
+
+                {# Columna 2: Recursos y Ayuda #}
+                <div class="col-md-3 mb-4 mb-md-0">
+                    <h5 class="text-uppercase fw-bold mb-3">Recursos</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-white text-decoration-none mb-2 d-block">Blog</a></li>
+                        <li><a href="#" class="text-white text-decoration-none mb-2 d-block">Preguntas Frecuentes</a></li>
+                        <li><a href="#" class="text-white text-decoration-none mb-2 d-block">Guía de Compra</a></li>
+                        <li><a href="#" class="text-white text-decoration-none mb-2 d-block">Guía de Venta</a></li>
+                    </ul>
+                </div>
+
+                {# Columna 3: Legal #}
+                <div class="col-md-3 mb-4 mb-md-0">
+                    <h5 class="text-uppercase fw-bold mb-3">Legal</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-white text-decoration-none mb-2 d-block">Políticas de Privacidad</a></li>
+                        <li><a href="#" class="text-white text-decoration-none mb-2 d-block">Términos y Condiciones</a></li>
+                        <li><a href="#" class="text-white text-decoration-none mb-2 d-block">Aviso Legal</a></li>
+                    </ul>
+                </div>
+
+                {# Columna 4: Contacto y Ubicación (detalles adicionales) #}
+                <div class="col-md-3 mb-4 mb-md-0">
+                    <h5 class="text-uppercase fw-bold mb-3">Contáctanos</h5>
+                    <p class="text-white mb-2"><i class="fas fa-map-marker-alt me-2"></i> Boca del Río, Ver., México</p>
+                    <p class="text-white mb-2"><i class="fas fa-envelope me-2"></i> cmagnadj@gmail.com</p>
+                    <p class="text-white mb-2"><i class="fas fa-phone me-2"></i> +52 (229) 301 9294</p>
+                    <p class="text-white mb-0"><i class="fas fa-clock me-2"></i> L-D: 8:00 - 17:00 Hrs.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    {# FIN: Sección de enlaces del pie de página (PRE-FOOTER) #}
+
     <footer class="bg-dark text-white text-center py-4 mt-5">
         <div class="container">
-            <p class="mb-0">© 2025 Propiedades Veracruz IA. Todos los derechos reservados.</p>
+            <p class="mb-0">© 2025 Propiedades Veracruz. Todos los derechos reservados.</p>
             <div class="social-icons mt-2">
                 <a href="https://wa.me/522293019294" class="text-white mx-2" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp"></i></a>
                 <a href="https://www.facebook.com/cMagnaDjesus" class="text-white mx-2" target="_blank" rel="noopener noreferrer"><i class="fab fa-facebook-f"></i></a>
@@ -106,7 +150,7 @@
 
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" xintegrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
     {# --- INICIO DE CAMBIO: SCRIPT REVISADO PARA AUTO-OCULTAR MENSAJES FLASH --- #}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -133,8 +177,10 @@
         });
     </script>
     {# --- FIN DE CAMBIO --- #}
+
     <script src="{{ url_for('static', filename='js/search_modals.js') }}"></script>
     <script src="{{ url_for('static', filename='js/carousel.js') }}"></script>
+    
     <script>
         // Script para el efecto blur en la navbar al hacer scroll
         window.addEventListener('scroll', function() {

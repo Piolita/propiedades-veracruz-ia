@@ -75,9 +75,9 @@
                     {# Sección de detalles con mejor presentación #}
                     <div class="row mb-3 p-3 border rounded bg-light"> {# Añadido padding, borde y fondo para destacar #}
                         <div class="col-md-6">
-                            <p class="lead mb-1"><strong>Precio:</strong> ${{ "{:,.2f}".format(property.precio) }}</p>
+                            <p class="lead mb-1"><strong>Precio:</strong> ${{ "{:,.0f}".format(property.precio) }}</p>
                             {% if property.cuota_mantenimiento %}
-                                <p class="lead mb-1"><strong>Cuota de Mantenimiento:</strong> ${{ "{:,.2f}".format(property.cuota_mantenimiento) }}</p>
+                                <p class="lead mb-1"><strong>Cuota de Mantenimiento:</strong> ${{ "{:,.0f}".format(property.cuota_mantenimiento) }}</p>
                             {% endif %}
                             <p class="lead mb-1"><strong>Opción:</strong> {{ property.property_options }}</p>
                             <p class="lead mb-1"><strong>Tipo:</strong> {{ property.tipo_propiedad }}</p>

@@ -117,28 +117,7 @@
             {% endif %}
         </div>
 
-        {# Nueva Sección: Síguenos en Redes Sociales #}
-        <section class="social-follow-section py-5 bg-white text-center">
-            <div class="container">
-                {# Contenedor principal para la imagen y el contenido superpuesto #}
-                <div class="social-image-wrapper position-relative mx-auto rounded shadow-lg overflow-hidden">
-                    <img src="{{ url_for('static', filename='img/banners/social_promo.jpg') }}" alt="Síguenos en Redes Sociales" class="img-fluid social-promo-image">
-                    
-                    {# Contenedor para el título y los iconos superpuestos #}
-                    <div class="social-overlay-content position-absolute p-4 text-end">
-                        <h2 class="social-section-title-overlay fw-bold text-white mb-3">Síguenos en Redes Sociales</h2>
-                        
-                        <div class="social-icons-overlay d-flex justify-content-end gap-3">
-                            {# Enlaces a tus perfiles reales de redes sociales #}
-                            <a href="https://www.facebook.com/cMagnaDjesus" class="social-icon-large facebook-bg" target="_blank" rel="noopener noreferrer"><i class="fab fa-facebook-f"></i></a>
-                            <a href="https://www.youtube.com/@propiedades-veracruz_2024" class="social-icon-large youtube-bg" target="_blank" rel="noopener noreferrer"><i class="fab fa-youtube"></i></a>
-                            <a href="https://www.tiktok.com/@cmagnadj" class="social-icon-large tiktok-bg" target="_blank" rel="noopener noreferrer"><i class="fab fa-tiktok"></i></a>
-                            <a href="https://www.instagram.com/propiedades_veracruz/" class="social-icon-large instagram-bg" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i></a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>      
+   
 
         {# Controles de Paginación #}
         {% if pagination.pages > 1 %}
@@ -175,6 +154,30 @@
             </ul>
         </nav>
         {% endif %}
+
+
+        {# Nueva Sección: Síguenos en Redes Sociales #}
+        <section class="social-follow-section py-5 bg-white text-center">
+            <div class="container">
+                {# Contenedor principal para la imagen y el contenido superpuesto #}
+                <div class="social-image-wrapper position-relative mx-auto rounded shadow-lg overflow-hidden">
+                    <img src="{{ url_for('static', filename='img/banners/social_promo.jpg') }}" alt="Síguenos en Redes Sociales" class="img-fluid social-promo-image">
+                    
+                    {# Contenedor para el título y los iconos superpuestos #}
+                    <div class="social-overlay-content position-absolute p-4 text-end">
+                        <h2 class="social-section-title-overlay fw-bold text-white mb-3">Síguenos en Redes Sociales</h2>
+                        
+                        <div class="social-icons-overlay d-flex justify-content-end gap-3">
+                            {# Enlaces a tus perfiles reales de redes sociales #}
+                            <a href="https://www.facebook.com/cMagnaDjesus" class="social-icon-large facebook-bg" target="_blank" rel="noopener noreferrer"><i class="fab fa-facebook-f"></i></a>
+                            <a href="https://www.youtube.com/@propiedades-veracruz_2024" class="social-icon-large youtube-bg" target="_blank" rel="noopener noreferrer"><i class="fab fa-youtube"></i></a>
+                            <a href="https://www.tiktok.com/@cmagnadj" class="social-icon-large tiktok-bg" target="_blank" rel="noopener noreferrer"><i class="fab fa-tiktok"></i></a>
+                            <a href="https://www.instagram.com/propiedades_veracruz/" class="social-icon-large instagram-bg" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>   
     </div>
 </section>
 

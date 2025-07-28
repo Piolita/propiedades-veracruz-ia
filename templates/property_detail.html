@@ -5,32 +5,37 @@
 {% block title %}Detalle de Propiedad{% endblock %}
 
 {% block content %}
-<div class="container my-5 pt-5"> {# Añadido pt-5 para compensar navbar fija #}
+<div class="container my-4 "> {# Añadido pt-5 para compensar navbar fija #}
     <div class="row justify-content-center">
         <div class="col-lg-10 col-md-12">
             <div class="card shadow-lg border-0 rounded-lg">
                 <div class="card-body p-4">
-                    {# Botón Volver al Inicio en la parte superior #}
-                    <div class="text-start mb-3">
-                        <a href="{{ url_for('main.home') }}" class="btn btn-secondary btn-sm">
-                            <i class="bi bi-arrow-left me-1"></i> Volver al Inicio
-                        </a>
-                    </div>
+                    {# INICIO DE CAMBIO: Cabecera Compacta y Centrada con Row/Col #}
+                    <div class="row align-items-center mb-3 g-2"> {# g-2 para espaciado entre columnas #}
+                        {# Columna para el Botón Volver al Inicio #}
+                        <div class="col-auto"> {# col-auto toma el ancho necesario para el contenido #}
+                            <a href="{{ url_for('main.home') }}" class="btn btn-secondary btn-sm rounded-pill">
+                                <i class="bi bi-arrow-left me-1"></i> Volver al Inicio
+                            </a>
+                        </div>
 
-                    <h1 class="card-title text-center text-primary mb-4 display-4 fw-bold">{{ property.titulo }}</h1>
-                  
-                    <div id="propertyTitleForWhatsApp" style="display:none;">{{ property.titulo }}</div>
-                  
-                    {# Nuevo menú de "Me gusta" y "Compartir" #}
-                    <div class="d-flex justify-content-center gap-4 mb-4">
-                        <button type="button" class="btn btn-outline-secondary btn-lg d-flex align-items-center gap-2">
-                            <i class="fas fa-heart"></i> Me gusta
-                        </button>
-                        <button type="button" class="btn btn-outline-secondary btn-lg d-flex align-items-center gap-2">
-                            <i class="fas fa-share-alt"></i> Compartir
-                        </button>
+                        {# Columna para el Título de la Propiedad (Centrado) #}
+                        <div class="col text-center"> {# col toma el espacio restante y text-center centra el H2 #}
+                            <h2 class="card-title text-primary display-6 fw-bold mb-0">{{ property.titulo }}</h2>
+                        </div>
+
+                        {# Columna para los Botones Me gusta/Compartir (Alineados a la derecha) #}
+                        <div class="col-auto d-flex gap-2 justify-content-end"> {# col-auto para shrink-wrap, d-flex gap-2 para los botones, justify-content-end para alinearlos a la derecha #}
+                            <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill d-flex align-items-center gap-1">
+                                <i class="fas fa-heart"></i> Me gusta
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill d-flex align-items-center gap-1">
+                                <i class="fas fa-share-alt"></i> Compartir
+                            </button>
+                        </div>
                     </div>
-                    <hr class="mb-4"> {# Separador #}
+                    <hr class="my-3"> {# Separador: Margen vertical reducido #}
+                    {# FIN DE CAMBIO: Cabecera Compacta y Centrada #}
 
                     {# Carrusel de imágenes (si hay imágenes) #}
                     {% if property.images %}
@@ -109,8 +114,7 @@
                             <a href="{{ url_for('main.edit_property', property_id=property.id) }}" class="btn btn-warning">Editar Propiedad</a>
                             <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteConfirmationModal" data-property-id="{{ property.id }}">
                                 Eliminar Propiedad
-                            </button>
-                            {# ELIMINADA LA ETIQUETA FORMULARIO REDUNDANTE AQUÍ #}
+                            </button>                            
                         </div>
                     {% endif %}
 
@@ -146,6 +150,5 @@
     </div>
 </div>
 
-{# ELIMINADO EL SCRIPT DUPLICADO QUE ESTABA AQUÍ ABAJO, AHORA search_modals.js SE ENCARGA #}
 
 {% endblock content %}

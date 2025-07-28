@@ -106,7 +106,6 @@ html, body {
 .container h2.text-primary {
     font-size: 1.5rem; /* CAMBIO: Tamaño de letra más pequeño */
     color: #343a40 !important; /* CAMBIO: Color negro (tu color de texto por defecto) */
-    text-align: left !important; /* CAMBIO: Alineado a la izquierda */
 }
 
 
@@ -436,5 +435,44 @@ footer {
     }
     .flash-messages-container .alert {
         max-width: 90%; /* Se adapta a un 90% del ancho de la pantalla en móviles */
+    }
+}
+
+/* Estilos para Carrusel de Imágenes en Detalle de Propiedad */
+.property-carousel-img {
+    max-height: 400px; /* CAMBIO: Altura máxima para las imágenes del carrusel */
+    object-fit: contain; /* CAMBIO: Asegura que la imagen completa sea visible, manteniendo su relación de aspecto */
+    width: 100%; /* Asegura que ocupe todo el ancho disponible */
+}
+
+/* Mejorar visibilidad de botones del carrusel */
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo semitransparente para los iconos */
+    padding: 1.2rem; /* Aumenta el área del icono para que sea más fácil de ver/clicar */
+    border-radius: 0.5rem; /* Bordes redondeados */
+}
+
+.carousel-control-prev,
+.carousel-control-next {
+    width: auto; /* Ajusta el ancho del botón al tamaño del icono */
+    opacity: 0.8; /* Ligeramente transparente cuando no se pasa el ratón */
+    transition: opacity 0.3s ease;
+}
+
+.carousel-control-prev:hover,
+.carousel-control-next:hover {
+    opacity: 1; /* Completamente opaco al pasar el ratón */
+}
+
+/* Ajustes responsivos para el carrusel */
+@media (max-width: 768px) {
+    .property-carousel-img {
+        max-height: 300px; /* CAMBIO: Menor altura en móviles */
+        object-fit: contain;
+    }
+    .carousel-control-prev-icon,
+    .carousel-control-next-icon {
+        padding: 1rem; /* Menor padding en móviles */
     }
 }

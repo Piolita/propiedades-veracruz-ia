@@ -94,7 +94,7 @@
                             </div>
                         </div>
 
-                        <!-- Opciones y Tipo de Propiedad -->
+                        <!-- Opciones, Tipo de Propiedad y Antiguedad-->
                         <div class="row g-3 mb-2">
                             <div class="col-md-6">
                                 {{ form.property_options.label(class="form-label") }}
@@ -118,6 +118,28 @@
                                     </div>
                                 {% endif %}
                             </div>
+                        </div>
+                        <div class="col-md-6">
+                            {{ form.antiguedad_option.label(class="form-label") }}
+                            {{ form.antiguedad_option(class="form-control {% if form.antiguedad_option.errors %}is-invalid{% endif %}") }}
+                            {% if form.antiguedad_option.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.antiguedad_option.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6" id="antiguedad_years_field_edit" style="display: none;"> {# ID diferente para evitar conflictos con add_property #}
+                            {{ form.antiguedad_years.label(class="form-label") }}
+                            {{ form.antiguedad_years(class="form-control {% if form.antiguedad_years.errors %}is-invalid{% endif %}") }}
+                            {% if form.antiguedad_years.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.antiguedad_years.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
                         </div>
 
                         <!-- Habitaciones y Estacionamientos -->
@@ -199,17 +221,7 @@
                         </div>
 
                         <!-- Antigüedad -->
-                        <div class="mb-2">
-                            {{ form.antiguedad.label(class="form-label") }}
-                            {{ form.antiguedad(class="form-control {% if form.antiguedad.errors %}is-invalid{% endif %}") }}
-                            {% if form.antiguedad.errors %}
-                                <div class="invalid-feedback">
-                                    {% for error in form.antiguedad.errors %}
-                                        <span>{{ error }}</span>
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-                        </div>
+
 
                         <!-- Cuota de Mantenimiento -->
                         <div class="mb-2"> {# mb-2 para compactar #}
@@ -319,4 +331,56 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
+    <!-- Script JavaScript para la antigüedad dinámica (ESPECÍFICO PARA ADD_PROPERTY.HTML) -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Función para manejar la visibilidad del campo de años
+            function updateAntiguedadVisibility(optionElement, yearsFieldElement) {
+                if (optionElement && yearsFieldElement) {
+                    if (optionElement.value === 'years') {
+                        yearsFieldElement.style.display = 'block'; // Muestra el campo
+                    } else {
+                        yearsFieldElement.style.display = 'none'; // Oculta el campo
+                    }
+                }
+            }
+
+            // --- Lógica para add_property.html ---
+            const addAntiguedadOption = document.getElementById('antiguedad_option');
+            const addAntiguedadYearsField = document.getElementById('antiguedad_years_field');
+            if (addAntiguedadOption && addAntiguedadYearsField) {
+                // Establece el estado inicial
+                updateAntiguedadVisibility(addAntiguedadOption, addAntiguedadYearsField);
+                // Agrega el escuchador de eventos para cuando cambie la selección
+                addAntiguedadOption.addEventListener('change', function() {
+                    updateAntiguedadVisibility(addAntiguedadOption, addAntiguedadYearsField);
+                });
+            }
+
+            // --- Lógica para edit_property.html ---
+            // Asegúrate de que el ID del SelectField sea 'antiguedad_option'
+            // y el ID del div que contiene antiguedad_years sea 'antiguedad_years_field_edit'
+            const editAntiguedadOption = document.getElementById('antiguedad_option');
+            const editAntiguedadYearsField = document.getElementById('antiguedad_years_field_edit');
+
+            if (editAntiguedadOption && editAntiguedadYearsField) {
+                // Establece el estado inicial
+                updateAntiguedadVisibility(editAntiguedadOption, editAntiguedadYearsField);
+
+                // Agrega el escuchador de eventos
+                editAntiguedadOption.addEventListener('change', function() {
+                    updateAntiguedadVisibility(editAntiguedadOption, editAntiguedadYearsField);
+                });
+
+                // *** IMPORTANTE AÑADIDO PARA EDICIÓN DE PROPIEDADES EXISTENTES ***:
+                // Dispara el evento 'change' en la carga para asegurar que el estado inicial
+                // se establezca correctamente, especialmente para propiedades que ya tienen
+                // 'Años' pre-seleccionado desde la base de datos.
+                editAntiguedadOption.dispatchEvent(new Event('change'));
+            }
+        });
+    </script>
+
+
 {% endblock content %}
+

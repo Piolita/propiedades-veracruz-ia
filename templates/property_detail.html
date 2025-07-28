@@ -84,6 +84,17 @@
                         </div>
                         <div class="col-md-6">
                             <p class="lead mb-1"><strong>Ubicación:</strong> {{ property.ubicacion }}, {{ property.municipio }}</p>
+                            {# INICIO CAMBIO: Mostrar antigüedad con los nuevos campos #}
+                            <p class="lead mb-1"><strong>Antigüedad:</strong>
+                                {% if property.antiguedad_tipo == 'new' %}
+                                    Nueva
+                                {% elif property.antiguedad_tipo == 'years' and property.antiguedad_anos is not none %}
+                                    {{ property.antiguedad_anos }} años
+                                {% else %}
+                                    No especificada
+                                {% endif %}
+                            </p>
+                            {# FIN CAMBIO ANTIGÜEDAD #}
                             {% if property.num_habitaciones %}
                                 <p class="lead mb-1"><strong>Habitaciones:</strong> {{ property.num_habitaciones }}</p>
                             {% endif %}

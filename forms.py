@@ -41,15 +41,23 @@ class PropertyForm(FlaskForm):
                                      ('Oficina', 'Oficina'),
                                      ('Bodega', 'Bodega')
                                  ])
-
-    num_habitaciones = IntegerField('Número de Habitaciones', validators=[Optional(), NumberRange(min=0)])
-    num_banos = IntegerField('Número de Baños Completos', validators=[Optional(), NumberRange(min=0)])
-    num_medios_banos = IntegerField('Número de Medios Baños', validators=[Optional(), NumberRange(min=0)])
+    # CAMBIO: Transformación del campo Antigüedad
+    antiguedad_option = SelectField('Antigüedad', choices=[
+        ('', 'Selecciona una opción'), # Opción vacía por defecto
+        ('new', 'Nueva'),
+        ('years', 'Años')
+    ], validators=[Optional()]) # Es opcional si no se selecciona nada (siempre puedes guardar NULL)
+    antiguedad_years = IntegerField('¿Cuántos años?', validators=[Optional(), NumberRange(min=0)])
+    # FIN CAMBIO
+    
+    num_habitaciones = IntegerField('Recamaras', validators=[Optional(), NumberRange(min=0)])
+    num_banos = IntegerField('Baños Completos', validators=[Optional(), NumberRange(min=0)])
+    num_medios_banos = IntegerField('Medios Baños', validators=[Optional(), NumberRange(min=0)])
     num_estacionamientos = IntegerField('Estacionamientos', validators=[Optional(), NumberRange(min=0)])
     area_terreno_metros_cuadrados = DecimalField('Área de Terreno (m²)', validators=[Optional(), NumberRange(min=0)])
     area_construccion_metros_cuadrados = DecimalField('Área de Construcción (m²)', validators=[Optional(), NumberRange(min=0)])
     cuota_mantenimiento = DecimalField('Cuota de Mantenimiento', validators=[Optional(), NumberRange(min=0)])
-    antiguedad = IntegerField('Antigüedad (años)', validators=[Optional(), NumberRange(min=0)])
+
 
     
     # Campo para la subida de múltiples imágenes

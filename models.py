@@ -28,7 +28,8 @@ class Property(db.Model):
     num_estacionamientos = db.Column(db.Integer, default=0)
     area_construccion_metros_cuadrados = db.Column(db.Float, nullable=True)
     area_terreno_metros_cuadrados = db.Column(db.Float, nullable=True)
-    antiguedad = db.Column(db.Integer, nullable=True) # En años
+    antiguedad_tipo = db.Column(db.String(50), nullable=True) # Para 'new' o 'years'
+    antiguedad_anos = db.Column(db.Integer, nullable=True)   
     cuota_mantenimiento = db.Column(db.Float, default=0.0)
     fecha_publicacion = db.Column(db.DateTime, default=datetime.utcnow)
 

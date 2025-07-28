@@ -268,6 +268,11 @@ def add_property():
     if form.validate_on_submit():
         print("DEBUG: form.validate_on_submit() es TRUE - ¡Formulario válido y enviado!")
         
+                # Lógica para determinar el valor de antiguedad_anos
+        antiguedad_anos_data = None
+        if form.antiguedad_option.data == 'years':
+            antiguedad_anos_data = form.antiguedad_years.data
+
         try:
             new_property = Property(
                 titulo=form.titulo.data,
@@ -284,7 +289,10 @@ def add_property():
                 area_terreno_metros_cuadrados=form.area_terreno_metros_cuadrados.data,
                 area_construccion_metros_cuadrados=form.area_construccion_metros_cuadrados.data,
                 cuota_mantenimiento=form.cuota_mantenimiento.data,
-                antiguedad=form.antiguedad.data if form.antiguedad.data is not None else 0,
+                # --- CAMBIO IMPORTANTE: Asignación de los nuevos campos de antigüedad ---
+                antiguedad_tipo=form.antiguedad_option.data,
+                antiguedad_anos=antiguedad_anos_data,
+                # --- FIN CAMBIO ANTIGÜEDAD ---
                 fecha_publicacion=datetime.utcnow(),
                 agente_id=current_user.id
             )
@@ -413,7 +421,15 @@ def edit_property(property_id):
         property_to_edit.area_terreno_metros_cuadrados = form.area_terreno_metros_cuadrados.data
         property_to_edit.area_construccion_metros_cuadrados = form.area_construccion_metros_cuadrados.data
         property_to_edit.cuota_mantenimiento = form.cuota_mantenimiento.data
-        property_to_edit.antiguedad = form.antiguedad.data
+        # --- CAMBIO IMPORTANTE: Actualización de los campos de antigüedad ---
+        property_to_edit.antiguedad_tipo = form.antiguedad_option.data
+        if form.antiguedad_option.data == 'years':
+            # Solo guarda los años si la opción seleccionada es 'Años'
+            property_to_edit.antiguedad_anos = form.antiguedad_years.data
+        else:
+            # Si la opción es 'Nueva' o no se seleccionó nada, los años deben ser NULL
+            property_to_edit.antiguedad_anos = None
+        # --- FIN CAMBIO ANTIGÜEDAD ---
 
         # --- Gestión de Imágenes Existentes ---
         print(f"\n--- INICIO PROCESO DE EDICIÓN DE IMÁGENES PARA PROPIEDAD ID: {property_id} ---")
@@ -540,8 +556,10 @@ def edit_property(property_id):
         form.area_terreno_metros_cuadrados.data = property_to_edit.area_terreno_metros_cuadrados
         form.area_construccion_metros_cuadrados.data = property_to_edit.area_construccion_metros_cuadrados
         form.cuota_mantenimiento.data = property_to_edit.cuota_mantenimiento
-        form.antiguedad.data = property_to_edit.antiguedad # Asegúrate de que este campo se precargue
-
+        # --- CAMBIO IMPORTANTE: Precarga de los campos de antigüedad ---
+        form.antiguedad_option.data = property_to_edit.antiguedad_tipo
+        form.antiguedad_years.data = property_to_edit.antiguedad_anos
+        # --- FIN CAMBIO ANTIGÜEDAD ---
     # Asegurarse de que el objeto property_to_edit refleje el estado más actual para el renderizado
     db.session.refresh(property_to_edit) # Importante para que el template vea los cambios de is_main
 

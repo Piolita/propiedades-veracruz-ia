@@ -169,9 +169,6 @@ html, body {
 }
 
 
-
-
-
 /* --- REGLAS AÑADIDAS/MODIFICADAS PARA LA VALIDACIÓN DE FORMULARIOS (ESTAS SÍ SE MANTIENEN) --- */
 /* Estas reglas son para el estado de error y el mensaje de error, no para el estilo base del input */
 .form-control.is-invalid, .form-select.is-invalid {

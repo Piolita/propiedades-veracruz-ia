@@ -49,7 +49,9 @@ class PropertyForm(FlaskForm):
     area_terreno_metros_cuadrados = DecimalField('Área de Terreno (m²)', validators=[Optional(), NumberRange(min=0)])
     area_construccion_metros_cuadrados = DecimalField('Área de Construcción (m²)', validators=[Optional(), NumberRange(min=0)])
     cuota_mantenimiento = DecimalField('Cuota de Mantenimiento', validators=[Optional(), NumberRange(min=0)])
+    antiguedad = IntegerField('Antigüedad (años)', validators=[Optional(), NumberRange(min=0)])
 
+    
     # Campo para la subida de múltiples imágenes
     # 'images' es el nombre del campo en el formulario HTML (multiple='true')
     imagenes = FileField('Subir Imágenes', validators=[

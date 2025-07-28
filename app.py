@@ -261,6 +261,7 @@ def add_property():
     # --- FIN: Lógica para limitar a un agente a una propiedad ---
 
     form = PropertyForm()
+    # Los prints de DEBUG se mantienen temporalmente para la verificación
     print(f"DEBUG: Método de la solicitud: {request.method}")
     print(f"DEBUG: ¿Formulario enviado? {form.is_submitted()}")
 
@@ -283,11 +284,12 @@ def add_property():
                 area_terreno_metros_cuadrados=form.area_terreno_metros_cuadrados.data,
                 area_construccion_metros_cuadrados=form.area_construccion_metros_cuadrados.data,
                 cuota_mantenimiento=form.cuota_mantenimiento.data,
+                antiguedad=form.antiguedad.data if form.antiguedad.data is not None else 0,
                 fecha_publicacion=datetime.utcnow(),
                 agente_id=current_user.id
             )
             db.session.add(new_property)
-            db.session.commit()
+            db.session.commit() # Guarda la propiedad para obtener su ID
 
             print(f"DEBUG: Propiedad guardada en DB con ID: {new_property.id}")
 
@@ -305,9 +307,9 @@ def add_property():
                     if file and allowed_file(file.filename):
                         filename = secure_filename(file.filename)
                         # Construir la ruta completa donde se guardará el archivo en el servidor
-                        filepath = os.path.join(property_upload_folder, filename)
+                        filepath = os.path.join(property_upload_folder, filename) # CAMBIO CLAVE: Guarda en la subcarpeta
                         file.save(filepath)
-                        print(f"DEBUG: Archivo guardado físicamente en {filepath}")
+                        print(f"DEBUG: Archivo guardado físicamente: {filepath}")
 
                         # Construir la ruta relativa para guardar en la base de datos
                         # Ej: 'uploads/123/nombre_archivo.jpg'
@@ -321,7 +323,7 @@ def add_property():
                         new_image = PropertyImage(
                             property_id=property_id,
                             filename=filename,
-                            path=db_image_path, # Guardar la ruta relativa completa
+                            path=db_image_path, # CAMBIO CLAVE: Guardar la ruta relativa completa
                             is_main=is_main
                         )
                         db.session.add(new_image)
@@ -332,7 +334,7 @@ def add_property():
                         print(f"DEBUG: Archivo {file.filename} no permitido o inválido.")
             # --- FIN DE CAMBIO ---
             
-            db.session.commit()
+            db.session.commit() # Un commit final para las imágenes
 
             print("DEBUG: Imágenes de propiedad guardadas en DB.")
 
@@ -396,6 +398,7 @@ def edit_property(property_id):
     form = EditPropertyForm()
 
     if form.validate_on_submit():
+        # --- Actualización de campos de texto ---
         property_to_edit.titulo = form.titulo.data
         property_to_edit.descripcion = form.descripcion.data
         property_to_edit.precio = form.precio.data
@@ -410,76 +413,119 @@ def edit_property(property_id):
         property_to_edit.area_terreno_metros_cuadrados = form.area_terreno_metros_cuadrados.data
         property_to_edit.area_construccion_metros_cuadrados = form.area_construccion_metros_cuadrados.data
         property_to_edit.cuota_mantenimiento = form.cuota_mantenimiento.data
+        property_to_edit.antiguedad = form.antiguedad.data
 
-        # --- INICIO DE CAMBIO: Lógica de eliminación de imágenes ---
+        # --- Gestión de Imágenes Existentes ---
+        print(f"\n--- INICIO PROCESO DE EDICIÓN DE IMÁGENES PARA PROPIEDAD ID: {property_id} ---")
+        print(f"DEBUG: Imágenes principales ANTES de procesar: {[img.filename for img in property_to_edit.images if img.is_main]}")
+
+        # 1. Procesar eliminaciones
         delete_images_ids = request.form.getlist('delete_images')
-        for img_id in delete_images_ids:
-            image_to_delete = PropertyImage.query.get(int(img_id))
-            if image_to_delete and image_to_delete.property_id == property_to_edit.id:
-                try:
-                    # Usar la columna 'path' para construir la ruta física
-                    # current_app.config['UPLOAD_FOLDER'] es la base 'static/uploads'
-                    # image_to_delete.path es 'uploads/ID/filename.jpg'
-                    filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], image_to_delete.path)
-                    
-                    if os.path.exists(filepath):
-                        os.remove(filepath)
-                        print(f"DEBUG: Archivo {image_to_delete.path} eliminado físicamente.")
-                    else:
-                        print(f"DEBUG: Archivo {image_to_delete.path} no encontrado en disco, eliminando solo de DB.")
-                except OSError as e:
-                    print(f"ERROR: No se pudo eliminar el archivo {image_to_delete.path}: {e}")
-                db.session.delete(image_to_delete)
-                print(f"DEBUG: Imagen ID {img_id} (Path: {image_to_delete.path}) marcada para eliminación de DB.")
-            else:
-                print(f"ADVERTENCIA: Intento de eliminar imagen ID {img_id} no encontrada o no pertenece a esta propiedad.")
-        # --- FIN DE CAMBIO: Lógica de eliminación de imágenes ---
+        if delete_images_ids: # Solo procesar si hay IDs para eliminar
+            print(f"DEBUG: IDs de imágenes a eliminar: {delete_images_ids}")
+            for img_id in delete_images_ids:
+                image_to_delete = PropertyImage.query.get(int(img_id))
+                if image_to_delete and image_to_delete.property_id == property_to_edit.id:
+                    try:
+                        # Usar la columna 'path' para construir la ruta física
+                        filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], image_to_delete.path) # CAMBIO CLAVE: Usa image_to_delete.path
+                        if os.path.exists(filepath):
+                            os.remove(filepath)
+                            print(f"DEBUG: Archivo '{image_to_delete.filename}' eliminado físicamente.")
+                        else:
+                            print(f"DEBUG: Archivo '{image_to_delete.filename}' no encontrado en disco en '{filepath}', eliminando solo de DB.")
+                    except OSError as e:
+                        print(f"ERROR: No se pudo eliminar el archivo '{image_to_delete.filename}': {e}")
+                    db.session.delete(image_to_delete)
+                    print(f"DEBUG: Imagen ID {img_id} (Path: {image_to_delete.path}) marcada para eliminación de DB.")
+                else:
+                    print(f"ADVERTENCIA: Intento de eliminar imagen ID {img_id} no encontrada o no pertenece a esta propiedad.")
+            db.session.flush() # Sincroniza las eliminaciones con la sesión
+            db.session.refresh(property_to_edit) # Vuelve a cargar la colección de imágenes de la DB
 
+        print(f"DEBUG: Imágenes después de eliminaciones: {[img.filename for img in property_to_edit.images]}")
+        print(f"DEBUG: Principales después de eliminaciones: {[img.filename for img in property_to_edit.images if img.is_main]}")
 
-        principal_image_id = request.form.get('principal_image', type=int)
-        if principal_image_id:
-            for img in property_to_edit.images:
+        # 2. Establecer la nueva imagen principal
+        principal_image_id = request.form.get('main_image', type=int)
+        print(f"DEBUG: Valor recibido para 'main_image' del formulario: {principal_image_id}")
+
+        # Desmarcar todas las imágenes como principales para esta propiedad
+        for img in property_to_edit.images:
+            if img.is_main: # Solo cambiar si ya es principal para evitar operaciones innecesarias
                 img.is_main = False
+                print(f"DEBUG: Desmarcada '{img.filename}' como principal.")
+        db.session.flush() # Sincroniza los cambios de is_main=False
+
+        if principal_image_id:
             new_principal_image = PropertyImage.query.get(principal_image_id)
             if new_principal_image and new_principal_image.property_id == property_to_edit.id:
                 new_principal_image.is_main = True
-                print(f"DEBUG: Imagen {new_principal_image.filename} marcada como principal.")
+                print(f"DEBUG: Nueva principal establecida: '{new_principal_image.filename}' (ID: {principal_image_id}).")
             else:
-                print(f"ADVERTENCIA: Imagen principal ID {principal_image_id} no encontrada o no pertenece a esta propiedad.")
+                print(f"ADVERTENCIA: Imagen principal ID {principal_image_id} no encontrada o no pertenece a esta propiedad al intentar establecerla.")
         else:
-            db.session.flush()
-            if property_to_edit.images and not any(img.is_main for img in property_to_edit.images):
-                property_to_edit.images[0].is_main = True
-                print(f"DEBUG: Ninguna principal seleccionada, primera imagen {property_to_edit.images[0].filename} establecida como principal por defecto.")
+            print("DEBUG: No se seleccionó una imagen principal explícitamente en el formulario.")
+        
+        db.session.flush() # Sincroniza el nuevo estado de is_main
+        db.session.refresh(property_to_edit) # Vuelve a cargar la colección de imágenes con el estado is_main actualizado
 
+        # 3. Procesar nuevas imágenes subidas
         new_image_files = request.files.getlist('imagenes')
         if new_image_files:
+            print(f"DEBUG: Procesando {len(new_image_files)} nuevos archivos de imagen.")
+            # Aseguramos que la carpeta de la propiedad exista (para el caso de nuevas imágenes)
+            property_upload_folder = os.path.join(current_app.config['UPLOAD_FOLDER'], str(property_to_edit.id))
+            os.makedirs(property_upload_folder, exist_ok=True)
+            
             for file in new_image_files:
                 if file.filename != '' and allowed_file(file.filename):
                     filename = secure_filename(file.filename)
-                    filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+                    # La nueva ruta de archivo incluye el ID de la propiedad
+                    db_image_path = os.path.join('uploads', str(property_to_edit.id), filename).replace('\\', '/')
+                    filepath = os.path.join(property_upload_folder, filename) # Ruta física para guardar
+                    
                     file.save(filepath)
                     
-                    is_main = False
-                    db.session.flush()
-                    if not property_to_edit.images or not any(img.is_main for img in property_to_edit.images):
-                        is_main = True
-                        print(f"DEBUG: Nueva imagen {filename} marcada como principal (primera).")
+                    is_main_new = False
+                    # Si no hay ninguna imagen principal después de todas las operaciones anteriores,
+                    # la primera nueva imagen que se suba se hace principal.
+                    db.session.refresh(property_to_edit) # Refresca el estado de la relación images
+                    if not any(img.is_main for img in property_to_edit.images):
+                        is_main_new = True
+                        print(f"DEBUG: Nueva imagen '{filename}' marcada como principal (primera disponible).")
 
-                    new_image = PropertyImage(property_id=property_to_edit.id, filename=filename, is_main=is_main)
+                    new_image = PropertyImage(property_id=property_to_edit.id, filename=filename, path=db_image_path, is_main=is_main_new) # CAMBIO CLAVE: Guarda el 'path'
                     db.session.add(new_image)
-                    print(f"DEBUG: Nueva imagen {filename} añadida a DB.")
+                    print(f"DEBUG: Nueva imagen '{filename}' añadida a DB con path: '{db_image_path}', is_main: {is_main_new}.")
                 elif file.filename == '':
-                    print("DEBUG: Archivo de imagen vacío ignorado.")
+                    print("DEBUG: Archivo de imagen vacío (Ignorado).")
                 else:
-                    print(f"ADVERTENCIA: Archivo {file.filename} no permitido o con nombre inválido.")
+                    print(f"ADVERTENCIA: Archivo '{file.filename}' no permitido o con nombre inválido.")
+            db.session.flush() # Sincroniza las nuevas adiciones
+            db.session.refresh(property_to_edit) # Refresca la colección de imágenes con las nuevas
 
+        # Lógica final para asegurar que SIEMPRE haya una imagen principal si hay imágenes
+        # Esto se ejecuta DESPUÉS de todas las eliminaciones y adiciones
+        if property_to_edit.images and not any(img.is_main for img in property_to_edit.images):
+            # Si no hay ninguna imagen principal, y aún hay imágenes, la primera se hace principal
+            property_to_edit.images[0].is_main = True
+            print(f"DEBUG: Lógica final: Ninguna principal encontrada, '{property_to_edit.images[0].filename}' establecida como principal por defecto.")
+        elif not property_to_edit.images:
+            print("DEBUG: No hay imágenes asociadas a esta propiedad después de las operaciones.")
+        else:
+            print(f"DEBUG: Lógica final: Una imagen principal ya está establecida: {[img.filename for img in property_to_edit.images if img.is_main]}")
+
+
+        # --- Commit Final y Redirección ---
         db.session.commit()
         print("DEBUG: Commit final de la sesión de DB.")
         flash('¡Propiedad actualizada exitosamente!', 'success')
+        print(f"--- FIN PROCESO DE EDICIÓN DE IMÁGENES PARA PROPIEDAD ID: {property_id} ---\n")
         return redirect(url_for('main.property_detail', property_id=property_to_edit.id))
 
     elif request.method == 'GET':
+        # Precarga los datos del formulario
         form.titulo.data = property_to_edit.titulo
         form.descripcion.data = property_to_edit.descripcion
         form.precio.data = property_to_edit.precio
@@ -494,7 +540,11 @@ def edit_property(property_id):
         form.area_terreno_metros_cuadrados.data = property_to_edit.area_terreno_metros_cuadrados
         form.area_construccion_metros_cuadrados.data = property_to_edit.area_construccion_metros_cuadrados
         form.cuota_mantenimiento.data = property_to_edit.cuota_mantenimiento
-    
+        form.antiguedad.data = property_to_edit.antiguedad # Asegúrate de que este campo se precargue
+
+    # Asegurarse de que el objeto property_to_edit refleje el estado más actual para el renderizado
+    db.session.refresh(property_to_edit) # Importante para que el template vea los cambios de is_main
+
     return render_template('edit_property.html', title='Editar Propiedad', form=form, property=property_to_edit)
 
 

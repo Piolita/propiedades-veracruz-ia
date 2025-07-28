@@ -1,27 +1,23 @@
+{# templates/edit_property.html #}
+
 {% extends "base.html" %}
 
 {% block title %}Editar Propiedad{% endblock %}
 
 {% block content %}
-    {# Contenedor principal con card para unificar estilos y centrar el formulario #}
-    <div class="container my-5 pt-5"> {# my-5 para margen vertical, pt-5 para compensar navbar fija #}
+    {# Contenedor principal con margen superior y centrado, similar a otros formularios #}
+    <div class="container my-5 pt-5">
         <div class="row justify-content-center">
-            <div class="col-lg-8 col-md-10"> {# Columnas para controlar el ancho en diferentes tamaños de pantalla #}
-                <div class="card shadow-lg border-0 rounded-4 p-4"> {# Card con sombra, bordes y padding #}
-                    {# Título principal del formulario #}
-                    <h2 class="card-title text-center mb-4 fw-bold text-primary fs-3">Editar Propiedad: {{ property.titulo }}</h2>
-                    
+            <div class="col-lg-8 col-md-10">
+                <div class="card shadow-lg border-0 rounded-lg p-4"> {# Añadido padding al card #}
+                    <h2 class="text-center mb-4 fs-3 fw-bold text-primary">Editar Propiedad: {{ property.titulo }}</h2> {# CAMBIO: Título a h2 fs-3 #}
                     <form method="POST" action="" enctype="multipart/form-data" novalidate>
-                        {{ form.hidden_tag() }} {# Campo oculto CSRF para seguridad #}
-                        
-                        {# Los campos del formulario (título, descripción, precio, etc.) #}
-                        {# Se han actualizado las clases de Bootstrap 4 a Bootstrap 5 (form-group a mb-3, form-control-label a form-label, form-row a row g-3) #}
-                        {# Y se ha asegurado la clase is-invalid para mostrar errores #}
+                        {{ form.hidden_tag() }}
 
                         <!-- Título -->
-                        <div class="mb-3">
+                        <div class="mb-2"> {# mb-2 para compactar verticalmente #}
                             {{ form.titulo.label(class="form-label") }}
-                            {{ form.titulo(class="form-control form-control-lg {% if form.titulo.errors %}is-invalid{% endif %}") }}
+                            {{ form.titulo(class="form-control {% if form.titulo.errors %}is-invalid{% endif %}") }} {# Eliminado form-control-lg #}
                             {% if form.titulo.errors %}
                                 <div class="invalid-feedback">
                                     {% for error in form.titulo.errors %}
@@ -32,9 +28,9 @@
                         </div>
 
                         <!-- Descripción -->
-                        <div class="mb-3">
+                        <div class="mb-2"> {# mb-2 para compactar verticalmente #}
                             {{ form.descripcion.label(class="form-label") }}
-                            {{ form.descripcion(class="form-control form-control-lg {% if form.descripcion.errors %}is-invalid{% endif %}", rows=5) }}
+                            {{ form.descripcion(class="form-control {% if form.descripcion.errors %}is-invalid{% endif %}", rows=3) }} {# rows a 3 para más compacto #}
                             {% if form.descripcion.errors %}
                                 <div class="invalid-feedback">
                                     {% for error in form.descripcion.errors %}
@@ -44,74 +40,89 @@
                             {% endif %}
                         </div>
 
-                        <!-- Precio -->
-                        <div class="mb-3">
-                            {{ form.precio.label(class="form-label") }}
-                            {{ form.precio(class="form-control form-control-lg {% if form.precio.errors %}is-invalid{% endif %}") }}
-                            {% if form.precio.errors %}
-                                <div class="invalid-feedback">
-                                    {% for error in form.precio.errors %}
-                                        <span>{{ error }}</span>
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
+                        {# INICIO CAMBIO: CAMPOS AGRUPADOS EN UNA SOLA LÍNEA #}
+
+                        <!-- Ubicación y Municipio -->
+                        <div class="row g-3 mb-2"> {# row para la línea, g-3 para el espaciado entre columnas, mb-2 para margen inferior #}
+                            <div class="col-md-6"> {# col-md-6 hace que cada campo ocupe 1/2 del ancho en pantallas medianas y grandes #}
+                                {{ form.ubicacion.label(class="form-label") }}
+                                {{ form.ubicacion(class="form-control {% if form.ubicacion.errors %}is-invalid{% endif %}") }}
+                                {% if form.ubicacion.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.ubicacion.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form.municipio.label(class="form-label") }}
+                                {{ form.municipio(class="form-control {% if form.municipio.errors %}is-invalid{% endif %}") }}
+                                {% if form.municipio.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.municipio.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
                         </div>
 
-                        <!-- Ubicación -->
-                        <div class="mb-3">
-                            {{ form.ubicacion.label(class="form-label") }}
-                            {{ form.ubicacion(class="form-control form-control-lg {% if form.ubicacion.errors %}is-invalid{% endif %}") }}
-                            {% if form.ubicacion.errors %}
-                                <div class="invalid-feedback">
-                                    {% for error in form.ubicacion.errors %}
-                                        <span>{{ error }}</span>
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
+                        <!-- Precio y Cuota de Mantenimiento -->
+                        <div class="row g-3 mb-2">
+                            <div class="col-md-6">
+                                {{ form.precio.label(class="form-label") }}
+                                {{ form.precio(class="form-control {% if form.precio.errors %}is-invalid{% endif %}") }}
+                                {% if form.precio.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.precio.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form.cuota_mantenimiento.label(class="form-label") }}
+                                {{ form.cuota_mantenimiento(class="form-control {% if form.cuota_mantenimiento.errors %}is-invalid{% endif %}") }}
+                                {% if form.cuota_mantenimiento.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.cuota_mantenimiento.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
                         </div>
 
-                        <!-- Municipio -->
-                        <div class="mb-3">
-                            {{ form.municipio.label(class="form-label") }}
-                            {{ form.municipio(class="form-control form-control-lg {% if form.municipio.errors %}is-invalid{% endif %}") }}
-                            {% if form.municipio.errors %}
-                                <div class="invalid-feedback">
-                                    {% for error in form.municipio.errors %}
-                                        <span>{{ error }}</span>
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
+                        <!-- Opciones y Tipo de Propiedad -->
+                        <div class="row g-3 mb-2">
+                            <div class="col-md-6">
+                                {{ form.property_options.label(class="form-label") }}
+                                {{ form.property_options(class="form-select {% if form.property_options.errors %}is-invalid{% endif %}") }}
+                                {% if form.property_options.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.property_options.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form.tipo_propiedad.label(class="form-label") }}
+                                {{ form.tipo_propiedad(class="form-select {% if form.tipo_propiedad.errors %}is-invalid{% endif %}") }}
+                                {% if form.tipo_propiedad.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.tipo_propiedad.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
                         </div>
 
-                        <!-- Opciones de la Propiedad (Venta/Renta) -->
-                        <div class="mb-3">
-                            {{ form.property_options.label(class="form-label") }} 
-                            {{ form.property_options(class="form-select form-select-lg {% if form.property_options.errors %}is-invalid{% endif %}") }} 
-                            {% if form.property_options.errors %} 
-                                <div class="invalid-feedback">
-                                    {% for error in form.property_options.errors %} 
-                                        <span>{{ error }}</span>
-                                    {% endfor %}                                       
-                                 </div>
-                            {% endif %}
-                        </div>
-
-                        <!-- Tipo de Propiedad -->
-                        <div class="mb-3">
-                            {{ form.tipo_propiedad.label(class="form-label") }}
-                            {{ form.tipo_propiedad(class="form-select form-select-lg {% if form.tipo_propiedad.errors %}is-invalid{% endif %}") }}
-                            {% if form.tipo_propiedad.errors %}
-                                <div class="invalid-feedback">
-                                    {% for error in form.tipo_propiedad.errors %}
-                                        <span>{{ error }}</span>
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-                        </div>
-
-                        <!-- Campos numéricos opcionales -->
-                        <div class="row g-3 mb-3">
-                            <div class="col-md-4">
+                        <!-- Habitaciones y Estacionamientos -->
+                        <div class="row g-3 mb-2">
+                            <div class="col-md-6">
                                 {{ form.num_habitaciones.label(class="form-label") }}
                                 {{ form.num_habitaciones(class="form-control {% if form.num_habitaciones.errors %}is-invalid{% endif %}") }}
                                 {% if form.num_habitaciones.errors %}
@@ -122,7 +133,22 @@
                                     </div>
                                 {% endif %}
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-6">
+                                {{ form.num_estacionamientos.label(class="form-label") }}
+                                {{ form.num_estacionamientos(class="form-control {% if form.num_estacionamientos.errors %}is-invalid{% endif %}") }}
+                                {% if form.num_estacionamientos.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.num_estacionamientos.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Baños Completos y Medios Baños -->
+                        <div class="row g-3 mb-2">
+                            <div class="col-md-6">
                                 {{ form.num_banos.label(class="form-label") }}
                                 {{ form.num_banos(class="form-control {% if form.num_banos.errors %}is-invalid{% endif %}") }}
                                 {% if form.num_banos.errors %}
@@ -133,7 +159,7 @@
                                     </div>
                                 {% endif %}
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 {{ form.num_medios_banos.label(class="form-label") }}
                                 {{ form.num_medios_banos(class="form-control {% if form.num_medios_banos.errors %}is-invalid{% endif %}") }}
                                 {% if form.num_medios_banos.errors %}
@@ -146,19 +172,9 @@
                             </div>
                         </div>
 
-                        <div class="row g-3 mb-3">
-                            <div class="col-md-4">
-                                {{ form.num_estacionamientos.label(class="form-label") }}
-                                {{ form.num_estacionamientos(class="form-control {% if form.num_estacionamientos.errors %}is-invalid{% endif %}") }}
-                                {% if form.num_estacionamientos.errors %}
-                                    <div class="invalid-feedback">
-                                        {% for error in form.num_estacionamientos.errors %}
-                                            <span>{{ error }}</span>
-                                        {% endfor %}
-                                    </div>
-                                {% endif %}
-                            </div>
-                            <div class="col-md-4">
+                        <!-- Área de Terreno y Área de Construcción -->
+                        <div class="row g-3 mb-2">
+                            <div class="col-md-6">
                                 {{ form.area_terreno_metros_cuadrados.label(class="form-label") }}
                                 {{ form.area_terreno_metros_cuadrados(class="form-control {% if form.area_terreno_metros_cuadrados.errors %}is-invalid{% endif %}") }}
                                 {% if form.area_terreno_metros_cuadrados.errors %}
@@ -169,7 +185,7 @@
                                     </div>
                                 {% endif %}
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 {{ form.area_construccion_metros_cuadrados.label(class="form-label") }}
                                 {{ form.area_construccion_metros_cuadrados(class="form-control {% if form.area_construccion_metros_cuadrados.errors %}is-invalid{% endif %}") }}
                                 {% if form.area_construccion_metros_cuadrados.errors %}
@@ -182,10 +198,23 @@
                             </div>
                         </div>
 
+                        <!-- Antigüedad -->
+                        <div class="mb-2">
+                            {{ form.antiguedad.label(class="form-label") }}
+                            {{ form.antiguedad(class="form-control {% if form.antiguedad.errors %}is-invalid{% endif %}") }}
+                            {% if form.antiguedad.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.antiguedad.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
                         <!-- Cuota de Mantenimiento -->
-                        <div class="mb-3">
+                        <div class="mb-2"> {# mb-2 para compactar #}
                             {{ form.cuota_mantenimiento.label(class="form-label") }}
-                            {{ form.cuota_mantenimiento(class="form-control form-control-lg {% if form.cuota_mantenimiento.errors %}is-invalid{% endif %}") }}
+                            {{ form.cuota_mantenimiento(class="form-control {% if form.cuota_mantenimiento.errors %}is-invalid{% endif %}") }}
                             {% if form.cuota_mantenimiento.errors %}
                                 <div class="invalid-feedback">
                                     {% for error in form.cuota_mantenimiento.errors %}
@@ -195,40 +224,8 @@
                             {% endif %}
                         </div>
 
-                        {# INICIO: Sección de Imágenes existentes y gestión #}
-                        {% if property.images %}
-                            <div class="mb-4"> {# Margen inferior para esta sección #}
-                                <label class="form-label">Imágenes Actuales:</label>
-                                <small class="text-muted d-block mb-2">Marca para eliminar, selecciona para principal.</small>
-                                <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-2"> {# Grid responsivo para miniaturas #}
-                                    {% for image in property.images %}
-                                        <div class="col">
-                                            <div class="card h-100 image-thumbnail-card position-relative {% if image.is_main %}border-success border-3{% endif %}"> {# Clase para JS y borde si es principal #}
-                                                <img src="{{ url_for('static', filename='uploads/' + image.filename) }}"
-                                                     class="img-thumbnail rounded" alt="Imagen de propiedad" style="width: 100%; height: 150px; object-fit: cover;">
-                                                <div class="card-body p-2 text-center">
-                                                    {# Checkbox para eliminar imagen #}
-                                                    <div class="form-check form-check-inline">
-                                                        <input class="form-check-input delete-image-checkbox" type="checkbox" name="delete_images" value="{{ image.id }}" id="delete_image_{{ image.id }}">
-                                                        <label class="form-check-label" for="delete_image_{{ image.id }}">Eliminar</label>
-                                                    </div>
-                                                    
-                                                    {# Radio button para seleccionar imagen principal #}
-                                                    <div class="form-check form-check-inline">
-                                                        <input class="form-check-input main-image-radio" type="radio" name="principal_image" value="{{ image.id }}" id="main_image_{{ image.id }}" {% if image.is_main %}checked{% endif %}>
-                                                        <label class="form-check-label" for="main_image_{{ image.id }}">Principal</label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    {% endfor %}
-                                </div>
-                            </div>
-                        {% endif %}
-                        {# FIN: Sección de Imágenes existentes y gestión #}
-
-                        <!-- Campo de Imágenes (para añadir nuevas imágenes durante la edición) -->
-                        <div class="mb-3">
+                        <!-- Campo de Imágenes (Nuevas) -->
+                        <div class="mb-4"> {# mb-4 para dar más espacio al final #}
                             {{ form.imagenes.label(class="form-label") }}
                             {{ form.imagenes(class="form-control {% if form.imagenes.errors %}is-invalid{% endif %}", multiple=True) }}
                             {% if form.imagenes.errors %}
@@ -240,65 +237,86 @@
                             {% endif %}
                         </div>
 
-                        <div class="d-grid mt-4"> {# d-grid y mt-4 para el botón #}
-                            {{ form.submit(class="btn btn-primary btn-lg rounded-3 fw-bold") }} {# Botón de envío #}
+                        {# INICIO: Sección de Imágenes existentes y sus controles #}
+                        {% if property.images %}
+                            <div class="mb-3">
+                                <label class="form-label">Imágenes existentes:</label>
+                                <small class="text-muted d-block mb-2">Marca para eliminar o selecciona la principal.</small>
+                                <div class="row g-2"> {# g-2 para espaciado reducido entre imágenes #}
+                                    {% for image in property.images %}
+                                        <div class="col-6 col-md-4 col-lg-3"> {# Columnas responsivas para miniaturas #}
+                                            <div class="image-thumbnail-card card h-100 position-relative"> {# Añadido position-relative #}
+                                                <img src="{{ url_for('static', filename=image.path) }}"
+                                                     class="img-thumbnail rounded-3" alt="Imagen de propiedad" style="width: 100%; height: 120px; object-fit: cover;">
+                                                <div class="card-body p-2 d-flex flex-column align-items-center">
+                                                    <div class="form-check">
+                                                        <input type="checkbox" name="delete_images" value="{{ image.id }}" id="delete_image_{{ image.id }}" class="form-check-input delete-image-checkbox">
+                                                        <label class="form-check-label" for="delete_image_{{ image.id }}">Eliminar</label>
+                                                    </div>
+                                                    <div class="form-check mt-1">
+                                                        <input type="radio" name="main_image" value="{{ image.id }}" id="main_image_{{ image.id }}" class="form-check-input main-image-radio" {% if image.is_main %}checked{% endif %}>
+                                                        <label class="form-check-label" for="main_image_{{ image.id }}">Principal</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+                        {# FIN: Sección de Imágenes existentes y sus controles #}
+
+                        {# Botón de Envío: Ajuste de margen y clases #}
+                        <div class="mt-4 mb-3 d-grid gap-2">
+                            {{ form.submit(class="btn btn-primary btn-lg rounded-3 fw-bold") }}
                         </div>
+
                     </form>
-                    {# Botón de Cancelar #}
-                    <div class="text-center mt-3">
-                        <a href="{{ url_for('main.property_detail', property_id=property.id) }}" class="btn btn-secondary btn-sm">Cancelar</a>
-                    </div>
-                </div> {# Fin card #}
-            </div> {# Fin col #}
-        </div> {# Fin row #}
-    </div> {# Fin container #}
+                </div>
+            </div>
+        </div>
+    </div>
 
-    {# INICIO: Script JS para feedback visual de gestión de imágenes #}
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const imageCards = document.querySelectorAll('.image-thumbnail-card');
-
-            imageCards.forEach(card => {
-                const checkbox = card.querySelector('.delete-image-checkbox');
-                const radio = card.querySelector('.main-image-radio');
-
-                // Función para actualizar estilos de la tarjeta
-                function updateCardStyles() {
-                    card.classList.remove('border-danger', 'border-success', 'border-3'); // Limpiar bordes
-
-                    if (checkbox && checkbox.checked) {
-                        card.classList.add('border-danger', 'border-3'); // Rojo si está marcada para eliminar
-                        card.style.opacity = '0.7';
-                    } else if (radio && radio.checked) {
-                        card.classList.add('border-success', 'border-3'); // Verde si es la imagen principal
-                        card.style.opacity = '1';
-                    } else {
-                        card.style.opacity = '1'; // Opacidad normal si no está marcada
-                    }
-                }
-
-                // Event Listeners
-                if (checkbox) {
-                    checkbox.addEventListener('change', updateCardStyles);
-                }
-                if (radio) {
-                    radio.addEventListener('change', function() {
-                        // Desmarcar principal de otras tarjetas visualmente
-                        document.querySelectorAll('.main-image-radio').forEach(otherRadio => {
-                            if (otherRadio !== radio && otherRadio.checked) {
-                                otherRadio.checked = false; // Desmarcar el radio button
-                                otherRadio.closest('.image-thumbnail-card').classList.remove('border-success', 'border-3');
-                            }
-                        });
-                        updateCardStyles(); // Actualizar el estilo de la tarjeta actual
-                    });
-                }
-
-                // Aplicar estilos iniciales al cargar la página
-                updateCardStyles();
-            });
+{# Script para manejar la retroalimentación visual de las imágenes (eliminar/principal) #}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Lógica para marcar tarjetas cuando se marcan para eliminar
+    document.querySelectorAll('.delete-image-checkbox').forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            const card = this.closest('.image-thumbnail-card');
+            if (this.checked) {
+                card.classList.add('border-danger', 'border-3', 'shadow-sm');
+                card.style.opacity = '0.7';
+            } else {
+                card.classList.remove('border-danger', 'border-3', 'shadow-sm');
+                card.style.opacity = '1';
+            }
         });
-    </script>
-    {# FIN: Script JS para feedback visual #}
+        // Asegurar estado inicial si ya viene marcado
+        if (checkbox.checked) {
+            checkbox.closest('.image-thumbnail-card').classList.add('border-danger', 'border-3', 'shadow-sm');
+            checkbox.closest('.image-thumbnail-card').style.opacity = '0.7';
+        }
+    });
+
+    // Lógica para marcar la imagen principal
+    document.querySelectorAll('.main-image-radio').forEach(radio => {
+        radio.addEventListener('change', function() {
+            // Quitar el borde verde de todas las tarjetas antes de aplicar el nuevo
+            document.querySelectorAll('.image-thumbnail-card').forEach(card => {
+                card.classList.remove('border-success', 'border-3', 'shadow-sm');
+            });
+            // Aplicar borde verde solo a la tarjeta de la imagen principal seleccionada
+            if (this.checked) {
+                this.closest('.image-thumbnail-card').classList.add('border-success', 'border-3', 'shadow-sm');
+            }
+        });
+        // Asegurar estado inicial
+        if (radio.checked) {
+            radio.closest('.image-thumbnail-card').classList.add('border-success', 'border-3', 'shadow-sm');
+        }
+    });
+});
+</script>
 
 {% endblock content %}

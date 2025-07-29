@@ -7,7 +7,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from flask_migrate import Migrate
 from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import os
 from werkzeug.utils import secure_filename
 from sqlalchemy import or_
@@ -289,11 +289,10 @@ def add_property():
                 area_terreno_metros_cuadrados=form.area_terreno_metros_cuadrados.data,
                 area_construccion_metros_cuadrados=form.area_construccion_metros_cuadrados.data,
                 cuota_mantenimiento=form.cuota_mantenimiento.data,
-                # --- CAMBIO IMPORTANTE: Asignación de los nuevos campos de antigüedad ---
                 antiguedad_tipo=form.antiguedad_option.data,
                 antiguedad_anos=antiguedad_anos_data,
-                # --- FIN CAMBIO ANTIGÜEDAD ---
-                fecha_publicacion=datetime.utcnow(),
+                youtube_video_url=form.youtube_video_url.data,
+                fecha_publicacion=datetime.now(timezone.utc),
                 agente_id=current_user.id
             )
             db.session.add(new_property)
@@ -421,15 +420,18 @@ def edit_property(property_id):
         property_to_edit.area_terreno_metros_cuadrados = form.area_terreno_metros_cuadrados.data
         property_to_edit.area_construccion_metros_cuadrados = form.area_construccion_metros_cuadrados.data
         property_to_edit.cuota_mantenimiento = form.cuota_mantenimiento.data
-        # --- CAMBIO IMPORTANTE: Actualización de los campos de antigüedad ---
+        
+        # ---  campos de antigüedad ---
         property_to_edit.antiguedad_tipo = form.antiguedad_option.data
         if form.antiguedad_option.data == 'years':
-            # Solo guarda los años si la opción seleccionada es 'Años'
             property_to_edit.antiguedad_anos = form.antiguedad_years.data
         else:
-            # Si la opción es 'Nueva' o no se seleccionó nada, los años deben ser NULL
             property_to_edit.antiguedad_anos = None
-        # --- FIN CAMBIO ANTIGÜEDAD ---
+        # --- fin CAMBIO ANTIGÜEDAD ---
+
+        #  Actualizar el campo youtube_video_url
+        property_to_edit.youtube_video_url = form.youtube_video_url.data 
+
 
         # --- Gestión de Imágenes Existentes ---
         print(f"\n--- INICIO PROCESO DE EDICIÓN DE IMÁGENES PARA PROPIEDAD ID: {property_id} ---")
@@ -556,11 +558,12 @@ def edit_property(property_id):
         form.area_terreno_metros_cuadrados.data = property_to_edit.area_terreno_metros_cuadrados
         form.area_construccion_metros_cuadrados.data = property_to_edit.area_construccion_metros_cuadrados
         form.cuota_mantenimiento.data = property_to_edit.cuota_mantenimiento
-        # --- CAMBIO IMPORTANTE: Precarga de los campos de antigüedad ---
         form.antiguedad_option.data = property_to_edit.antiguedad_tipo
         form.antiguedad_years.data = property_to_edit.antiguedad_anos
-        # --- FIN CAMBIO ANTIGÜEDAD ---
-    # Asegurarse de que el objeto property_to_edit refleje el estado más actual para el renderizado
+        form.youtube_video_url.data = property_to_edit.youtube_video_url
+
+
+
     db.session.refresh(property_to_edit) # Importante para que el template vea los cambios de is_main
 
     return render_template('edit_property.html', title='Editar Propiedad', form=form, property=property_to_edit)

@@ -220,16 +220,14 @@
                             </div>
                         </div>
 
-                        <!-- Antigüedad -->
 
-
-                        <!-- Cuota de Mantenimiento -->
-                        <div class="mb-2"> {# mb-2 para compactar #}
-                            {{ form.cuota_mantenimiento.label(class="form-label") }}
-                            {{ form.cuota_mantenimiento(class="form-control {% if form.cuota_mantenimiento.errors %}is-invalid{% endif %}") }}
-                            {% if form.cuota_mantenimiento.errors %}
+                        <!-- Campo para la URL de Video de YouTube -->
+                        <div class="mb-4"> {# mb-4 para dar un buen espacio #}
+                            {{ form.youtube_video_url.label(class="form-label") }}
+                            {{ form.youtube_video_url(class="form-control {% if form.youtube_video_url.errors %}is-invalid{% endif %}") }}
+                            {% if form.youtube_video_url.errors %}
                                 <div class="invalid-feedback">
-                                    {% for error in form.cuota_mantenimiento.errors %}
+                                    {% for error in form.youtube_video_url.errors %}
                                         <span>{{ error }}</span>
                                     {% endfor %}
                                 </div>

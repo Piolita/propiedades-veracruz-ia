@@ -72,20 +72,20 @@
                     </div>
                     {% endif %}
 
-                    {# Sección de detalles con mejor presentación #}
-                    <div class="row mb-3 p-3 border rounded bg-light"> {# Añadido padding, borde y fondo para destacar #}
+                    {# Sección de detalles principales con diseño en dos columnas: lista de detalles y video #}
+                    <div class="row mb-3 p-3 border rounded bg-light"> {# Contenedor principal de esta sección #}
+                    
+                        {# Columna para la lista de detalles (ocupará la mitad del ancho en pantallas medianas y grandes) #}
                         <div class="col-md-6">
-                            <p class="lead mb-1"><strong>Precio:</strong> ${{ "{:,.0f}".format(property.precio) }}</p>
+                            <h5 class="fw-bold mb-3">Detalles de la Propiedad</h5> {# Título para la sección de detalles #}
+                            <p class="text-sm mb-1"><strong>Precio:</strong> ${{ "{:,.0f}".format(property.precio) if property.precio % 1 == 0 else "{:,.2f}".format(property.precio) }}</p>
                             {% if property.cuota_mantenimiento %}
-                                <p class="lead mb-1"><strong>Cuota de Mantenimiento:</strong> ${{ "{:,.0f}".format(property.cuota_mantenimiento) }}</p>
+                                <p class="text-sm mb-1"><strong>Cuota de Mantenimiento:</strong> ${{ "{:,.0f}".format(property.cuota_mantenimiento) if property.cuota_mantenimiento % 1 == 0 else "{:,.2f}".format(property.cuota_mantenimiento) }}</p>
                             {% endif %}
-                            <p class="lead mb-1"><strong>Opción:</strong> {{ property.property_options }}</p>
-                            <p class="lead mb-1"><strong>Tipo:</strong> {{ property.tipo_propiedad }}</p>
-                        </div>
-                        <div class="col-md-6">
-                            <p class="lead mb-1"><strong>Ubicación:</strong> {{ property.ubicacion }}, {{ property.municipio }}</p>
-                            {# INICIO CAMBIO: Mostrar antigüedad con los nuevos campos #}
-                            <p class="lead mb-1"><strong>Antigüedad:</strong>
+                            <p class="text-sm mb-1"><strong>Opción:</strong> {{ property.property_options }}</p>
+                            <p class="text-sm mb-1"><strong>Tipo:</strong> {{ property.tipo_propiedad }}</p>
+                            <p class="text-sm mb-1"><strong>Ubicación:</strong> {{ property.ubicacion }}, {{ property.municipio }}</p>
+                            <p class="text-sm mb-1"><strong>Antigüedad:</strong>
                                 {% if property.antiguedad_tipo == 'new' %}
                                     Nueva
                                 {% elif property.antiguedad_tipo == 'years' and property.antiguedad_anos is not none %}
@@ -94,28 +94,51 @@
                                     No especificada
                                 {% endif %}
                             </p>
-                            {# FIN CAMBIO ANTIGÜEDAD #}
                             {% if property.num_habitaciones %}
-                                <p class="lead mb-1"><strong>Habitaciones:</strong> {{ property.num_habitaciones }}</p>
+                                <p class="text-sm mb-1"><strong>Habitaciones:</strong> {{ property.num_habitaciones }}</p>
                             {% endif %}
                             {% if property.num_banos %}
-                                <p class="lead mb-1"><strong>Baños:</strong> {{ property.num_banos }}{% if property.num_medios_banos %}.5{% endif %}</p>
+                                <p class="text-sm mb-1"><strong>Baños:</strong> {{ property.num_banos }}{% if property.num_medios_banos %}.5{% endif %}</p>
                             {% endif %}
                             {% if property.num_estacionamientos %}
-                                <p class="lead mb-1"><strong>Estacionamientos:</strong> {{ property.num_estacionamientos }}</p>
+                                <p class="text-sm mb-1"><strong>Estacionamientos:</strong> {{ property.num_estacionamientos }}</p>
                             {% endif %}
                             {% if property.area_terreno_metros_cuadrados %}
-                                <p class="lead mb-1"><strong>Área de Terreno:</strong> {{ "{:,.0f}".format(property.area_terreno_metros_cuadrados) }} m²</p>
+                                <p class="text-sm mb-1"><strong>Área de Terreno:</strong> {{ "{:,.0f}".format(property.area_terreno_metros_cuadrados) }} m²</p>
                             {% endif %}
                             {% if property.area_construccion_metros_cuadrados %}
-                                <p class="lead mb-1"><strong>Área de Construcción:</strong> {{ "{:,.0f}".format(property.area_construccion_metros_cuadrados) }} m²</p>
+                                <p class="text-sm mb-1"><strong>Área de Construcción:</strong> {{ "{:,.0f}".format(property.area_construccion_metros_cuadrados) }} m²</p>
+                            {% endif %}
+                        </div>
+                    
+                        {# Columna para el video de YouTube (ocupará la otra mitad del ancho en pantallas medianas y grandes) #}
+                        <div class="col-md-6 mt-3 mt-md-0"> {# mt-3 para espacio en móviles, mt-md-0 para alinear en escritorio #}
+                            {% set youtube_video_id = property.get_youtube_video_id() %} {# Obtiene el ID del video #}
+                            {% set youtube_thumbnail_url = property.get_youtube_thumbnail_url() %} {# Obtiene la URL de la miniatura #}
+                    
+                            {% if youtube_video_id and youtube_thumbnail_url %}
+                                <h5 class="fw-bold mb-2">Video de la Propiedad</h5>
+                                <div class="embed-responsive embed-responsive-16by9 position-relative overflow-hidden" style="padding-bottom: 56.25%; height: 0;"> {# Contenedor para relación de aspecto 16:9 #}
+                                    <a href="https://www.youtube.com/watch?v={{ youtube_video_id }}" target="_blank" rel="noopener noreferrer" class="d-block w-100 h-100 position-absolute top-0 start-0">
+                                        <img src="{{ youtube_thumbnail_url }}" class="img-fluid w-100 h-100 object-fit-cover" alt="Miniatura de Video de YouTube">
+                                        <div class="position-absolute top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center bg-dark bg-opacity-50">
+                                            <i class="fab fa-youtube text-white" style="font-size: 4rem;"></i> {# Ícono de YouTube #}
+                                        </div>
+                                    </a>
+                                </div>
+                                <p class="text-center mt-2 small text-muted">Haz clic para ver el video en YouTube</p>
+                            {% else %}
+                                <div class="alert alert-info text-center small" role="alert">
+                                    No hay video de YouTube disponible para esta propiedad.
+                                </div>
                             {% endif %}
                         </div>
                     </div>
 
+
                     <hr>
                     <h3 class="text-primary mb-3">Descripción Detallada</h3>
-                    <p class="card-text text-muted">{{ property.descripcion }}</p>
+                    <p class="card-text text-muted" style="white-space: pre-wrap;">{{ property.descripcion }}</p>
 
                     <p class="text-end text-muted small mt-4">Publicado el: {{ property.fecha_publicacion.strftime('%d/%m/%Y') }}</p>
 

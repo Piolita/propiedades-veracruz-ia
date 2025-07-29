@@ -119,6 +119,7 @@
                                 {% endif %}
                             </div>
                         </div>
+                        
                         <!-- Antiguedad (CAMBIO: Añadido aquí) -->
                         <div class="col-md-6">
                             {{ form.antiguedad_option.label(class="form-label") }}
@@ -221,7 +222,18 @@
                             </div>
                         </div>
 
-
+                       <!-- Campo para la URL de Video de YouTube -->
+                        <div class="mb-4"> {# mb-4 para dar un buen espacio #}
+                            {{ form.youtube_video_url.label(class="form-label") }}
+                            {{ form.youtube_video_url(class="form-control {% if form.youtube_video_url.errors %}is-invalid{% endif %}") }}
+                            {% if form.youtube_video_url.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.youtube_video_url.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
 
                         <!-- Campo de Imágenes -->
                         <div class="mb-4"> {# mb-4 para dar más espacio al final #}

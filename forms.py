@@ -2,7 +2,7 @@
 
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField, DecimalField, IntegerField, SelectField
-from wtforms.validators import DataRequired, Length, Email, EqualTo, NumberRange, Optional, ValidationError
+from wtforms.validators import DataRequired, Length, Email, EqualTo, NumberRange, Optional, ValidationError, URL
 from flask_wtf.file import FileField, FileAllowed
 from markupsafe import Markup # Para permitir HTML seguro en las opciones de SelectField
 
@@ -58,10 +58,9 @@ class PropertyForm(FlaskForm):
     area_construccion_metros_cuadrados = DecimalField('Área de Construcción (m²)', validators=[Optional(), NumberRange(min=0)])
     cuota_mantenimiento = DecimalField('Cuota de Mantenimiento', validators=[Optional(), NumberRange(min=0)])
 
-
+    youtube_video_url = StringField('URL de Video de YouTube (Opcional)', validators=[Optional(), URL(message='Por favor, introduce una URL de YouTube válida.')])
     
     # Campo para la subida de múltiples imágenes
-    # 'images' es el nombre del campo en el formulario HTML (multiple='true')
     imagenes = FileField('Subir Imágenes', validators=[
         FileAllowed(['jpg', 'jpeg', 'png', 'gif', 'webp'], 'Solo se permiten imágenes (JPG, JPEG, PNG, GIF, WEBP)!'),
         Optional() # Las imágenes no son obligatorias al añadir una propiedad
@@ -69,7 +68,7 @@ class PropertyForm(FlaskForm):
 
     submit = SubmitField('Añadir Propiedad')
 
-# --- Formulario para Editar Propiedad (similar a Añadir, pero con manejo de imágenes existentes) ---
+# --- Formulario para Editar Propiedad 
 class EditPropertyForm(PropertyForm):
     # Aquí podríamos añadir campos específicos para la edición de imágenes,
     # como checkboxes para eliminar imágenes existentes o un campo para cambiar la imagen principal.
@@ -98,13 +97,16 @@ class RegisterForm(FlaskForm):
 
     # Validaciones personalizadas para username y email
     def validate_username(self, username):
-        from app import User # Importa User aquí para evitar importación circular
+        # CAMBIO: Importa User aquí para evitar importación circular. Asegúrate de que esta importación sea necesaria.
+        # Si 'app' es donde se inicializa db, podrías necesitar un import local o manejar la importación en __init__.py
+        from .models import User 
         user = User.query.filter_by(username=username.data).first()
         if user:
             raise ValidationError('Ese nombre de usuario ya está en uso. Por favor, elige uno diferente.')
 
     def validate_email(self, email):
-        from app import User # Importa User aquí para evitar importación circular
+        # CAMBIO: Importa User aquí para evitar importación circular.
+        from .models import User
         user = User.query.filter_by(email=email.data).first()
         if user:
             raise ValidationError('Ese email ya está registrado. Por favor, utiliza uno diferente.')
